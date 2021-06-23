@@ -1,0 +1,41 @@
+-main ApplicationMain 
+-cp C:/HaxeToolkit/haxe/lib/flixel/4,8,1
+-D flixel=4.8.1
+--macro openfl.utils._internal.ExtraParamsMacro.include()
+-cp C:/HaxeToolkit/haxe/lib/openfl/9,1,0/src
+-D openfl=9.1.0
+--macro lime._internal.macros.DefineMacro.run()
+-cp C:/HaxeToolkit/haxe/lib/lime/7,8,0/src
+-D lime=7.8.0
+-cp C:/HaxeToolkit/haxe/lib/flixel-addons/git
+-D flixel-addons=2.10.0
+--macro keep('IntIterator')
+-cp C:/HaxeToolkit/haxe/lib/hscript/2,4,0
+-D hscript=2.4.0
+-cp C:/HaxeToolkit/haxe/lib/flixel-ui/2,3,3
+-D flixel-ui=2.3.3
+-cp C:/HaxeToolkit/haxe/lib/polymod/git
+-D polymod=0.0.0
+-cp source
+-D FLX_NO_FOCUS_LOST_SCREEN
+-D tools=7.8.0
+-D lime-canvas
+-D FLX_NO_DEBUG
+-D howlerjs
+-D no-compilation
+-D openfl-html5
+-D NAPE_RELEASE_BUILD
+-D lime-webgl
+-D lime-dom
+-D lime-howlerjs
+-D lime-html5
+-D html5
+-D web
+--remap flash:openfl
+--macro flixel.system.macros.FlxDefines.run()
+--connect
+6001
+-js export/html5/bin/FunkinForever.js
+-cp export/html5/haxe
+-D html5
+-debug

@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="skater.png">
+	<!-- Created with Adobe Animate version 19.2.0.405 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Skater Idle0000" x="0" y="0" width="484" height="592" frameX="-15" frameY="-38" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0001" x="0" y="0" width="484" height="592" frameX="-15" frameY="-38" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0002" x="484" y="0" width="480" height="611" frameX="-9" frameY="-20" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0003" x="484" y="0" width="480" height="611" frameX="-9" frameY="-20" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0004" x="964" y="0" width="480" height="629" frameX="0" frameY="-2" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0005" x="964" y="0" width="480" height="629" frameX="0" frameY="-2" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0006" x="1444" y="0" width="479" height="631" frameX="0" frameY="0" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0007" x="1444" y="0" width="479" height="631" frameX="0" frameY="0" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0008" x="1923" y="0" width="479" height="631" frameX="-2" frameY="0" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0009" x="2402" y="0" width="480" height="631" frameX="-2" frameY="0" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0010" x="2402" y="0" width="480" height="631" frameX="-2" frameY="0" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0011" x="2402" y="0" width="480" height="631" frameX="-2" frameY="0" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0012" x="2402" y="0" width="480" height="631" frameX="-2" frameY="0" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Idle0013" x="2402" y="0" width="480" height="631" frameX="-2" frameY="0" frameWidth="499" frameHeight="631"/>
+	<SubTexture name="Skater Note Down0000" x="2882" y="0" width="503" height="495" frameX="0" frameY="-8" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0001" x="2882" y="0" width="503" height="495" frameX="0" frameY="-8" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0002" x="3385" y="0" width="517" height="501" frameX="-3" frameY="-2" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0003" x="3385" y="0" width="517" height="501" frameX="-3" frameY="-2" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0004" x="0" y="631" width="522" height="503" frameX="-3" frameY="0" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0005" x="0" y="631" width="522" height="503" frameX="-3" frameY="0" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0006" x="522" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0007" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0008" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0009" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0010" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0011" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0012" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0013" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0014" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0015" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0016" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0017" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0018" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0019" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0020" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0021" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0022" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0023" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0024" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0025" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0026" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0027" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0028" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Down0029" x="1042" y="631" width="520" height="502" frameX="-3" frameY="-1" frameWidth="525" frameHeight="503"/>
+	<SubTexture name="Skater Note Left0000" x="1562" y="631" width="758" height="659" frameX="0" frameY="-1" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0001" x="1562" y="631" width="758" height="659" frameX="0" frameY="-1" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0002" x="2320" y="631" width="746" height="660" frameX="-13" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0003" x="2320" y="631" width="746" height="660" frameX="-13" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0004" x="3066" y="631" width="743" height="660" frameX="-16" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0005" x="3066" y="631" width="743" height="660" frameX="-16" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0006" x="0" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0007" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0008" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0009" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0010" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0011" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0012" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0013" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0014" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0015" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0016" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0017" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0018" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0019" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0020" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0021" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0022" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0023" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0024" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0025" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0026" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0027" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0028" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Left0029" x="744" y="1291" width="744" height="660" frameX="-15" frameY="0" frameWidth="759" frameHeight="660"/>
+	<SubTexture name="Skater Note Right0000" x="1488" y="1291" width="574" height="608" frameX="-3" frameY="0" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0001" x="1488" y="1291" width="574" height="608" frameX="-3" frameY="0" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0002" x="2062" y="1291" width="583" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0003" x="2062" y="1291" width="583" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0004" x="2645" y="1291" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0005" x="2645" y="1291" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0006" x="3229" y="1291" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0007" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0008" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0009" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0010" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0011" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0012" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0013" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0014" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0015" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0016" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0017" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0018" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0019" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0020" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0021" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0022" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0023" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0024" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0025" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0026" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0027" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0028" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Right0029" x="0" y="1951" width="584" height="604" frameX="0" frameY="-4" frameWidth="584" frameHeight="608"/>
+	<SubTexture name="Skater Note Up0000" x="584" y="1951" width="484" height="691" frameX="-39" frameY="0" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0001" x="584" y="1951" width="484" height="691" frameX="-39" frameY="0" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0002" x="1068" y="1951" width="489" height="686" frameX="-7" frameY="-4" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0003" x="1068" y="1951" width="489" height="686" frameX="-7" frameY="-4" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0004" x="1557" y="1951" width="490" height="687" frameX="0" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0005" x="1557" y="1951" width="490" height="687" frameX="0" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0006" x="2047" y="1951" width="490" height="687" frameX="-2" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0007" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0008" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0009" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0010" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0011" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0012" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0013" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0014" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0015" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0016" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0017" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0018" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0019" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0020" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0021" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0022" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0023" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0024" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0025" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0026" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0027" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0028" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+	<SubTexture name="Skater Note Up0029" x="2537" y="1951" width="489" height="687" frameX="-4" frameY="-3" frameWidth="523" frameHeight="691"/>
+</TextureAtlas>
