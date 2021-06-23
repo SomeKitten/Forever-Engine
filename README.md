@@ -1,5 +1,5 @@
 # FunkinForever
-An open-source Friday Night Funkin' mod engine
+An open-source [Friday Night Funkin'](https://github.com/ninjamuffin99/Funkin) mod engine
 ----------------------------------------------
 Funkin' Forever, or Forever Engine is an open source modification of the Friday Night Funkin' engine. At the time of writing this, it is completely and absolutely 
 Planned Features:
