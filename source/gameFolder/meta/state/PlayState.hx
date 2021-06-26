@@ -246,10 +246,6 @@ class PlayState extends MusicBeatState
 		super.create();
 	}
 
-	var canAscend = false;
-	var ascendBy:Float = 0.01;
-	var val:Float = 0;
-
 	override public function update(elapsed:Float)
 	{
 		// pause the game if the game is allowed to pause and enter is pressed
@@ -276,9 +272,6 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.SIX)
 			boyfriendAutoplay = !boyfriendAutoplay;
-
-		if (FlxG.keys.justPressed.FIVE)
-			canAscend = true;
 
 		///*
 		if (startingSong)
@@ -351,14 +344,6 @@ class PlayState extends MusicBeatState
 
 		// handle all of the note calls
 		noteCalls();
-
-		if (canAscend)
-		{
-			dadOpponent.y -= ascendBy;
-			dadOpponent.playAnim('singUP');
-			if (ascendBy < 5)
-				ascendBy += ascendBy / 25;
-		}
 	}
 
 	//----------------------------------------------------------------
@@ -432,6 +417,14 @@ class PlayState extends MusicBeatState
 					vocals.volume = 1;
 
 				// kill the note, then remove it from the array
+				if (charCallType == 1)
+				{
+					if (!daNote.isSustainNote)
+					{
+						popUpScore(daNote.strumTime);
+						combo += 1;
+					}
+				}
 				daNote.kill();
 				notes.remove(daNote, true);
 				daNote.destroy();
