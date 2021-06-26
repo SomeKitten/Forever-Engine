@@ -22,6 +22,7 @@ Planned Features:
 
 Current Features:
 * TANKMAN
+  * Disclaimer: Tankman is not at all the main focus of this engine, please support friday night funkin on [newgrounds](https://www.newgrounds.com/portal/view/770371) if you actually want to play week 7, this is just here for the sake of preparations for when week 7 source comes out.
 * Makeshift song editor that's just the base game one
 * A much more organised PlayState
 * comments that are kind of funny
