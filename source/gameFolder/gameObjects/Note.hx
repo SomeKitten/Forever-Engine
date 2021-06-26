@@ -188,13 +188,13 @@ class Note extends FlxSprite
 
 		if (mustPress)
 		{
-			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.25)
-				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
+			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset)
+				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset))
 				canBeHit = true;
 			else
 				canBeHit = false;
 
-			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
+			if (strumTime < Conductor.songPosition - (Conductor.safeZoneOffset * 1.5) && !wasGoodHit)
 				tooLate = true;
 		}
 		else // make sure the note can't be hit if it's the dad's I guess

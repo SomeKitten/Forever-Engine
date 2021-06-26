@@ -3,33 +3,84 @@ package gameFolder.meta.state;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.transition.TransitionData;
+import flixel.graphics.FlxGraphic;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import gameFolder.meta.MusicBeat.MusicBeatState;
+import openfl.Assets;
 
 using StringTools;
 
 class TitleState extends MusicBeatState
-{ // remember to change later
-	/*
-		// holy shit this is like hello world but slightly worse?
-		// this is just test code don't mind it.
-		var stringText:String = "woah its a string \n no way anyways i \n gotta see if it loads";
-		var menuText:FlxText;
+{
+	//
+	var curWacky:Array<String> = [];
+	var initialised:Bool = false; // initialisation to make sure things work
 
-		override public function create()
+	override public function create():Void
+	{
+		super.create();
+
+		// text string that plays at the start of the game much like the original engine lol
+		curWacky = FlxG.random.getObject(getIntroTextShit());
+
+		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
-			super.create();
+			startIntro();
+		});
+	}
 
-			menuText = new FlxText(0, 0, 0, stringText, 64);
-			// menuText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			menuText.screenCenter();
-			add(menuText);
+	function startIntro()
+	{
+		// check if the game isn't initialised, if it isn't start doing shit about it!
+		if (!initialised)
+		{
+			//
+			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+			FlxG.sound.music.fadeIn(5, 0, 0.7);
+		}
+		Conductor.changeBPM(102);
+		persistentUpdate = true;
+
+		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		add(bg);
+	}
+
+	function getIntroTextShit():Array<Array<String>>
+	{
+		var fullText:String = Assets.getText(Paths.txt('introText'));
+
+		var firstArray:Array<String> = fullText.split('\n');
+		var swagGoodArray:Array<Array<String>> = [];
+
+		for (i in firstArray)
+		{
+			swagGoodArray.push(i.split('--'));
 		}
 
-		override public function update(elapsed:Float)
-		{
-			super.update(elapsed);
-			menuText.x += 1;
-		}
-		// */
+		return swagGoodArray;
+	}
+
+	override function update(elapsed:Float)
+	{
+		//
+	}
+
+	override function beatHit()
+	{
+		super.beatHit();
+
+		// end it on a different line for the sake of clarity
+		if (curBeat == 16)
+			skipIntro();
+	}
+
+	function skipIntro()
+	{
+		//
+	}
 }

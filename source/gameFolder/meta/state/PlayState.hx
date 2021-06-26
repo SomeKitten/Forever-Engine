@@ -43,6 +43,8 @@ class PlayState extends MusicBeatState
 	public static var storyPlaylist:Array<String> = [];
 	public static var storyDifficulty:Int = 2;
 
+	public var downscroll:Bool = true;
+
 	var startTimer:FlxTimer;
 
 	private var vocals:FlxSound;
@@ -96,7 +98,8 @@ class PlayState extends MusicBeatState
 	var songTime:Float = 0;
 
 	private var camHUD:FlxCamera;
-	private var camGame:FlxCamera;
+
+	public static var camGame:FlxCamera;
 
 	private var camDisplaceX:Float = 0;
 	private var camDisplaceY:Float = 0; // might not use depending on result
@@ -136,7 +139,7 @@ class PlayState extends MusicBeatState
 
 		// default song
 		if (SONG == null)
-			SONG = Song.loadFromJson('stress-hard', 'stress');
+			SONG = Song.loadFromJson('fresh-hard', 'fresh');
 
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
@@ -244,6 +247,8 @@ class PlayState extends MusicBeatState
 	}
 
 	var canAscend = false;
+	var ascendBy:Float = 0.01;
+	var val:Float = 0;
 
 	override public function update(elapsed:Float)
 	{
@@ -274,9 +279,6 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.FIVE)
 			canAscend = true;
-
-		if (canAscend)
-			boyfriend.y -= 50;
 
 		///*
 		if (startingSong)
@@ -349,6 +351,14 @@ class PlayState extends MusicBeatState
 
 		// handle all of the note calls
 		noteCalls();
+
+		if (canAscend)
+		{
+			dadOpponent.y -= ascendBy;
+			dadOpponent.playAnim('singUP');
+			if (ascendBy < 5)
+				ascendBy += ascendBy / 25;
+		}
 	}
 
 	//----------------------------------------------------------------
@@ -703,7 +713,69 @@ class PlayState extends MusicBeatState
 
 	function popUpScore(strumTime:Float)
 	{
+		// just base game but a lil cleaner
+		var noteDiff:Float = Math.abs(strumTime - Conductor.songPosition);
 		vocals.volume = 1;
+
+		var placement:String = Std.string(combo);
+		//
+
+		// set up the rating
+		var score:Int = 50;
+
+		// call the rating
+		// also thanks sammu :mariocool:
+		var daRatings:Map<String, Array<Dynamic>> = [
+			"sick" => [null, 350],
+			"good" => [0.1, 200],
+			"bad" => [0.5, 100],
+			"shit" => [0.7, 50],
+		];
+
+		var foundRating = false;
+		// loop through all avaliable ratings
+		var baseRating:String = "sick";
+		for (myRating in daRatings.keys())
+		{
+			if ((daRatings.get(myRating)[0] != null)
+				&& (((noteDiff > Conductor.safeZoneOffset * daRatings.get(myRating)[0])
+					|| (noteDiff < Conductor.safeZoneOffset * -daRatings.get(myRating)[0]))
+					&& (!foundRating)))
+			{
+				// call the rating itself
+				baseRating = myRating;
+				foundRating = true;
+			}
+		}
+
+		displayRating(baseRating);
+		score = Std.int(daRatings.get(baseRating)[1]);
+
+		songScore += score;
+	}
+
+	public function displayRating(daRating:String)
+	{
+		var rating:FlxSprite = new FlxSprite();
+		rating.loadGraphic(Paths.image('UI/ratings/' + daRating));
+		rating.screenCenter();
+		rating.x = (FlxG.width * 0.55) - 40;
+		rating.y -= 60;
+		rating.acceleration.y = 550;
+		rating.velocity.y -= FlxG.random.int(140, 175);
+		rating.velocity.x -= FlxG.random.int(0, 10);
+		// rating.cameras = [PlayState.camGame];
+		add(rating);
+
+		///*
+		FlxTween.tween(rating, {alpha: 0}, 0.2, {
+			onComplete: function(tween:FlxTween)
+			{
+				rating.destroy();
+			},
+			startDelay: Conductor.crochet * 0.002
+		});
+		// */
 	}
 
 	function goodNoteHit(coolNote:Note, character:Character, characterStrums:FlxTypedGroup<UIBabyArrow>)
@@ -896,7 +968,7 @@ class PlayState extends MusicBeatState
 			boyfriend.dance();
 
 			var introAssets:Map<String, Array<String>> = new Map<String, Array<String>>();
-			introAssets.set('default', ['ready', "set", "go"]);
+			introAssets.set('default', ['UI/ready', "UI/set", "UI/go"]);
 			introAssets.set('school', ['weeb/pixelUI/ready-pixel', 'weeb/pixelUI/set-pixel', 'weeb/pixelUI/date-pixel']);
 			introAssets.set('schoolEvil', ['weeb/pixelUI/ready-pixel', 'weeb/pixelUI/set-pixel', 'weeb/pixelUI/date-pixel']);
 
@@ -1004,8 +1076,8 @@ class PlayState extends MusicBeatState
 			babyArrow.x += Note.swagWidth * i;
 			babyArrow.x += ((FlxG.width / 2) * player);
 
-			babyArrow.x = Math.floor(babyArrow.x);
-			babyArrow.y = Math.floor(babyArrow.y);
+			babyArrow.initialX = Math.floor(babyArrow.x);
+			babyArrow.initialY = Math.floor(babyArrow.y);
 
 			babyArrow.playAnim('static');
 			strumLineNotes.add(babyArrow);
