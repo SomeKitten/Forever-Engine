@@ -418,7 +418,12 @@ class Character extends FlxSprite
 				// if I forget to remove this, this is just me messing around so don't worry about it
 				frames = Paths.getSparrowAtlas("characters/'Girl'Friend_Assets");
 				animation.addByPrefix('idle', 'BF idle dance instance 1', 24, false);
+				animation.addByPrefix('singUP', 'BF idle dance instance 1', 24, false);
+				animation.addByPrefix('singDOWN', 'BF idle dance instance 1', 24, false);
+				animation.addByPrefix('singLEFT', 'BF idle dance instance 1', 24, false);
+				animation.addByPrefix('singRIGHT', 'BF idle dance instance 1', 24, false);
 
+				flipX = true;
 				playAnim('idle');
 		}
 
