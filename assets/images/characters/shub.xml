@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="shub.png">
+	<!-- Created with Adobe Animate version 21.0.1.37179 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Shubs Idle0000" x="0" y="0" width="443" height="557" frameX="0" frameY="-6" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0001" x="0" y="0" width="443" height="557" frameX="0" frameY="-6" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0002" x="443" y="0" width="430" height="558" frameX="-7" frameY="-5" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0003" x="873" y="0" width="430" height="559" frameX="-7" frameY="-4" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0004" x="1303" y="0" width="421" height="563" frameX="-7" frameY="0" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0005" x="0" y="563" width="421" height="562" frameX="-7" frameY="-1" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0006" x="421" y="563" width="421" height="561" frameX="-7" frameY="-2" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0007" x="421" y="563" width="421" height="561" frameX="-7" frameY="-2" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0008" x="421" y="563" width="421" height="561" frameX="-7" frameY="-2" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0009" x="421" y="563" width="421" height="561" frameX="-7" frameY="-2" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0010" x="421" y="563" width="421" height="561" frameX="-7" frameY="-2" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0011" x="421" y="563" width="421" height="561" frameX="-7" frameY="-2" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0012" x="421" y="563" width="421" height="561" frameX="-7" frameY="-2" frameWidth="443" frameHeight="563"/>
+	<SubTexture name="Shubs Idle0013" x="421" y="563" width="421" height="561" frameX="-7" frameY="-2" frameWidth="443" frameHeight="563"/>
+</TextureAtlas>

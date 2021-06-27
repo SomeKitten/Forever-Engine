@@ -124,4 +124,23 @@ class UIBabyArrow extends FlxSprite
 		return stringSect;
 		//
 	}
+
+	// that last function was so useful I gave it a sequel
+	public static function getColorFromNumber(numb:Int)
+	{
+		var stringSect:String = '';
+		switch (numb)
+		{
+			case(0):
+				stringSect = 'purple';
+			case(1):
+				stringSect = 'blue';
+			case(2):
+				stringSect = 'green';
+			case(3):
+				stringSect = 'red';
+		}
+		return stringSect;
+		//
+	}
 }

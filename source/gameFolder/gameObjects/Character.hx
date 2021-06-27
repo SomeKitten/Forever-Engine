@@ -416,14 +416,13 @@ class Character extends FlxSprite
 				playAnim('shoot1');
 			case 'shubs':
 				// if I forget to remove this, this is just me messing around so don't worry about it
-				frames = Paths.getSparrowAtlas("characters/'Girl'Friend_Assets");
-				animation.addByPrefix('idle', 'BF idle dance instance 1', 24, false);
-				animation.addByPrefix('singUP', 'BF idle dance instance 1', 24, false);
-				animation.addByPrefix('singDOWN', 'BF idle dance instance 1', 24, false);
-				animation.addByPrefix('singLEFT', 'BF idle dance instance 1', 24, false);
-				animation.addByPrefix('singRIGHT', 'BF idle dance instance 1', 24, false);
+				frames = Paths.getSparrowAtlas("characters/shub");
+				animation.addByPrefix('idle', 'Shubs Idle', 24, false);
+				animation.addByPrefix('singUP', 'Shubs Idle', 24, false);
+				animation.addByPrefix('singDOWN', 'Shubs Idle', 24, false);
+				animation.addByPrefix('singLEFT', 'Shubs Idle', 24, false);
+				animation.addByPrefix('singRIGHT', 'Shubs Idle', 24, false);
 
-				flipX = true;
 				playAnim('idle');
 		}
 

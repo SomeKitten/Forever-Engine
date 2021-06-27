@@ -1,6 +1,6 @@
 package gameFolder.meta;
 
-import Main;
+// import Main;
 import haxe.Timer;
 import openfl.events.Event;
 import openfl.system.System;
@@ -38,7 +38,7 @@ class InfoHud extends TextField
 		selectable = false;
 		mouseEnabled = false;
 		// might as well have made it comic sans
-		defaultTextFormat = new TextFormat("_sans", 12, color);
+		defaultTextFormat = new TextFormat(Paths.font("vcr.ttf"), 16, color);
 		// set text area for the time being
 		width = Main.gameWidth;
 		height = Main.gameHeight;
