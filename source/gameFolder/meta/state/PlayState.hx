@@ -320,17 +320,17 @@ class PlayState extends MusicBeatState
 
 			// song shit for testing lols
 
-			///*
+			/*
 
-			var shitBeat = (Conductor.songPosition / 1000) * (Conductor.bpm / 60);
-			var swirlInterval:Float = 10;
-			for (i in 0...strumLineNotes.length)
-			{
-				strumLineNotes.members[i].y = strumLineNotes.members[i].initialY + swirlInterval * Math.cos((shitBeat + i * 0.25) * Math.PI);
-				strumLineNotes.members[i].x = strumLineNotes.members[i].initialX + swirlInterval * Math.sin((shitBeat + i * 0.25) * Math.PI);
-			}
+				var shitBeat = (Conductor.songPosition / 1000) * (Conductor.bpm / 60);
+				var swirlInterval:Float = 10;
+				for (i in 0...strumLineNotes.length)
+				{
+					strumLineNotes.members[i].y = strumLineNotes.members[i].initialY + swirlInterval * Math.cos((shitBeat + i * 0.25) * Math.PI);
+					strumLineNotes.members[i].x = strumLineNotes.members[i].initialX + swirlInterval * Math.sin((shitBeat + i * 0.25) * Math.PI);
+				}
 
-			//*/
+				// */
 		}
 
 		// boyfriend.playAnim('singLEFT', true);
