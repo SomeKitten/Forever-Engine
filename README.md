@@ -36,13 +36,18 @@ CREDITS:
 ----------------------------------------------
 
 [Pixloen](https://github.com/PixlJacket) - Assets, general Rhythm game expertise, revisions, inspiration, being a perfect human being
+
 [ImCodist](https://github.com/ImCodist) - Miscelaneous Assets, creator of the obsidian soul (real, stole my iron in minecraft (fuck you)
+
 [HelloSammu](https://github.com/hellosammu) - Input improvements, being a better programmer than me, being able to use twitter comprehensively
+
 [Tetracold](https://twitter.com/FourTimesCold) - not doing anything, probably doesn't even know the engine exists, uh hes a good artist
 
 [Mr. Identity Crisis](https://twitter.com/MrIDCrisis) - yes
 
 [ninjamuffin99](https://twitter.com/ninja_muffin99) - he believes in me (I will never forget [maybe I will
+
+rest of fnf team (they are very good and very real ESPECIALLY PHANTOMARCADE HES GAMING
 
 ----------------------------------------------
 How to Compile:
