@@ -41,7 +41,7 @@ CREDITS:
 
 [HelloSammu](https://github.com/hellosammu) - Input improvements, being a better programmer than me, being able to use twitter comprehensively
 
-[Tetracold](https://twitter.com/FourTimesCold) - not doing anything, probably doesn't even know the engine exists, uh hes a good artist
+
 
 [Mr. Identity Crisis](https://twitter.com/MrIDCrisis) - yes
 
