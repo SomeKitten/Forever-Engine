@@ -33,6 +33,10 @@ Current Features:
 * probably a better input system idk???
 
 ----------------------------------------------
+CREDITS:
+
+
+----------------------------------------------
 How to Compile:
 
 Basically, all of the files you need are in the engine itself through the setup.bat (Huge thanks to [FNF Source Code Guide](https://gamebanana.com/tuts/13798) for the download to the file) except for Visual Studio Code, or whatever program you choose to use to program in the engine. If you've already worked with fnf, this should work perfectly with you and if it doesn't then you might have the wrong target settings, or Lime is probably broken, that's usually what happens with these things, it's happened to me a ton of times lmao. I'm not a very good programmer.
