@@ -12,7 +12,7 @@ class HealthIcon extends FlxSprite
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{
 		super();
-		if (char.startsWith('bf'))
+		if ((char.startsWith('bf')) && (!char.endsWith('pixel')))
 			char = 'bf';
 		if (char.startsWith('mom'))
 			char = 'mom';

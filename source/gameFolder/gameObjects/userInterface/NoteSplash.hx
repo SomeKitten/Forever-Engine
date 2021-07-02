@@ -31,6 +31,7 @@ class NoteSplash extends FlxSprite
 		// kill the note splash if it's done
 		if (animation.finished)
 		{
+			// set the splash to invisible
 			if (visible)
 				visible = false;
 		}
@@ -39,7 +40,9 @@ class NoteSplash extends FlxSprite
 
 	public function playAnimation(animPlay:String)
 	{
+		// make sure the animation is visible
 		visible = true;
+		// play the animation
 		animation.play(animPlay);
 	}
 }

@@ -4,6 +4,7 @@ import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
+import gameFolder.gameObjects.userInterface.UIBabyArrow;
 import gameFolder.meta.*;
 import gameFolder.meta.state.PlayState;
 
@@ -19,7 +20,9 @@ class Note extends FlxSprite
 
 	public var mustPress:Bool = false;
 	public var noteData:Int = 0;
+	public var noteAlt:Float = 0;
 	public var noteType:Float = 0;
+	public var noteString:String = "";
 
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
@@ -37,7 +40,7 @@ class Note extends FlxSprite
 	public static var BLUE_NOTE:Int = 1;
 	public static var RED_NOTE:Int = 3;
 
-	public function new(strumTime:Float, noteData:Int, noteType:Float, ?prevNote:Note, ?sustainNote:Bool = false)
+	public function new(strumTime:Float, noteData:Int, noteAlt:Float, noteType:Float, noteString:String, ?prevNote:Note, ?sustainNote:Bool = false)
 	{
 		super();
 
@@ -54,31 +57,13 @@ class Note extends FlxSprite
 
 		this.noteData = noteData;
 
+		this.noteAlt = noteAlt;
 		this.noteType = noteType;
+		this.noteString = noteString;
 
+		// frames originally go here
 		switch (noteType)
 		{
-			case 0: // default
-				frames = Paths.getSparrowAtlas('notes/NOTE_assets');
-
-				animation.addByPrefix('greenScroll', 'green0');
-				animation.addByPrefix('redScroll', 'red0');
-				animation.addByPrefix('blueScroll', 'blue0');
-				animation.addByPrefix('purpleScroll', 'purple0');
-
-				animation.addByPrefix('purpleholdend', 'pruple end hold'); // dude pruple is my favorite color
-				animation.addByPrefix('greenholdend', 'green hold end');
-				animation.addByPrefix('redholdend', 'red hold end');
-				animation.addByPrefix('blueholdend', 'blue hold end');
-
-				animation.addByPrefix('purplehold', 'purple hold piece');
-				animation.addByPrefix('greenhold', 'green hold piece');
-				animation.addByPrefix('redhold', 'red hold piece');
-				animation.addByPrefix('bluehold', 'blue hold piece');
-
-				setGraphicSize(Std.int(width * 0.7));
-				updateHitbox();
-				antialiasing = true;
 			case 1: // pixel arrows
 				loadGraphic(Paths.image('notes/arrows-pixels'), true, 17, 17);
 
@@ -128,17 +113,8 @@ class Note extends FlxSprite
 				antialiasing = true;
 		}
 
-		switch (noteData)
-		{
-			case 0:
-				animation.play('purpleScroll');
-			case 1:
-				animation.play('blueScroll');
-			case 2:
-				animation.play('greenScroll');
-			case 3:
-				animation.play('redScroll');
-		}
+		//
+		animation.play(UIBabyArrow.getColorFromNumber(noteData) + 'Scroll');
 
 		// trace(prevNote);
 
@@ -147,33 +123,13 @@ class Note extends FlxSprite
 			noteScore * 0.2;
 			alpha = 0.6;
 
-			switch (noteData)
-			{
-				case 2:
-					animation.play('greenholdend');
-				case 3:
-					animation.play('redholdend');
-				case 1:
-					animation.play('blueholdend');
-				case 0:
-					animation.play('purpleholdend');
-			}
+			animation.play(UIBabyArrow.getColorFromNumber(noteData) + 'holdend');
 
 			updateHitbox();
 
 			if (prevNote.isSustainNote)
 			{
-				switch (prevNote.noteData)
-				{
-					case 0:
-						prevNote.animation.play('purplehold');
-					case 1:
-						prevNote.animation.play('bluehold');
-					case 2:
-						prevNote.animation.play('greenhold');
-					case 3:
-						prevNote.animation.play('redhold');
-				}
+				prevNote.animation.play(UIBabyArrow.getColorFromNumber(prevNote.noteData) + 'hold');
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
@@ -189,7 +145,7 @@ class Note extends FlxSprite
 		if (mustPress)
 		{
 			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset)
-				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
+				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset))
 				canBeHit = true;
 			else
 				canBeHit = false;

@@ -414,16 +414,37 @@ class Character extends FlxSprite
 				animation.addByPrefix('shoot4', 'Pico shoot 4', 24, false);
 
 				playAnim('shoot1');
-			case 'shubs':
-				// if I forget to remove this, this is just me messing around so don't worry about it
-				frames = Paths.getSparrowAtlas("characters/shub");
-				animation.addByPrefix('idle', 'Shubs Idle', 24, false);
-				animation.addByPrefix('singUP', 'Shubs Idle', 24, false);
-				animation.addByPrefix('singDOWN', 'Shubs Idle', 24, false);
-				animation.addByPrefix('singLEFT', 'Shubs Idle', 24, false);
-				animation.addByPrefix('singRIGHT', 'Shubs Idle', 24, false);
+			default:
+				// set up animations if they aren't already
 
-				playAnim('idle');
+				// fyi if you're reading this this isn't meant to be well made, it's kind of an afterthought I wanted to mess with and
+				// I'm probably not gonna clean it up and make it an actual feature of the engine I just wanted to play other people's mods but not add their files to
+				// the engine because that'd be stealing assets
+				var fileNew = curCharacter + 'Anims';
+				if (OpenFlAssets.exists(Paths.offsetTxt(fileNew)))
+				{
+					var characterAnims:Array<String> = CoolUtil.coolTextFile(Paths.offsetTxt(fileNew));
+					var characterName:String = characterAnims[0].trim();
+					frames = Paths.getSparrowAtlas('characters/$characterName');
+					for (i in 1...characterAnims.length)
+					{
+						var getterArray:Array<Array<String>> = CoolUtil.getAnimsFromTxt(Paths.offsetTxt(fileNew));
+						animation.addByPrefix(getterArray[i][0], getterArray[i][1].trim(), 24, false);
+					}
+				}
+				else
+				{
+					// DAD ANIMATION LOADING CODE
+					tex = Paths.getSparrowAtlas('characters/DADDY_DEAREST');
+					frames = tex;
+					animation.addByPrefix('idle', 'Dad idle dance', 30, false);
+					animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
+					animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
+					animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
+					animation.addByPrefix('singLEFT', 'Dad Sing Note LEFT', 24);
+
+					playAnim('idle');
+				}
 		}
 
 		// set up offsets cus why not

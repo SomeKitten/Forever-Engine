@@ -7,6 +7,7 @@ using StringTools;
 
 class CoolUtil
 {
+	// tymgus45
 	public static var difficultyArray:Array<String> = ['EASY', "NORMAL", "HARD"];
 
 	public static function difficultyString():String
@@ -36,6 +37,21 @@ class CoolUtil
 		for (i in firstArray)
 		{
 			swagOffsets.push(i.split(' '));
+		}
+
+		return swagOffsets;
+	}
+
+	public static function getAnimsFromTxt(path:String):Array<Array<String>>
+	{
+		var fullText:String = Assets.getText(path);
+
+		var firstArray:Array<String> = fullText.split('\n');
+		var swagOffsets:Array<Array<String>> = [];
+
+		for (i in firstArray)
+		{
+			swagOffsets.push(i.split('--'));
 		}
 
 		return swagOffsets;

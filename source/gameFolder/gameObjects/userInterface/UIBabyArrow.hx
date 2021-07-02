@@ -1,6 +1,7 @@
 package gameFolder.gameObjects.userInterface;
 
 import flixel.FlxSprite;
+import gameFolder.meta.state.PlayState;
 
 using StringTools;
 
@@ -35,21 +36,39 @@ class UIBabyArrow extends FlxSprite
 		animOffsets = new Map<String, Array<Dynamic>>();
 
 		this.babyArrowType = babyArrowType;
-		var stringSect:String = '';
 
-		// call arrow type I think
-		stringSect = getArrowFromNumber(babyArrowType);
+		if (PlayState.isPixel)
+		{
+			// look man you know me I fucking hate repeating code
+			// not even just a cleanliness thing it's just so annoying to tweak if something goes wrong like
+			// genuinely more programmers should make their code more modular
+			loadGraphic(Paths.image('notes/arrows-pixels'), true, 17, 17);
+			animation.add('static', [babyArrowType]);
+			animation.add('pressed', [4 + babyArrowType, 8 + babyArrowType], 12, false);
+			animation.add('confirm', [12 + babyArrowType, 16 + babyArrowType], 24, false);
 
-		frames = Paths.getSparrowAtlas('notes/NOTE_assets');
-		animation.addByPrefix('green', 'arrowUP');
-		animation.addByPrefix('blue', 'arrowDOWN');
-		animation.addByPrefix('purple', 'arrowLEFT');
-		animation.addByPrefix('red', 'arrowRIGHT');
+			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+			updateHitbox();
+			antialiasing = false;
+		}
+		else
+		{
+			// probably gonna revise this and make it possible to add other arrow types but for now it's just pixel and normal
+			var stringSect:String = '';
+			// call arrow type I think
+			stringSect = getArrowFromNumber(babyArrowType);
 
-		// idk if this works or not lmao
-		animation.addByPrefix('static', 'arrow' + stringSect.toUpperCase());
-		animation.addByPrefix('pressed', stringSect + ' press', 24, false);
-		animation.addByPrefix('confirm', stringSect + ' confirm', 24, false);
+			var framesArgument:String = "NOTE_assets";
+			frames = Paths.getSparrowAtlas('notes/$framesArgument');
+
+			// idk if this works or not lmao
+			animation.addByPrefix('static', 'arrow' + stringSect.toUpperCase());
+			animation.addByPrefix('pressed', stringSect + ' press', 24, false);
+			animation.addByPrefix('confirm', stringSect + ' confirm', 24, false);
+
+			antialiasing = true;
+			setGraphicSize(Std.int(width * 0.7));
+		}
 
 		// set little offsets per note!
 		// so these had a little problem honestly and they make me wanna off(set) myself so the middle notes basically
@@ -73,16 +92,21 @@ class UIBabyArrow extends FlxSprite
 
 		// upside of this is it only has to run once even if it's trash, the game itself has to run this code with the arrows like
 		// idk every time the confirm arrow is shown which is painful
-
-		addOffset('static');
-		addOffset('pressed', -2, -2);
-		addOffset('confirm', 36 + offsetMiddleX, 36 + offsetMiddleY);
+		if (!PlayState.isPixel)
+		{
+			addOffset('static');
+			addOffset('pressed', -2, -2);
+			addOffset('confirm', 36 + offsetMiddleX, 36 + offsetMiddleY);
+		}
+		else
+		{
+			addOffset('static', -75, -75);
+			addOffset('pressed', -75, -75);
+			addOffset('confirm', -75, -75);
+		}
 
 		updateHitbox();
 		scrollFactor.set();
-
-		antialiasing = true;
-		setGraphicSize(Std.int(width * 0.7));
 	}
 
 	// literally just character code
