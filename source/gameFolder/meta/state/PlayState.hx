@@ -491,7 +491,8 @@ class PlayState extends MusicBeatState
 						{
 							// if (Math.abs(noteDouble.strumTime - daNote.strumTime) < 10)
 							canDisplayRating = false;
-							//
+							// removing the fucking check apparently fixes it
+							// god damn it that stupid glitch with the double ratings is annoying
 						}
 						//
 					}
