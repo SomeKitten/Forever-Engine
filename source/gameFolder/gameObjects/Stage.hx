@@ -21,9 +21,6 @@ using StringTools;
 	This is the stage class. It sets up everything you need for stages in a more organised and clean manner than the
 	base game. Nothing against Ninjamuffin, of course, it's not too bad, just very crowded. I'll be adding stages as a separate
 	thing to the weeks, making them not hardcoded to the songs.
-
-	To add a stage, simply add on to the switch case with the stage name, then add the stage's name to the typedef.
-	(If I set it up right, that is. I could just completely mess this up lmao.)
 **/
 class Stage extends FlxTypedGroup<FlxBasic>
 {

@@ -1,7 +1,14 @@
 package gameFolder.meta.data;
 
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.math.FlxMath;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import gameFolder.gameObjects.Note;
 import gameFolder.meta.data.Section.SwagSection;
+import gameFolder.meta.data.Song.SwagSong;
+import gameFolder.meta.state.ChartingState;
 import gameFolder.meta.state.PlayState;
 
 /**
@@ -118,5 +125,73 @@ class ChartLoader
 	public static function returnUnspawnNotes()
 	{
 		return unspawnNotes;
+	}
+
+	public static function flushUnspawnNotes()
+	{
+		unspawnNotes = [];
+	}
+
+	public static function generateChartingArrows(i:Array<Int>, curSection:Int, _song:SwagSong)
+	{
+		var GRID_SIZE = ChartingState.GRID_SIZE;
+		// note modifiers based on shit like idk the funny chart types
+		var daNoteInfo = i[1];
+		var daStrumTime = i[0];
+		var daSus = i[2];
+		var daNoteType = 0;
+		var daNoteAlt = 0;
+
+		if (i.length > 2)
+			daNoteAlt = i[3];
+
+		// for now I'mma just use the fnf style for a test
+		var note:Note = new Note(daStrumTime, daNoteInfo % 4, daNoteAlt, 0, "");
+
+		// if the note is on the other side, flip the base section of the note
+		var gottaHitNote:Bool = _song.notes[curSection].mustHitSection;
+		if (daNoteInfo > 3)
+			gottaHitNote = !gottaHitNote;
+
+		note.rawNoteData = daNoteInfo; // raw data
+
+		note.sustainLength = daSus;
+		note.noteType = daNoteType;
+		note.setGraphicSize(GRID_SIZE, GRID_SIZE);
+		note.updateHitbox();
+		note.x = ((FlxG.width / 2) - (GRID_SIZE * 4));
+
+		note.x += Math.floor((daNoteInfo % 4) * GRID_SIZE);
+		if (gottaHitNote)
+			note.x += (4 * GRID_SIZE);
+
+		// when the equation is painful
+		note.y = Math.floor(ChartingState.getYfromStrum((daStrumTime - ChartingState.sectionStartTime(curSection,
+			_song)) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps), curSection));
+
+		ChartingState.curRenderedNotes.add(note);
+
+		if (daSus > 0)
+		{
+			var sustainVis:FlxSprite = new FlxSprite(note.x + (GRID_SIZE / 2),
+				note.y + GRID_SIZE).makeGraphic(8, Math.floor(FlxMath.remapToRange(daSus, 0, Conductor.stepCrochet * 16, 0, GRID_SIZE * 16)));
+			note.chartSustain = sustainVis;
+			ChartingState.curRenderedSustains.add(sustainVis);
+		}
+
+		// pain
+
+		// hell in a shell even
+
+		// play mario rabbids
+
+		// unoptimised asf but for testing purposes
+		if (ChartingState.renderTestActive)
+		{
+			var newText:FlxText = new FlxText(note.x, note.y, 0, Std.string(daNoteInfo) + ', ' + Std.string(daNoteInfo % 4));
+			newText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			ChartingState.renderTextTest.add(newText);
+		}
+		//
 	}
 }

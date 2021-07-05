@@ -18,6 +18,7 @@ import flixel.util.FlxTimer;
 import gameFolder.meta.Conductor;
 import gameFolder.meta.CoolUtil;
 import gameFolder.meta.InfoHud;
+import gameFolder.meta.data.Timings;
 import gameFolder.meta.state.PlayState;
 
 using StringTools;
@@ -110,6 +111,13 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		var importPlayStateCombo = PlayState.combo;
 		var importMisses = PlayState.misses;
 		scoreBar.text = 'Score: $importSongScore // Combo: $importPlayStateCombo // Misses: $importMisses';
+		// testing purposes
+		var displayAccuracy:Bool = true;
+		if (displayAccuracy)
+			scoreBar.text += ' // Accuracy: ' + Std.string(Math.floor(Timings.accuracy * 100) / 100) + '%';
+
+		scoreBar.text += ' // Rank: ' + Std.string(Timings.returnScoreRating().toUpperCase());
+
 		scoreBar.x = ((FlxG.width / 2) - (scoreBar.width / 2));
 	}
 
