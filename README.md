@@ -6,8 +6,20 @@ Funkin' Forever, or Forever Engine is an open source modification of the Friday 
 ----------------------------------------------
 This Engine is mostly a restructure but also in a lot of ways a rewrite of the base Funkin engine that you can find [here](https://github.com/ninjamuffin99/Funkin).
 
+----------------------------------------------
+CHANGELOG v0.1.1
+
+* THE MOTHERFCUKIN CHARTINSTNG STYTSTEM YEAH BABY
+* uh note timings and stuff
+* Accuracy ratings! (increasing)
+* Song Rankings! (Huge work in progress)
+* Arrowvortex note hit thingy
+* removed herobrine
+
+----------------------------------------------
+
+
 Planned Features:
-* New Charting System
 * Offset Editor based on .txt files
 * Downscroll, options, etc
 * Translations (if enough support is given)
