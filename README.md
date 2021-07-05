@@ -29,7 +29,6 @@ Current Features:
 * idk im struggling to come up with features
 * seriously this is very work in progress please understand
 * separated hardcoded chart information (some of it at least
-* DID I MENTION TANKMAN???
 * probably a better input system idk???
 
 CREDITS:
@@ -39,7 +38,7 @@ CREDITS:
 
 [ImCodist](https://github.com/ImCodist) - Miscelaneous Assets, creator of the obsidian soul (real, stole my iron in minecraft (fuck you)
 
-[HelloSammu](https://github.com/hellosammu) - Input improvements, being a better programmer than me, being able to use twitter comprehensively
+[HelloSammu](https://github.com/hellosammu) - Some code enhancements, being a better programmer than me, being able to use twitter comprehensively
 
 
 
