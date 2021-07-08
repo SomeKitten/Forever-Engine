@@ -48,13 +48,15 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 
 		// small info bar, kinda like the KE watermark
 		// based on scoretxt which I will set up as well
-		var infoDisplay:String = PlayState.SONG.song + ' - ' + CoolUtil.difficultyString() + " - FF BETA v0.1.1";
+		var infoDisplay:String = CoolUtil.dashToSpace(PlayState.SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(PlayState.storyDifficulty)
+			+ " - FF BETA v0.2.0";
 
 		infoBar = new FlxText(5, FlxG.height - 30, 0, infoDisplay, 20);
 		infoBar.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		infoBar.scrollFactor.set();
 		add(infoBar);
 
+		// fnf mods
 		var scoreDisplay:String = 'beep bop bo skdkdkdbebedeoop brrapadop';
 
 		// le healthbar setup
@@ -82,8 +84,6 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		updateScoreText();
 		scoreBar.scrollFactor.set();
 		add(scoreBar);
-
-		startCountdown();
 	}
 
 	override public function update(elapsed:Float)
@@ -103,6 +103,16 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 
 		iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
 		iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
+
+		if (healthBar.percent < 20)
+			iconP1.animation.curAnim.curFrame = 1;
+		else
+			iconP1.animation.curAnim.curFrame = 0;
+
+		if (healthBar.percent > 80)
+			iconP2.animation.curAnim.curFrame = 1;
+		else
+			iconP2.animation.curAnim.curFrame = 0;
 	}
 
 	private function updateScoreText()
@@ -110,7 +120,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		var importSongScore = PlayState.songScore;
 		var importPlayStateCombo = PlayState.combo;
 		var importMisses = PlayState.misses;
-		scoreBar.text = 'Score: $importSongScore // Combo: $importPlayStateCombo // Misses: $importMisses';
+		scoreBar.text = 'Score: $importSongScore';
 		// testing purposes
 		var displayAccuracy:Bool = true;
 		if (displayAccuracy)
@@ -119,96 +129,5 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		scoreBar.text += ' // Rank: ' + Std.string(Timings.returnScoreRating().toUpperCase());
 
 		scoreBar.x = ((FlxG.width / 2) - (scoreBar.width / 2));
-	}
-
-	public static var swagCounter:Int = 0;
-
-	private function startCountdown():Void
-	{
-		Conductor.songPosition = 0;
-		Conductor.songPosition -= Conductor.crochet * 5;
-
-		swagCounter = 0;
-
-		PlayState.startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
-		{
-			PlayState.everyoneDance();
-
-			var introAssets:Map<String, Array<String>> = new Map<String, Array<String>>();
-			introAssets.set('default', ['UI/ready', "UI/set", "UI/go"]);
-			introAssets.set('school', ['UI/pixelUI/ready', 'UI/pixelUI/set', 'UI/pixelUI/date']);
-			introAssets.set('schoolEvil', ['UI/pixelUI/ready', 'UI/pixelUI/set', 'UI/pixelUI/date']);
-
-			var introAlts:Array<String> = introAssets.get('default');
-			for (value in introAssets.keys())
-			{
-				if (value == PlayState.curStage)
-					introAlts = introAssets.get(value);
-			}
-
-			switch (swagCounter)
-			{
-				case 0:
-					FlxG.sound.play(Paths.sound('intro3'), 0.6);
-				case 1:
-					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
-					ready.scrollFactor.set();
-					ready.updateHitbox();
-
-					if (PlayState.curStage.startsWith('school'))
-						ready.setGraphicSize(Std.int(ready.width * PlayState.daPixelZoom));
-
-					ready.screenCenter();
-					add(ready);
-					FlxTween.tween(ready, {y: ready.y += 100, alpha: 0}, Conductor.crochet / 1000, {
-						ease: FlxEase.cubeInOut,
-						onComplete: function(twn:FlxTween)
-						{
-							ready.destroy();
-						}
-					});
-					FlxG.sound.play(Paths.sound('intro2'), 0.6);
-				case 2:
-					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
-					set.scrollFactor.set();
-
-					if (PlayState.curStage.startsWith('school'))
-						set.setGraphicSize(Std.int(set.width * PlayState.daPixelZoom));
-
-					set.screenCenter();
-					add(set);
-					FlxTween.tween(set, {y: set.y += 100, alpha: 0}, Conductor.crochet / 1000, {
-						ease: FlxEase.cubeInOut,
-						onComplete: function(twn:FlxTween)
-						{
-							set.destroy();
-						}
-					});
-					FlxG.sound.play(Paths.sound('intro1'), 0.6);
-				case 3:
-					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
-					go.scrollFactor.set();
-
-					if (PlayState.curStage.startsWith('school'))
-						go.setGraphicSize(Std.int(go.width * PlayState.daPixelZoom));
-
-					go.updateHitbox();
-
-					go.screenCenter();
-					add(go);
-					FlxTween.tween(go, {y: go.y += 100, alpha: 0}, Conductor.crochet / 1000, {
-						ease: FlxEase.cubeInOut,
-						onComplete: function(twn:FlxTween)
-						{
-							go.destroy();
-						}
-					});
-					FlxG.sound.play(Paths.sound('introGo'), 0.6);
-				case 4:
-			}
-
-			swagCounter += 1;
-			// generateSong('fresh');
-		}, 5);
 	}
 }

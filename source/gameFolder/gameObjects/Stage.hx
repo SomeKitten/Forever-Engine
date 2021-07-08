@@ -19,7 +19,7 @@ using StringTools;
 
 /**
 	This is the stage class. It sets up everything you need for stages in a more organised and clean manner than the
-	base game. Nothing against Ninjamuffin, of course, it's not too bad, just very crowded. I'll be adding stages as a separate
+	base game. It's not too bad, just very crowded. I'll be adding stages as a separate
 	thing to the weeks, making them not hardcoded to the songs.
 **/
 class Stage extends FlxTypedGroup<FlxBasic>
@@ -42,7 +42,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 	var bgGirls:BackgroundGirls;
 	var defaultCamZoom:Float = 1.05;
 
-	var curStage:String;
+	public var curStage:String;
 
 	var daPixelZoom = PlayState.daPixelZoom;
 
@@ -51,6 +51,36 @@ class Stage extends FlxTypedGroup<FlxBasic>
 		super();
 
 		this.curStage = curStage;
+
+		/// get hardcoded stage type if chart is fnf style
+		if (PlayState.determinedChartType == "FNF")
+		{
+			// this is because I want to avoid editing the fnf chart type
+			// custom stage stuffs will come with forever charts
+			switch (PlayState.SONG.song.toLowerCase())
+			{
+				case 'spookeez' | 'south' | 'monster':
+					curStage = 'spooky';
+				case 'pico' | 'blammed' | 'philly-nice':
+					curStage = 'philly';
+				case 'milf' | 'satin-panties' | 'high':
+					curStage = 'highway';
+				case 'cocoa' | 'eggnog':
+					curStage = 'mall';
+				case 'winter-horrorland':
+					curStage = 'mallEvil';
+				case 'senpai' | 'roses':
+					curStage = 'school';
+				case 'thorns':
+					curStage = 'schoolEvil';
+				default:
+					curStage = 'stage';
+			}
+
+			PlayState.curStage = curStage;
+		}
+
+		//
 
 		switch (curStage)
 		{
@@ -154,6 +184,77 @@ class Stage extends FlxTypedGroup<FlxBasic>
 
 				fastCar = new FlxSprite(-300, 160).loadGraphic(Paths.image('backgrounds/' + curStage + '/fastCarLol'));
 			// loadArray.add(limo);
+			case 'mall':
+				curStage = 'mall';
+				defaultCamZoom = 0.80;
+
+				var bg:FlxSprite = new FlxSprite(-1000, -500).loadGraphic(Paths.image('backgrounds/' + curStage + '/bgWalls'));
+				bg.antialiasing = true;
+				bg.scrollFactor.set(0.2, 0.2);
+				bg.active = false;
+				bg.setGraphicSize(Std.int(bg.width * 0.8));
+				bg.updateHitbox();
+				add(bg);
+
+				upperBoppers = new FlxSprite(-240, -90);
+				upperBoppers.frames = Paths.getSparrowAtlas('backgrounds/' + curStage + '/upperBop');
+				upperBoppers.animation.addByPrefix('bop', "Upper Crowd Bob", 24, false);
+				upperBoppers.antialiasing = true;
+				upperBoppers.scrollFactor.set(0.33, 0.33);
+				upperBoppers.setGraphicSize(Std.int(upperBoppers.width * 0.85));
+				upperBoppers.updateHitbox();
+				add(upperBoppers);
+
+				var bgEscalator:FlxSprite = new FlxSprite(-1100, -600).loadGraphic(Paths.image('backgrounds/' + curStage + '/bgEscalator'));
+				bgEscalator.antialiasing = true;
+				bgEscalator.scrollFactor.set(0.3, 0.3);
+				bgEscalator.active = false;
+				bgEscalator.setGraphicSize(Std.int(bgEscalator.width * 0.9));
+				bgEscalator.updateHitbox();
+				add(bgEscalator);
+
+				var tree:FlxSprite = new FlxSprite(370, -250).loadGraphic(Paths.image('backgrounds/' + curStage + '/christmasTree'));
+				tree.antialiasing = true;
+				tree.scrollFactor.set(0.40, 0.40);
+				add(tree);
+
+				bottomBoppers = new FlxSprite(-300, 140);
+				bottomBoppers.frames = Paths.getSparrowAtlas('backgrounds/' + curStage + '/bottomBop');
+				bottomBoppers.animation.addByPrefix('bop', 'Bottom Level Boppers', 24, false);
+				bottomBoppers.antialiasing = true;
+				bottomBoppers.scrollFactor.set(0.9, 0.9);
+				bottomBoppers.setGraphicSize(Std.int(bottomBoppers.width * 1));
+				bottomBoppers.updateHitbox();
+				add(bottomBoppers);
+
+				var fgSnow:FlxSprite = new FlxSprite(-600, 700).loadGraphic(Paths.image('backgrounds/' + curStage + '/fgSnow'));
+				fgSnow.active = false;
+				fgSnow.antialiasing = true;
+				add(fgSnow);
+
+				santa = new FlxSprite(-840, 150);
+				santa.frames = Paths.getSparrowAtlas('backgrounds/' + curStage + '/santa');
+				santa.animation.addByPrefix('idle', 'santa idle in fear', 24, false);
+				santa.antialiasing = true;
+				add(santa);
+			case 'mallEvil':
+				curStage = 'mallEvil';
+				var bg:FlxSprite = new FlxSprite(-400, -500).loadGraphic(Paths.image('backgrounds/mall/evilBG'));
+				bg.antialiasing = true;
+				bg.scrollFactor.set(0.2, 0.2);
+				bg.active = false;
+				bg.setGraphicSize(Std.int(bg.width * 0.8));
+				bg.updateHitbox();
+				add(bg);
+
+				var evilTree:FlxSprite = new FlxSprite(300, -300).loadGraphic(Paths.image('backgrounds/mall/evilTree'));
+				evilTree.antialiasing = true;
+				evilTree.scrollFactor.set(0.2, 0.2);
+				add(evilTree);
+
+				var evilSnow:FlxSprite = new FlxSprite(-200, 700).loadGraphic(Paths.image("backgrounds/mall/evilSnow"));
+				evilSnow.antialiasing = true;
+				add(evilSnow);
 			case 'school':
 				curStage = 'school';
 
@@ -212,40 +313,21 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				bgGirls.scrollFactor.set(0.9, 0.9);
 
 				if (PlayState.SONG.song.toLowerCase() == 'roses')
-				{
 					bgGirls.getScared();
-				}
 
 				bgGirls.setGraphicSize(Std.int(bgGirls.width * daPixelZoom));
 				bgGirls.updateHitbox();
 				add(bgGirls);
-			case 'military':
-				curStage = 'military';
-				var skyBG:FlxSprite = new FlxSprite(-120, 20).loadGraphic(Paths.image('backgrounds/' + curStage + '/tankSky'));
-				skyBG.scrollFactor.set(0.1, 0.1);
-				add(skyBG);
-
-				var skyClouds:FlxSprite = new FlxSprite(-120, -50).loadGraphic(Paths.image('backgrounds/' + curStage + '/tankClouds'));
-				skyClouds.scrollFactor.set(0.1, 0.1);
-				add(skyClouds);
-
-				var tankMountains:FlxSprite = new FlxSprite(-120, -50).loadGraphic(Paths.image('backgrounds/' + curStage + '/tankMountains'));
-				tankMountains.scrollFactor.set(0.1, 0.1);
-				add(tankMountains);
-
-				var tankRuins:FlxSprite = new FlxSprite(-120, -50).loadGraphic(Paths.image('backgrounds/' + curStage + '/tankRuins'));
-				tankRuins.scrollFactor.set(0.1, 0.1);
-				add(tankRuins);
-
-				var tankBuildings:FlxSprite = new FlxSprite(-120, -50).loadGraphic(Paths.image('backgrounds/' + curStage + '/tankBuildings'));
-				tankBuildings.scrollFactor.set(0.1, 0.1);
-				add(tankBuildings);
-
-				var tankGround:FlxSprite = new FlxSprite(-120, 40).loadGraphic(Paths.image('backgrounds/' + curStage + '/tankGround'));
-				// tankGround.scrollFactor.set(0.1, 0.1);
-				tankGround.antialiasing = true;
-				add(tankGround);
-				tankGround.setGraphicSize(Std.int(tankGround.width * 1.3));
+			case 'schoolEvil':
+				var posX = 400;
+				var posY = 200;
+				var bg:FlxSprite = new FlxSprite(posX, posY);
+				bg.frames = Paths.getSparrowAtlas('backgrounds/' + curStage + '/animatedEvilSchool');
+				bg.animation.addByPrefix('idle', 'background 2', 24);
+				bg.animation.play('idle');
+				bg.scrollFactor.set(0.8, 0.9);
+				bg.scale.set(6, 6);
+				add(bg);
 
 			default:
 				PlayState.defaultCamZoom = 0.9;
@@ -281,7 +363,6 @@ class Stage extends FlxTypedGroup<FlxBasic>
 	}
 
 	// return the girlfriend's type
-
 	public function returnGFtype(curStage)
 	{
 		var gfVersion:String = 'gf';
@@ -302,7 +383,6 @@ class Stage extends FlxTypedGroup<FlxBasic>
 	}
 
 	// get the dad's position
-
 	public function dadPosition(curStage, dad:Character, gf:Character, camPos:FlxPoint, songPlayer2):Void
 	{
 		switch (songPlayer2)
@@ -392,9 +472,11 @@ class Stage extends FlxTypedGroup<FlxBasic>
 
 	public function stageUpdate()
 	{
-		switch (curStage)
+		trace('update backgrounds');
+		switch (PlayState.curStage)
 		{
 			case 'highway':
+				trace('highway update');
 				grpLimoDancers.forEach(function(dancer:BackgroundDancer)
 				{
 					dancer.dance();

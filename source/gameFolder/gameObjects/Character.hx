@@ -514,7 +514,8 @@ class Character extends FlxSprite
 			}
 		}
 
-		switch (curCharacter)
+		var curCharSimplified:String = simplifyCharacter();
+		switch (curCharSimplified)
 		{
 			case 'gf':
 				if (animation.curAnim.name == 'hairFall' && animation.curAnim.finished)
@@ -535,10 +536,7 @@ class Character extends FlxSprite
 	{
 		if (!debugMode)
 		{
-			var curCharSimplified:String = curCharacter;
-			if (curCharacter.startsWith('gf'))
-				curCharSimplified = 'gf';
-
+			var curCharSimplified:String = simplifyCharacter();
 			switch (curCharSimplified)
 			{
 				case 'gf':
@@ -598,5 +596,14 @@ class Character extends FlxSprite
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)
 	{
 		animOffsets[name] = [x, y];
+	}
+
+	public function simplifyCharacter():String
+	{
+		var base = curCharacter;
+
+		if (base.startsWith('gf'))
+			base = 'gf';
+		return base;
 	}
 }

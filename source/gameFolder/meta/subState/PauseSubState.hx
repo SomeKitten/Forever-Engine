@@ -13,7 +13,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import gameFolder.meta.MusicBeat.MusicBeatSubState;
 import gameFolder.meta.data.font.Alphabet;
-import gameFolder.meta.state.PlayState;
+import gameFolder.meta.state.*;
 
 class PauseSubState extends MusicBeatSubState
 {
@@ -27,6 +27,7 @@ class PauseSubState extends MusicBeatSubState
 	public function new(x:Float, y:Float)
 	{
 		super();
+		trace('pause call');
 
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
 		pauseMusic.volume = 0;
@@ -34,20 +35,24 @@ class PauseSubState extends MusicBeatSubState
 
 		FlxG.sound.list.add(pauseMusic);
 
+		trace('pause background');
+
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0;
 		bg.scrollFactor.set();
 		add(bg);
 
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
-		levelInfo.text += PlayState.SONG.song;
+		levelInfo.text += CoolUtil.dashToSpace(PlayState.SONG.song);
 		levelInfo.scrollFactor.set();
 		levelInfo.setFormat(Paths.font("vcr.ttf"), 32);
 		levelInfo.updateHitbox();
 		add(levelInfo);
 
+		trace('pause info');
+
 		var levelDifficulty:FlxText = new FlxText(20, 15 + 32, 0, "", 32);
-		levelDifficulty.text += CoolUtil.difficultyString();
+		levelDifficulty.text += CoolUtil.difficultyFromNumber(PlayState.storyDifficulty);
 		levelDifficulty.scrollFactor.set();
 		levelDifficulty.setFormat(Paths.font('vcr.ttf'), 32);
 		levelDifficulty.updateHitbox();
@@ -74,17 +79,24 @@ class PauseSubState extends MusicBeatSubState
 			grpMenuShit.add(songText);
 		}
 
+		trace('change selection');
+
 		changeSelection();
 
+		trace('cameras');
+
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+
+		trace('cameras done');
 	}
 
 	override function update(elapsed:Float)
 	{
-		if (pauseMusic.volume < 0.5)
-			pauseMusic.volume += 0.01 * elapsed;
+		trace('call event');
 
 		super.update(elapsed);
+
+		trace('updated event');
 
 		var upP = controls.UP_P;
 		var downP = controls.DOWN_P;
@@ -110,7 +122,12 @@ class PauseSubState extends MusicBeatSubState
 				case "Restart Song":
 					FlxG.resetState();
 				case "Exit to menu":
-					// FlxG.switchState(new MainMenuState());
+					PlayState.resetMusic();
+
+					if (PlayState.isStoryMode)
+						Main.switchState(new StoryMenuState());
+					else
+						Main.switchState(new FreeplayState());
 			}
 		}
 
@@ -119,6 +136,10 @@ class PauseSubState extends MusicBeatSubState
 			// for reference later!
 			// PlayerSettings.player1.controls.replaceBinding(Control.LEFT, Keys, FlxKey.J, null);
 		}
+
+		trace('music volume increased');
+		if (pauseMusic.volume < 0.5)
+			pauseMusic.volume += 0.01 * elapsed;
 	}
 
 	override function destroy()
@@ -139,6 +160,8 @@ class PauseSubState extends MusicBeatSubState
 
 		var bullShit:Int = 0;
 
+		trace('mid selection');
+
 		for (item in grpMenuShit.members)
 		{
 			item.targetY = bullShit - curSelected;
@@ -153,5 +176,8 @@ class PauseSubState extends MusicBeatSubState
 				// item.setGraphicSize(Std.int(item.width));
 			}
 		}
+
+		trace('finished selection');
+		//
 	}
 }

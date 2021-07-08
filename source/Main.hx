@@ -5,7 +5,6 @@ import flixel.FlxGame;
 import flixel.FlxState;
 import gameFolder.meta.*;
 import gameFolder.meta.data.PlayerSettings;
-import gameFolder.meta.state.*;
 import openfl.Assets;
 import openfl.Lib;
 import openfl.display.FPS;
@@ -54,7 +53,7 @@ class Main extends Sprite
 	public static var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	public static var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
 
-	public static var mainClassState:Class<FlxState> = PlayState; // Determine the main class state of the game
+	public static var mainClassState:Class<FlxState> = Init; // Determine the main class state of the game
 
 	/*  This is used to switch "rooms," to put it basically. Imagine you are in the main menu, and press the freeplay button.
 		That would change the game's main class to freeplay, as it is the active class at the moment.
@@ -100,9 +99,6 @@ class Main extends Sprite
 			// if set to negative one, it is done so automatically, which is the default.
 		}
 
-		// set the main state to the titlescreen
-		// mainClassState = TitleState;
-
 		// here we set up the base game
 		var gameCreate:FlxGame;
 		gameCreate = new FlxGame(gameWidth, gameHeight, mainClassState, zoom, framerate, framerate, skipSplash);
@@ -119,5 +115,17 @@ class Main extends Sprite
 
 		infoCounter = new InfoHud(10, 3, 0xFFFFFF, infoHudDisplay);
 		addChild(infoCounter);
+	}
+
+	/// function for going to different states and such
+	public static function switchState(target:FlxState)
+	{
+		// this is for a dumb feature that has no use except for cool extra info
+		mainClassState = Type.getClass(target);
+		// though I suppose this could be of use to people who want to load things between classes and such
+		// not that that would be of use to people who aren't already writing their own engines lmfao
+
+		// load the state
+		FlxG.switchState(target);
 	}
 }

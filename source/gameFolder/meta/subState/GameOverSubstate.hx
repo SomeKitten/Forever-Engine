@@ -9,7 +9,7 @@ import gameFolder.gameObjects.Boyfriend;
 import gameFolder.meta.Conductor.BPMChangeEvent;
 import gameFolder.meta.Conductor;
 import gameFolder.meta.MusicBeat.MusicBeatSubState;
-import gameFolder.meta.state.PlayState;
+import gameFolder.meta.state.*;
 
 class GameOverSubstate extends MusicBeatSubState
 {
@@ -28,7 +28,7 @@ class GameOverSubstate extends MusicBeatSubState
 				daBf = 'bf-pixel-dead';
 				stageSuffix = '-pixel';
 			default:
-				daBf = daBoyfriendType;
+				daBf = 'bf';
 		}
 
 		super();
@@ -63,10 +63,12 @@ class GameOverSubstate extends MusicBeatSubState
 		{
 			FlxG.sound.music.stop();
 
-			// if (PlayState.isStoryMode)
-			// FlxG.switchState(new StoryMenuState());
-			// else
-			//	FlxG.switchState(new FreeplayState());
+			if (PlayState.isStoryMode)
+			{
+				Main.switchState(new StoryMenuState());
+			}
+			else
+				Main.switchState(new FreeplayState());
 		}
 
 		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.curFrame == 12)
@@ -100,7 +102,7 @@ class GameOverSubstate extends MusicBeatSubState
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 1, false, function()
 				{
-					// LoadingState.loadAndSwitchState(new PlayState());
+					Main.switchState(new PlayState());
 				});
 			});
 			//

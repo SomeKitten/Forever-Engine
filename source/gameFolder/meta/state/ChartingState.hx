@@ -20,6 +20,8 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
 import flixel.util.FlxColor;
@@ -58,10 +60,15 @@ class ChartingState extends MusicBeatState
 	var dummyArrow:FlxSprite;
 	var strumLine:FlxSprite;
 	var playButton:FlxSprite;
+	var ogWidth:Float;
+	var ogHeight:Float;
 
 	var _song:SwagSong;
 	var gridBG:FlxSprite;
+
+	var songMusic:FlxSound;
 	var vocals:FlxSound;
+
 	var blackBG:FlxSprite;
 
 	var blackColor:FlxColor;
@@ -127,6 +134,7 @@ class ChartingState extends MusicBeatState
 		blackBG = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, blackColor);
 		add(blackBG);
 
+		loadSong(_song.song);
 		displayNotes();
 
 		strumLine = new FlxSprite(0, 0).makeGraphic(Std.int(FlxG.width / 2), 4);
@@ -169,7 +177,6 @@ class ChartingState extends MusicBeatState
 		FlxCamera.defaultCameras = [camGame];
 		// ee
 
-		loadSong(_song.song);
 		Conductor.changeBPM(_song.bpm);
 		Conductor.mapBPMChanges(_song);
 
@@ -179,6 +186,8 @@ class ChartingState extends MusicBeatState
 		playButton.animation.add('pause', [2, 3], 6, true);
 		playButton.animation.play('pause');
 		playButton.setGraphicSize(Std.int(playButton.width * 0.7));
+		ogWidth = playButton.width;
+		ogHeight = playButton.height;
 		// ayo dont forget to add it DUMMY shubs
 		add(playButton);
 
@@ -194,6 +203,7 @@ class ChartingState extends MusicBeatState
 		rightIcon.cameras = [camHUD];
 
 		//
+		PlayState.resetMusic();
 		if (FlxG.sound.music != null)
 		{
 			FlxG.sound.music.stop();
@@ -215,7 +225,7 @@ class ChartingState extends MusicBeatState
 			for (i in section.sectionNotes)
 				ChartLoader.generateChartingArrows(i, curSection, _song);
 
-			if (curSection * (GRID_SIZE * 16) < FlxG.sound.music.length)
+			if (curSection * (GRID_SIZE * 16) < songMusic.length)
 			{
 				gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * 16, true, 0xffe7e6e6, 0xffd9d5d5);
 				gridBG.screenCenter(X);
@@ -265,7 +275,7 @@ class ChartingState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		// update the song position
-		Conductor.songPosition = FlxG.sound.music.time;
+		Conductor.songPosition = songMusic.time;
 
 		// hell, okay, so we wanna figure out the section the strumline is on
 		var strumSection = Math.floor(Math.min((strumLine.y + 10) / (16 * GRID_SIZE), sectionsMax));
@@ -296,25 +306,25 @@ class ChartingState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.SPACE)
 		{
-			if (FlxG.sound.music.playing)
+			if (songMusic.playing)
 			{
-				FlxG.sound.music.pause();
+				songMusic.pause();
 				vocals.pause();
-				playButton.animation.play('pause');
+				playButtonAnimation('pause');
 			}
 			else
 			{
 				vocals.play();
-				FlxG.sound.music.play();
+				songMusic.play();
 				// for note tick sounds
 				hasPlayedSound = [];
 
-				playButton.animation.play('play');
+				playButtonAnimation('play');
 			}
 		}
 
 		// note tick sounds
-		if (FlxG.sound.music.playing)
+		if (songMusic.playing)
 		{
 			curRenderedNotes.forEachAlive(function(note:Note)
 			{
@@ -333,12 +343,12 @@ class ChartingState extends MusicBeatState
 			// probably stupid
 			scrolling = true;
 
-			FlxG.sound.music.pause();
+			songMusic.pause();
 			vocals.pause();
 
-			FlxG.sound.music.time = Math.max(FlxG.sound.music.time - (FlxG.mouse.wheel * Conductor.stepCrochet * 0.4), 0);
-			FlxG.sound.music.time = Math.min(FlxG.sound.music.time, FlxG.sound.music.length);
-			vocals.time = FlxG.sound.music.time;
+			songMusic.time = Math.max(songMusic.time - (FlxG.mouse.wheel * Conductor.stepCrochet * 0.4), 0);
+			songMusic.time = Math.min(songMusic.time, songMusic.length);
+			vocals.time = songMusic.time;
 		}
 		/*else if (scrolling)
 			{
@@ -399,11 +409,10 @@ class ChartingState extends MusicBeatState
 		{
 			// lastSection = curSection;
 			PlayState.SONG = _song;
-			FlxG.sound.music.stop();
+			songMusic.stop();
 			vocals.stop();
 
-			Main.mainClassState = PlayState;
-			FlxG.switchState(new PlayState());
+			Main.switchState(new PlayState());
 		}
 
 		blackBG.y = strumLineCam.y - (FlxG.height / 2);
@@ -419,28 +428,24 @@ class ChartingState extends MusicBeatState
 
 	function loadSong(daSong:String):Void
 	{
-		if (FlxG.sound.music != null)
-		{
-			FlxG.sound.music.stop();
-			// vocals.stop();
-		}
+		if (songMusic != null)
+			songMusic.stop();
 
-		FlxG.sound.playMusic(Paths.inst(daSong), 0.6);
+		if (vocals != null)
+			vocals.stop();
 
-		// WONT WORK FOR TUTORIAL OR TEST SONG!!! REDO LATER
+		songMusic = new FlxSound().loadEmbedded(Paths.inst(daSong));
 		vocals = new FlxSound().loadEmbedded(Paths.voices(daSong));
+		FlxG.sound.list.add(songMusic);
 		FlxG.sound.list.add(vocals);
 
-		FlxG.sound.music.pause();
+		songMusic.pause();
 		vocals.pause();
 
-		FlxG.sound.music.onComplete = function()
+		songMusic.onComplete = function()
 		{
 			vocals.pause();
-			vocals.time = 0;
-			FlxG.sound.music.pause();
-			FlxG.sound.music.time = 0;
-			// changeSection();
+			songMusic.pause();
 		};
 		//
 	}
@@ -534,5 +539,16 @@ class ChartingState extends MusicBeatState
 	function getMouseSection()
 	{
 		return Math.floor(Math.min((FlxG.mouse.y) / (16 * GRID_SIZE), sectionsMax));
+	}
+
+	function playButtonAnimation(animation:String)
+	{
+		playButton.animation.play(animation);
+
+		playButton.setGraphicSize(Std.int(playButton.width * 1.15));
+		FlxTween.tween(playButton, {
+			'scale.x': 0.7,
+			'scale.y': 0.7
+		}, 0.5);
 	}
 }

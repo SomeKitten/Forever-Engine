@@ -21,6 +21,7 @@ class Timings
 		// reset the accuracy to 0%
 		accuracy = 0.001;
 		judgementRates = new Array<Float>();
+		ratingFinal = "f";
 	}
 
 	/*
@@ -44,9 +45,9 @@ class Timings
 		// chance, score from it, id and percentage
 		daRatings = [
 			"sick" => [null, 350, 0, 100],
-			"good" => [0.15, 200, 1, 75],
-			"bad" => [0.5, 100, 2, 50],
-			"shit" => [0.7, 50, 3, 25],
+			"good" => [0.15, 200, 1, 50],
+			"bad" => [0.5, 100, 2, 25],
+			"shit" => [0.7, 50, 3, 5],
 		];
 
 		for (myRating in daRatings.keys())

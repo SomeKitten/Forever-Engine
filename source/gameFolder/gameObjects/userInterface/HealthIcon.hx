@@ -12,10 +12,11 @@ class HealthIcon extends FlxSprite
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{
 		super();
-		if ((char.startsWith('bf')) && (!char.endsWith('pixel')))
-			char = 'bf';
-		if (char.startsWith('mom'))
-			char = 'mom';
+
+		if ((!char.endsWith('pixel')) && (char.contains('-')))
+		{
+			char = char.substring(0, char.indexOf('-'));
+		}
 
 		antialiasing = true;
 		loadGraphic(Paths.image('icons/icon-' + char), true, 150, 150);

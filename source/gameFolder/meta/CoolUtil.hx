@@ -9,10 +9,16 @@ class CoolUtil
 {
 	// tymgus45
 	public static var difficultyArray:Array<String> = ['EASY', "NORMAL", "HARD"];
+	public static var difficultyLength = difficultyArray.length;
 
-	public static function difficultyString():String
+	public static function difficultyFromNumber(number:Int):String
 	{
-		return difficultyArray[PlayState.storyDifficulty];
+		return difficultyArray[number];
+	}
+
+	public static function dashToSpace(string:String):String
+	{
+		return string.replace("-", " ");
 	}
 
 	public static function coolTextFile(path:String):Array<String>
