@@ -18,6 +18,11 @@ class InfoHud extends TextField
 	public static var currentFPS(default, null):Int;
 	public static var memoryUsage:Float;
 
+	// display info
+	public static var displayFps = true;
+	public static var displayMemory = true;
+	public static var displayExtra = true;
+
 	// I also like to set them up so that you can call on them later since they're static
 	// anyways heres some other stuff I didn't write most of this so its just standard fps stuff
 	private var cacheCount:Int;
@@ -76,11 +81,14 @@ class InfoHud extends TextField
 
 		// pretty sure that was to avoid optimisation issues and shit but like I dunno man I'm not writing an if statement that updates all of these at once
 		// if (currentCount != cacheCount && display)
-		text = "FPS: " + currentFPS + "\nState: " + Main.mainClassState + "\nMemory: " + memoryUsage + " mb";
+		text = "";
+		if (displayFps)
+			text += "FPS: " + currentFPS + "\n";
+		if (displayExtra)
+			text += "State: " + Main.mainClassState + "\n";
+		if (displayMemory)
+			text += "Memory: " + memoryUsage + " mb";
 		// mb stands for my bad
-
-		if (!display)
-			text = "";
 
 		cacheCount = currentCount;
 	}
@@ -95,5 +103,12 @@ class InfoHud extends TextField
 	public static function getMemoryUsage():Float
 	{
 		return memoryUsage;
+	}
+
+	public static function updateDisplayInfo(shouldDisplayFps:Bool, shouldDisplayExtra:Bool, shouldDisplayMemory:Bool)
+	{
+		displayFps = shouldDisplayFps;
+		displayExtra = shouldDisplayExtra;
+		displayMemory = shouldDisplayMemory;
 	}
 }

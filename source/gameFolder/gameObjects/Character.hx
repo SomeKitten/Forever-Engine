@@ -5,19 +5,18 @@ package gameFolder.gameObjects;
 	stay the same as it was in the original source of the game. I'll most likely make some changes afterwards though!
 **/
 import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.addons.util.FlxSimplex;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
 import gameFolder.meta.*;
+import gameFolder.meta.FNFSprite;
 import gameFolder.meta.state.PlayState;
 import openfl.utils.Assets as OpenFlAssets;
 
 using StringTools;
 
-class Character extends FlxSprite
+class Character extends FNFSprite
 {
-	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
 
 	public var isPlayer:Bool = false;
@@ -29,7 +28,6 @@ class Character extends FlxSprite
 	{
 		super(x, y);
 
-		animOffsets = new Map<String, Array<Dynamic>>();
 		curCharacter = character;
 		this.isPlayer = isPlayer;
 
@@ -563,17 +561,9 @@ class Character extends FlxSprite
 		}
 	}
 
-	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
+	override public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		animation.play(AnimName, Force, Reversed, Frame);
-
-		var daOffset = animOffsets.get(AnimName);
-		if (animOffsets.exists(AnimName))
-		{
-			offset.set(daOffset[0], daOffset[1]);
-		}
-		else
-			offset.set(0, 0);
+		super.playAnim(AnimName, Force, Reversed, Frame);
 
 		if (curCharacter == 'gf')
 		{
@@ -591,11 +581,6 @@ class Character extends FlxSprite
 				danced = !danced;
 			}
 		}
-	}
-
-	public function addOffset(name:String, x:Float = 0, y:Float = 0)
-	{
-		animOffsets[name] = [x, y];
 	}
 
 	public function simplifyCharacter():String

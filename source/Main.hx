@@ -61,7 +61,6 @@ class Main extends Sprite
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 120; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
-	var infoHudDisplay:Bool = true; // Whether to display additional debug information.
 	var infoCounter:InfoHud; // initialize the heads up display that shows information before creating it.
 
 	// most of these variables are just from the base game!
@@ -113,7 +112,7 @@ class Main extends Sprite
 		// if you're reading this in the future I've added my own FPS counter below! hopefully...
 		// yeah dw I'm getting started on it fffff
 
-		infoCounter = new InfoHud(10, 3, 0xFFFFFF, infoHudDisplay);
+		infoCounter = new InfoHud(10, 3, 0xFFFFFF, true);
 		addChild(infoCounter);
 	}
 

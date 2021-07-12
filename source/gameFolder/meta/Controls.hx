@@ -509,78 +509,96 @@ class Controls extends FlxActionSet
 
 	public function setKeyboardScheme(scheme:KeyboardScheme, reset = true)
 	{
-		if (reset)
-			removeKeyboard();
+		// if (reset)
+		removeKeyboard();
 
-		keyboardScheme = scheme;
+		// keyboardScheme = scheme;
+		inline bindKeys(Control.UP, [Init.gameControls.get('UP')[0][0], Init.gameControls.get('UP')[0][1]]);
+		inline bindKeys(Control.DOWN, [Init.gameControls.get('DOWN')[0][0], Init.gameControls.get('DOWN')[0][1]]);
+		inline bindKeys(Control.LEFT, [Init.gameControls.get('LEFT')[0][0], Init.gameControls.get('LEFT')[0][1]]);
+		inline bindKeys(Control.RIGHT, [Init.gameControls.get('RIGHT')[0][0], Init.gameControls.get('RIGHT')[0][1]]);
+		inline bindKeys(Control.ACCEPT, [
+			Init.gameControls.get('ACCEPT')[0][0],
+			Init.gameControls.get('ACCEPT')[0][1],
+			Init.gameControls.get('ACCEPT')[0][2]
+		]);
+		inline bindKeys(Control.BACK, [
+			Init.gameControls.get('BACK')[0][0],
+			Init.gameControls.get('BACK')[0][1],
+			Init.gameControls.get('BACK')[0][2]
+		]);
+		inline bindKeys(Control.PAUSE, [Init.gameControls.get('PAUSE')[0][0], Init.gameControls.get('PAUSE')[0][1]]);
+		inline bindKeys(Control.RESET, [Init.gameControls.get('RESET')[0][0], Init.gameControls.get('RESET')[0][1]]);
 
-		#if (haxe >= "4.0.0")
-		switch (scheme)
-		{
-			case Solo:
-				inline bindKeys(Control.UP, [J, FlxKey.UP]);
-				inline bindKeys(Control.DOWN, [F, FlxKey.DOWN]);
-				inline bindKeys(Control.LEFT, [D, FlxKey.LEFT]);
-				inline bindKeys(Control.RIGHT, [K, FlxKey.RIGHT]);
-				inline bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
-				inline bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
-				inline bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
-				inline bindKeys(Control.RESET, [R]);
-			case Duo(true):
-				inline bindKeys(Control.UP, [W]);
-				inline bindKeys(Control.DOWN, [S]);
-				inline bindKeys(Control.LEFT, [A]);
-				inline bindKeys(Control.RIGHT, [D]);
-				inline bindKeys(Control.ACCEPT, [G, Z]);
-				inline bindKeys(Control.BACK, [H, X]);
-				inline bindKeys(Control.PAUSE, [ONE]);
-				inline bindKeys(Control.RESET, [R]);
-			case Duo(false):
-				inline bindKeys(Control.UP, [FlxKey.UP]);
-				inline bindKeys(Control.DOWN, [FlxKey.DOWN]);
-				inline bindKeys(Control.LEFT, [FlxKey.LEFT]);
-				inline bindKeys(Control.RIGHT, [FlxKey.RIGHT]);
-				inline bindKeys(Control.ACCEPT, [O]);
-				inline bindKeys(Control.BACK, [P]);
-				inline bindKeys(Control.PAUSE, [ENTER]);
-				inline bindKeys(Control.RESET, [BACKSPACE]);
-			case None: // nothing
-			case Custom: // nothing
-		}
-		#else
-		switch (scheme)
-		{
-			case Solo:
-				bindKeys(Control.UP, [W, FlxKey.UP]);
-				bindKeys(Control.DOWN, [S, FlxKey.DOWN]);
-				bindKeys(Control.LEFT, [A, FlxKey.LEFT]);
-				bindKeys(Control.RIGHT, [D, FlxKey.RIGHT]);
-				bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
-				bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
-				bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
-				bindKeys(Control.RESET, [R]);
-			case Duo(true):
-				bindKeys(Control.UP, [W]);
-				bindKeys(Control.DOWN, [S]);
-				bindKeys(Control.LEFT, [A]);
-				bindKeys(Control.RIGHT, [D]);
-				bindKeys(Control.ACCEPT, [G, Z]);
-				bindKeys(Control.BACK, [H, X]);
-				bindKeys(Control.PAUSE, [ONE]);
-				bindKeys(Control.RESET, [R]);
-			case Duo(false):
-				bindKeys(Control.UP, [FlxKey.UP]);
-				bindKeys(Control.DOWN, [FlxKey.DOWN]);
-				bindKeys(Control.LEFT, [FlxKey.LEFT]);
-				bindKeys(Control.RIGHT, [FlxKey.RIGHT]);
-				bindKeys(Control.ACCEPT, [O]);
-				bindKeys(Control.BACK, [P]);
-				bindKeys(Control.PAUSE, [ENTER]);
-				bindKeys(Control.RESET, [BACKSPACE]);
-			case None: // nothing
-			case Custom: // nothing
-		}
-		#end
+		/* 
+			#if (haxe >= "4.0.0")
+			switch (scheme)
+			{
+				case Solo:
+					inline bindKeys(Control.UP, [J, FlxKey.UP]);
+					inline bindKeys(Control.DOWN, [F, FlxKey.DOWN]);
+					inline bindKeys(Control.LEFT, [D, FlxKey.LEFT]);
+					inline bindKeys(Control.RIGHT, [K, FlxKey.RIGHT]);
+					inline bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
+					inline bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
+					inline bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
+					inline bindKeys(Control.RESET, [R]);
+				case Duo(true):
+					inline bindKeys(Control.UP, [W]);
+					inline bindKeys(Control.DOWN, [S]);
+					inline bindKeys(Control.LEFT, [A]);
+					inline bindKeys(Control.RIGHT, [D]);
+					inline bindKeys(Control.ACCEPT, [G, Z]);
+					inline bindKeys(Control.BACK, [H, X]);
+					inline bindKeys(Control.PAUSE, [ONE]);
+					inline bindKeys(Control.RESET, [R]);
+				case Duo(false):
+					inline bindKeys(Control.UP, [FlxKey.UP]);
+					inline bindKeys(Control.DOWN, [FlxKey.DOWN]);
+					inline bindKeys(Control.LEFT, [FlxKey.LEFT]);
+					inline bindKeys(Control.RIGHT, [FlxKey.RIGHT]);
+					inline bindKeys(Control.ACCEPT, [O]);
+					inline bindKeys(Control.BACK, [P]);
+					inline bindKeys(Control.PAUSE, [ENTER]);
+					inline bindKeys(Control.RESET, [BACKSPACE]);
+				case None: // nothing
+				case Custom: // nothing
+			}
+			#else
+			switch (scheme)
+			{
+				case Solo:
+					bindKeys(Control.UP, [W, FlxKey.UP]);
+					bindKeys(Control.DOWN, [S, FlxKey.DOWN]);
+					bindKeys(Control.LEFT, [A, FlxKey.LEFT]);
+					bindKeys(Control.RIGHT, [D, FlxKey.RIGHT]);
+					bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
+					bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
+					bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
+					bindKeys(Control.RESET, [R]);
+				case Duo(true):
+					bindKeys(Control.UP, [W]);
+					bindKeys(Control.DOWN, [S]);
+					bindKeys(Control.LEFT, [A]);
+					bindKeys(Control.RIGHT, [D]);
+					bindKeys(Control.ACCEPT, [G, Z]);
+					bindKeys(Control.BACK, [H, X]);
+					bindKeys(Control.PAUSE, [ONE]);
+					bindKeys(Control.RESET, [R]);
+				case Duo(false):
+					bindKeys(Control.UP, [FlxKey.UP]);
+					bindKeys(Control.DOWN, [FlxKey.DOWN]);
+					bindKeys(Control.LEFT, [FlxKey.LEFT]);
+					bindKeys(Control.RIGHT, [FlxKey.RIGHT]);
+					bindKeys(Control.ACCEPT, [O]);
+					bindKeys(Control.BACK, [P]);
+					bindKeys(Control.PAUSE, [ENTER]);
+					bindKeys(Control.RESET, [BACKSPACE]);
+				case None: // nothing
+				case Custom: // nothing
+			}
+			#end
+		 */
 	}
 
 	function removeKeyboard()

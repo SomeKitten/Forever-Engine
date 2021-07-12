@@ -14,7 +14,7 @@ using StringTools;
 import polymod.format.ParseRules.TargetSignatureElement;
 #end
 
-class Note extends FlxSprite
+class Note extends FNFSprite
 {
 	public var strumTime:Float = 0;
 
@@ -44,7 +44,7 @@ class Note extends FlxSprite
 
 	public function new(strumTime:Float, noteData:Int, noteAlt:Float, noteType:Float, noteString:String, ?prevNote:Note, ?sustainNote:Bool = false)
 	{
-		super();
+		super(x, y);
 
 		if (prevNote == null)
 			prevNote = this;

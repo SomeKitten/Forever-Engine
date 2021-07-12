@@ -60,7 +60,11 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		var scoreDisplay:String = 'beep bop bo skdkdkdbebedeoop brrapadop';
 
 		// le healthbar setup
-		healthBarBG = new FlxSprite(0, FlxG.height * 0.875).loadGraphic(Paths.image('UI/healthBar'));
+		var barY = FlxG.height * 0.875;
+		if (Init.gameSettings.get('Downscroll')[0])
+			barY = 64;
+
+		healthBarBG = new FlxSprite(0, barY).loadGraphic(Paths.image('UI/healthBar'));
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
 		add(healthBarBG);

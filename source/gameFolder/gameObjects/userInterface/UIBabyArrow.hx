@@ -1,5 +1,6 @@
 package gameFolder.gameObjects.userInterface;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import gameFolder.meta.state.PlayState;
 

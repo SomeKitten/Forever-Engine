@@ -139,7 +139,7 @@ class MainMenuState extends MusicBeatState
 		var down_p = controls.DOWN_P;
 		var controlArray:Array<Bool> = [up, down, up_p, down_p];
 
-		if (controlArray.contains(true))
+		if ((controlArray.contains(true)) && (!selectedSomethin))
 		{
 			for (i in 0...controlArray.length)
 			{
@@ -193,7 +193,7 @@ class MainMenuState extends MusicBeatState
 			counterControl = 0;
 		}
 
-		if (controls.ACCEPT)
+		if ((controls.ACCEPT) && (!selectedSomethin))
 		{
 			//
 			selectedSomethin = true;
@@ -226,6 +226,8 @@ class MainMenuState extends MusicBeatState
 							case 'freeplay':
 								Main.switchState(new FreeplayState());
 							case 'options':
+								transIn = FlxTransitionableState.defaultTransIn;
+								transOut = FlxTransitionableState.defaultTransOut;
 								Main.switchState(new OptionsMenuState());
 						}
 					});

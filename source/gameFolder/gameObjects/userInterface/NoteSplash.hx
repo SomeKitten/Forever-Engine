@@ -68,7 +68,7 @@ class NoteSplash extends FlxSprite
 		animOffsets[name] = [x, y];
 	}
 
-	public function playAnimation(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0)
+	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0)
 	{
 		// make sure the animation is visible
 		visible = true;

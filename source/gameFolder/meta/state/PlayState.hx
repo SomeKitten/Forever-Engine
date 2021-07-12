@@ -1,6 +1,5 @@
 package gameFolder.meta.state;
 
-import cpp.ConstStar;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;
@@ -137,6 +136,7 @@ class PlayState extends MusicBeatState
 		combo = 0;
 		health = 1;
 		misses = 0;
+		defaultCamZoom = 1.05;
 
 		Timings.callAccuracy();
 
@@ -237,9 +237,13 @@ class PlayState extends MusicBeatState
 
 		// create strums and ui elements
 		strumLine = new FlxTypedGroup<FlxSprite>();
+		var strumLineY:Int = 50;
+		if (Init.gameSettings.get('Downscroll')[0])
+			strumLineY = FlxG.height - (strumLineY * 3);
+
 		for (i in 0...8)
 		{
-			var strumLinePart = new FlxSprite(0, 50).makeGraphic(FlxG.width, 10);
+			var strumLinePart = new FlxSprite(0, strumLineY).makeGraphic(FlxG.width, 10);
 			strumLinePart.scrollFactor.set();
 
 			strumLine.add(strumLinePart);
@@ -473,8 +477,10 @@ class PlayState extends MusicBeatState
 				var dunceNote:Note = unspawnNotes[0];
 				notes.add(dunceNote);
 
-				var index:Int = unspawnNotes.indexOf(dunceNote);
-				unspawnNotes.splice(index, 1);
+				unspawnNotes.splice(unspawnNotes.indexOf(dunceNote), 1);
+
+				// thanks sammu I have no idea how this line works lmao
+				notes.sort(FlxSort.byY, (!Init.gameSettings.get('Downscroll')[0]) ? FlxSort.DESCENDING : FlxSort.ASCENDING);
 			}
 		}
 
@@ -504,14 +510,32 @@ class PlayState extends MusicBeatState
 
 		// im very sorry for this if condition I made it worse lmao
 		///*
+		var downscrollMultiplier = 1;
+		if (Init.gameSettings.get('Downscroll')[0])
+			downscrollMultiplier = -1;
+
 		if (daNote.isSustainNote
-			&& daNote.y + daNote.offset.y <= strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y + Note.swagWidth / 2
+			&& (((daNote.y + daNote.offset.y <= (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y + Note.swagWidth / 2))
+				&& !Init.gameSettings.get('Downscroll')[0])
+				|| ((((daNote.y - daNote.offset.y) + daNote.height * 2) >= (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
+					+ Note.swagWidth / 2))
+					&& Init.gameSettings.get('Downscroll')[0]))
 			&& (autoplay || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
 		{
-			var swagRect = new FlxRect(0, strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y + Note.swagWidth / 2 - daNote.y,
-				daNote.width * 2, daNote.height * 2);
-			swagRect.y /= daNote.scale.y;
-			swagRect.height -= swagRect.y;
+			var swagRectY = ((strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y);
+			var swagRect = new FlxRect(0, 0, daNote.width * 2, daNote.height * 2);
+			// I feel genuine pain
+			// basically these should be flipped based on if it is downscroll or not
+			if (Init.gameSettings.get('Downscroll')[0])
+			{
+				swagRect.height = swagRectY;
+				swagRect.y -= swagRect.height - daNote.height;
+			}
+			else
+			{
+				swagRect.y = swagRectY;
+				swagRect.height -= swagRect.y;
+			}
 
 			daNote.clipRect = swagRect;
 		}
@@ -641,19 +665,23 @@ class PlayState extends MusicBeatState
 
 	private function strumCameraRoll(cStrum:FlxTypedGroup<UIBabyArrow>, mustHit:Bool)
 	{
-		var camDisplaceExtend:Float = 1.5;
-		var camDisplaceSpeed = 0.0125;
-		if (PlayState.SONG.notes[Std.int(curStep / 16)] != null)
+		if (!Init.gameSettings.get('No camera note movement')[0])
 		{
-			if ((PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && mustHit)
-				|| (!PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && !mustHit))
+			var camDisplaceExtend:Float = 1.5;
+			var camDisplaceSpeed = 0.0125;
+			if (PlayState.SONG.notes[Std.int(curStep / 16)] != null)
 			{
-				if ((cStrum.members[0].animation.curAnim.name == 'confirm') && (camDisplaceX > -camDisplaceExtend))
-					camDisplaceX -= camDisplaceSpeed;
-				else if ((cStrum.members[3].animation.curAnim.name == 'confirm') && (camDisplaceX < camDisplaceExtend))
-					camDisplaceX += camDisplaceSpeed;
+				if ((PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && mustHit)
+					|| (!PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && !mustHit))
+				{
+					if ((cStrum.members[0].animation.curAnim.name == 'confirm') && (camDisplaceX > -camDisplaceExtend))
+						camDisplaceX -= camDisplaceSpeed;
+					else if ((cStrum.members[3].animation.curAnim.name == 'confirm') && (camDisplaceX < camDisplaceExtend))
+						camDisplaceX += camDisplaceSpeed;
+				}
 			}
 		}
+		//
 	}
 
 	//----------------------------------------------------------------
@@ -746,8 +774,35 @@ class PlayState extends MusicBeatState
 					otherSustain = daNote.width;
 
 				// set the notes x and y
+				var downscrollMultiplier = 1;
+				if (Init.gameSettings.get('Downscroll')[0])
+					downscrollMultiplier = -1;
+
 				daNote.y = (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
-					- (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
+					+ (downscrollMultiplier * -((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2)))));
+				/*
+					heres the part where I talk about how shitty my downscroll code is
+					mostly because I don't actually understand downscroll and I don't play downscroll so its really more
+					of an afterthought, if you feel like improving the code lemme know or make a pr or something I'll gladly accept it
+
+					EDIT: I'm gonna try to revise it but no promises
+					ya I give up if you wanna fix it go ahead idc anymore
+				 */
+
+				if ((Init.gameSettings.get('Downscroll')[0]) && (daNote.isSustainNote))
+				{
+					// note alignments (thanks pixl for pointing out what made old downscroll weird)
+					if (daNote.animation.curAnim.name.endsWith('holdend'))
+					{
+						daNote.flipY = true;
+						if (daNote.prevNote != null)
+							daNote.y += (daNote.prevNote.height / 2);
+					}
+					//	daNote.y += ((daNote.prevNote.height * 1.3) / SONG.speed);
+					// else
+					daNote.y += daNote.height / 2;
+				}
+
 				daNote.x = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].x + 25 + otherSustain;
 
 				// also set note rotation
@@ -776,7 +831,8 @@ class PlayState extends MusicBeatState
 				}
 
 				// if the note is off screen (above)
-				if (daNote.y < -daNote.height)
+				if (((!Init.gameSettings.get('Downscroll')[0]) && (daNote.y < -daNote.height))
+					|| ((Init.gameSettings.get('Downscroll')[0]) && (daNote.y > (FlxG.height + daNote.height))))
 				{
 					if (daNote.tooLate || !daNote.wasGoodHit)
 					{
@@ -1049,7 +1105,7 @@ class PlayState extends MusicBeatState
 	{
 		// play animation in existing notesplashes
 		var noteSplashRandom:String = (Std.string((FlxG.random.int(0, 1) + 1)));
-		splashNotes.members[coolNote.noteData].playAnimation('anim' + noteSplashRandom);
+		splashNotes.members[coolNote.noteData].playAnim('anim' + noteSplashRandom);
 	}
 
 	public function displayRating(daRating:String)
@@ -1371,10 +1427,11 @@ class PlayState extends MusicBeatState
 	{
 		super.beatHit();
 
-		if (generatedMusic)
-		{
-			notes.sort(FlxSort.byY, FlxSort.DESCENDING);
-		}
+		/*
+			if (generatedMusic)
+			{
+				notes.sort(FlxSort.byY, FlxSort.DESCENDING);
+		}*/
 
 		if (camZooming && FlxG.camera.zoom < 1.35 && curBeat % 4 == 0)
 		{
