@@ -51,10 +51,6 @@ CREDITS:
 
 [HelloSammu](https://github.com/hellosammu) - Some code enhancements, being a better programmer than me, being able to use twitter comprehensively
 
-
-
-[Mr. Identity Crisis](https://twitter.com/MrIDCrisis) - yes
-
 [ninjamuffin99](https://twitter.com/ninja_muffin99) - he believes in me (I will never forget [maybe I will
 
 rest of fnf team (they are very good and very real ESPECIALLY PHANTOMARCADE HES GAMING
