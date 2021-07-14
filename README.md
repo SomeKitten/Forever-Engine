@@ -1,46 +1,50 @@
 # FunkinForever
 An open-source [Friday Night Funkin'](https://www.newgrounds.com/portal/view/770371) mod engine
 ----------------------------------------------
-Funkin' Forever, or Forever Engine is an open source modification of the Friday Night Funkin' engine. At the time of writing this, it is completely and absolutely UNFINISHED, and I do not recommend anyone uses it for the time being. The plan is to have a more easy to mod and heavily documented Friday Night Funkin' engine that I can personally use for my own projects, but others could use too if they really want (even though bigger and more community engrained engines exist lol).
+Funkin' Forever, or Forever Engine is an open source modification of the Friday Night Funkin' engine. The engine is still unfinished, but it's getting there. Within the span of a week, if all goes well, it should be perfectly fine to use, as long as I don't forget to fix FNF songs themselves, aside from that, with the exception of custom controls, the engine is completely useable.
 
 ----------------------------------------------
 This Engine is mostly a restructure but also in a lot of ways a rewrite of the base Funkin engine that you can find [here](https://github.com/ninjamuffin99/Funkin).
 
 ----------------------------------------------
-CHANGELOG v0.1.2
+CHANGELOG v0.2.0
+* removed most week 7 stuffs because I respect newgrounds and they werent meant to be in for the release I just wanted to test
+* options menu, main menu, title screen, story menu, freeplay menu
+* custom color coding freeplay menu based on weeks! (or songs)
+* week 7 icon formatting
+* week 7 offset formatting (offset editor coming soon)
+* no changes to the chart editor (don't use it yet its still very buggy and limited)
+* some stuff got overhauled
+* note timings and better ratings
+* negative combos and epic pixel stuffs I think (missing the miss rating for pixel still)
 
-* didnt wanna push this stuff until 2.0 but I have to for 2 reasons
-* skater and monday night madness
-* (mostly skater)
-* uh full menu and all that stuff options is wip tho
-* SONGS BREAK but feel free to report issues
-
+* forked skater from the engine (madness comes next)
 ----------------------------------------------
 
 
 Planned Features:
 * Offset Editor based on .txt files
-* Downscroll, options, etc
+* Custom Controls
 * Translations (if enough support is given)
 * Adjustable Note Colors
 * Misc Rhythm Game features
   * Offsets (maybe)
   * Note colors based on Rhythm
   * Modcharts
-  * Better Score and Ratings
   * Other general features that will make this engine stand out from others
 * Modularity (? idk it sounds cool and smart [not like me lmao])
 
 Current Features:
-* TANKMAN
-  * Disclaimer: Tankman is not at all the main focus of this engine, please support friday night funkin on [newgrounds](https://www.newgrounds.com/portal/view/770371) if you actually want to play week 7, this is just here for the sake of preparations for when week 7 source comes out.
-* Makeshift song editor that's just the base game one
+* Unfinished song editor
 * A much more organised PlayState
 * comments that are kind of funny
 * idk im struggling to come up with features
 * seriously this is very work in progress please understand
-* separated hardcoded chart information (some of it at least
 * probably a better input system idk???
+* even less features than last time lmao
+* no seriously I have to add filler features like this
+* to make it look somewhat longer
+* because I actually removed and maintained some things
 
 CREDITS:
 ----------------------------------------------
