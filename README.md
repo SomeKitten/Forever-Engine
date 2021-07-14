@@ -11,6 +11,8 @@ CHANGELOG v0.2.1
 * custom controls lmao
 * fixed some misc bugs and glitches
 
+  * 0.2.1.1 fixes a stupid oversight
+
 CHANGELOG v0.2.0
 * removed most week 7 stuffs because I respect newgrounds and they werent meant to be in for the release I just wanted to test
 * options menu, main menu, title screen, story menu, freeplay menu
