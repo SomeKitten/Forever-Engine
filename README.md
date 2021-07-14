@@ -10,6 +10,7 @@ This Engine is mostly a restructure but also in a lot of ways a rewrite of the b
 CHANGELOG v0.2.1
 * custom controls lmao
 * fixed some misc bugs and glitches
+
 CHANGELOG v0.2.0
 * removed most week 7 stuffs because I respect newgrounds and they werent meant to be in for the release I just wanted to test
 * options menu, main menu, title screen, story menu, freeplay menu
