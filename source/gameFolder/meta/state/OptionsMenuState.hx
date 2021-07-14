@@ -40,12 +40,13 @@ class OptionsMenuState extends MusicBeatState
 			'FPS Counter',
 			'Memory Counter',
 			'Debug Info',
-			'No camera note movement'
+			'No camera note movement',
+			'Display Accuracy'
 		];
 		preferenceGroup = generateGroup(preferenceOptions, true);
 		preferenceCheckmarks = generateCheckmarks(preferenceOptions);
 
-		var accessibilityOptions:Array<String> = ["Disable Flashing", "Deuteranopia", "Protanopia", "Tritanopia"];
+		var accessibilityOptions:Array<String> = ['Reduced Movements', "Deuteranopia", "Protanopia", "Tritanopia"];
 		accessibilityGroup = generateGroup(accessibilityOptions, true);
 		accessibilityCheckmarks = generateCheckmarks(accessibilityOptions);
 		//
@@ -82,7 +83,7 @@ class OptionsMenuState extends MusicBeatState
 		var down_p = controls.DOWN_P;
 		var controlArray:Array<Bool> = [up, down, up_p, down_p];
 
-		if (controlArray.contains(true))
+		if ((controlArray.contains(true)) && (!optionSelected))
 		{
 			for (i in 0...controlArray.length)
 			{
@@ -109,9 +110,10 @@ class OptionsMenuState extends MusicBeatState
 			optionSelected = true;
 			FlxG.sound.play(Paths.sound('confirmMenu'));
 
-			FlxFlicker.flicker(optionsSubgroups.get(selectedGroup)[0].members[curSelection], 0.5, 0.06 * 2, true, false, function(flick:FlxFlicker)
+			var curSet:FlxTypedGroup<Alphabet> = optionsSubgroups.get(selectedGroup)[0];
+			FlxFlicker.flicker(curSet.members[curSelection], 0.5, 0.06 * 2, true, false, function(flick:FlxFlicker)
 			{
-				updateOption(optionsSubgroups.get(selectedGroup)[0]);
+				updateOption(curSet);
 			});
 		}
 

@@ -3,6 +3,7 @@ package gameFolder.meta.data.font;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import flixel.tweens.FlxEase;
@@ -22,6 +23,10 @@ class Alphabet extends FlxSpriteGroup
 	// for menu shit
 	public var targetY:Float = 0;
 	public var disableX:Bool = false;
+	public var controlGroupID:Int = 0;
+	public var extensionJ:Int = 0;
+
+	public var textInit:String;
 
 	public var xTo = 100;
 
@@ -29,8 +34,8 @@ class Alphabet extends FlxSpriteGroup
 
 	public var text:String = "";
 
-	var _finalText:String = "";
-	var _curText:String = "";
+	public var _finalText:String = "";
+	public var _curText:String = "";
 
 	public var widthOfWords:Float = FlxG.width;
 
@@ -50,9 +55,18 @@ class Alphabet extends FlxSpriteGroup
 	{
 		super(x, y);
 
-		_finalText = text;
 		this.text = text;
 		isBold = bold;
+
+		restartText(text, typed);
+	}
+
+	public function restartText(text, typed)
+	{
+		xPosResetted = true;
+
+		_finalText = text;
+		textInit = text;
 
 		if (text != "")
 		{
@@ -67,10 +81,13 @@ class Alphabet extends FlxSpriteGroup
 		}
 	}
 
+	public var arrayLetters:Array<AlphaCharacter>;
+
 	public function addText()
 	{
 		doSplitWords();
 
+		arrayLetters = [];
 		var xPos:Float = 0;
 		for (character in splitWords)
 		{
@@ -86,9 +103,15 @@ class Alphabet extends FlxSpriteGroup
 			if (AlphaCharacter.alphabet.indexOf(character.toLowerCase()) != -1)
 				// if (AlphaCharacter.alphabet.contains(character.toLowerCase()))
 			{
-				if (lastSprite != null)
+				if (xPosResetted)
 				{
-					xPos = lastSprite.x + lastSprite.width;
+					xPos = 0;
+					xPosResetted = false;
+				}
+				else
+				{
+					if (lastSprite != null)
+						xPos += lastSprite.width;
 				}
 
 				if (lastWasSpace)
@@ -107,6 +130,7 @@ class Alphabet extends FlxSpriteGroup
 					letter.createLetter(character);
 				}
 
+				arrayLetters.push(letter);
 				add(letter);
 
 				lastSprite = letter;
@@ -114,6 +138,8 @@ class Alphabet extends FlxSpriteGroup
 
 			// loopNum += 1;
 		}
+
+		// add(displayedLetters);
 	}
 
 	function doSplitWords():Void
@@ -142,7 +168,6 @@ class Alphabet extends FlxSpriteGroup
 			{
 				yMulti += 1;
 				xPosResetted = true;
-				xPos = 0;
 				curRow += 1;
 			}
 
@@ -172,6 +197,7 @@ class Alphabet extends FlxSpriteGroup
 				}
 				else
 				{
+					xPos = 0;
 					xPosResetted = false;
 				}
 
@@ -237,6 +263,17 @@ class Alphabet extends FlxSpriteGroup
 			else
 				x = FlxMath.lerp(x, xTo, 0.1);
 		}
+
+		if ((text != textInit))
+		{
+			if (arrayLetters.length > 0)
+				for (i in 0...arrayLetters.length)
+					arrayLetters[i].destroy();
+			//
+			lastSprite = null;
+			restartText(text, false);
+		}
+
 		super.update(elapsed);
 	}
 }

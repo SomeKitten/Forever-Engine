@@ -1,15 +1,22 @@
 package gameFolder.meta.subState;
 
+import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.effects.FlxFlicker;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.input.keyboard.FlxKey;
+import flixel.util.FlxColor;
 import gameFolder.meta.MusicBeat.MusicBeatSubState;
 import gameFolder.meta.data.font.Alphabet;
+
+using StringTools;
 
 class OptionsSubstate extends MusicBeatSubState
 {
 	private var curSelection = 0;
 	var totalSize = Lambda.count(Init.gameControls);
+	private var submenuGroup:FlxTypedGroup<FlxBasic>;
 
 	// the controls class thingy
 	override public function create():Void
@@ -30,6 +37,25 @@ class OptionsSubstate extends MusicBeatSubState
 
 		keyOptions = generateOptions();
 		updateSelection();
+
+		submenuGroup = new FlxTypedGroup<FlxBasic>();
+
+		submenu = new FlxSprite(0, 0).makeGraphic(FlxG.width - 200, FlxG.height - 200, FlxColor.fromRGB(250, 253, 109));
+		submenu.screenCenter();
+		submenuGroup.add(submenu);
+
+		var submenuText = new Alphabet(0, 0, "Press any key to rebind", true, false);
+		submenuText.screenCenter();
+		submenuText.y -= 32;
+		submenuGroup.add(submenuText);
+
+		var submenuText2 = new Alphabet(0, 0, "Escape to Cancel", true, false);
+		submenuText2.screenCenter();
+		submenuText2.y += 32;
+		submenuGroup.add(submenuText2);
+
+		add(submenuGroup);
+		submenuGroup.visible = false;
 	}
 
 	private var keyOptions:FlxTypedGroup<Alphabet>;
@@ -70,20 +96,39 @@ class OptionsSubstate extends MusicBeatSubState
 		otherKeys = new FlxTypedGroup<Alphabet>();
 		for (i in 0...arrayTemp.length)
 		{
-			for (j in 0...1)
+			for (j in 0...2)
 			{
-				var secondaryText:Alphabet = new Alphabet(0, 0, Std.string('deez'), false, false);
+				var keyString = getStringKey(Init.gameControls.get(arrayTemp[i])[0][j]);
+
+				var secondaryText:Alphabet = new Alphabet(0, 0, keyString, false, false);
 				secondaryText.screenCenter();
 				secondaryText.y += (90 * (i - (arrayTemp.length / 2)));
 				secondaryText.targetY = i;
 				secondaryText.disableX = true;
-				secondaryText.xTo += ((j + 1) * 30);
+				secondaryText.xTo += ((j + 1) * 420);
 				secondaryText.isMenuItem = true;
 				secondaryText.alpha = 0.6;
+
+				secondaryText.controlGroupID = i;
+				secondaryText.extensionJ = j;
 				otherKeys.add(secondaryText);
 			}
 		}
 		add(otherKeys);
+	}
+
+	private function getStringKey(arrayThingy:Dynamic):String
+	{
+		var keyString:String = 'none';
+		if (arrayThingy != null)
+		{
+			var keyDisplay:FlxKey = arrayThingy;
+			keyString = keyDisplay.toString();
+		}
+
+		keyString = keyString.replace(" ", "");
+
+		return keyString;
 	}
 
 	private function updateSelection(equal:Int = 0)
@@ -110,9 +155,9 @@ class OptionsSubstate extends MusicBeatSubState
 		for (i in 0...otherKeys.length)
 		{
 			otherKeys.members[i].alpha = 0.6;
-			otherKeys.members[i].targetY = ((i - curSelection) / 2);
+			otherKeys.members[i].targetY = (((Math.floor(i / 2)) - curSelection) / 2) - 0.25;
 		}
-		otherKeys.members[curSelection + curHorizontalSelection].alpha = 1;
+		otherKeys.members[(curSelection * 2) + curHorizontalSelection].alpha = 1;
 		// */
 	}
 
@@ -122,7 +167,7 @@ class OptionsSubstate extends MusicBeatSubState
 	{
 		var left = controls.LEFT_P;
 		var right = controls.RIGHT_P;
-		var horizontalControl:Array<Bool> = [left, right];
+		var horizontalControl:Array<Bool> = [left, false, right];
 
 		if (horizontalControl.contains(true))
 		{
@@ -141,6 +186,8 @@ class OptionsSubstate extends MusicBeatSubState
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 				}
 			}
+
+			updateSelection(curSelection);
 			//
 		}
 	}
@@ -153,11 +200,6 @@ class OptionsSubstate extends MusicBeatSubState
 
 		if (!submenuOpen)
 		{
-			if (controls.BACK)
-			{
-				close();
-			}
-
 			var up = controls.UP;
 			var down = controls.DOWN;
 			var up_p = controls.UP_P;
@@ -188,6 +230,96 @@ class OptionsSubstate extends MusicBeatSubState
 
 			//
 			updateHorizontalSelection();
+
+			if (controls.ACCEPT)
+			{
+				FlxG.sound.play(Paths.sound('confirmMenu'));
+				submenuOpen = true;
+
+				FlxFlicker.flicker(otherKeys.members[(curSelection * 2) + curHorizontalSelection], 0.5, 0.06 * 2, true, false, function(flick:FlxFlicker)
+				{
+					openSubmenu();
+				});
+			}
+			else if (controls.BACK)
+				close();
 		}
+		else
+			subMenuControl();
+	}
+
+	override public function close()
+	{
+		//
+		Init.saveControls();
+		super.close();
+	}
+
+	/// options submenu stuffs
+	/// right here lol
+	//
+	// I think
+	//
+	// just a little further
+	//
+	// almost there
+	//
+	// got it!
+	private var submenu:FlxSprite;
+
+	private function openSubmenu()
+	{
+		submenuGroup.visible = true;
+	}
+
+	private function closeSubmenu()
+	{
+		submenuOpen = false;
+		submenuGroup.visible = false;
+	}
+
+	private function subMenuControl()
+	{
+		// be able to close the submenu
+		if (FlxG.keys.justPressed.ESCAPE)
+			closeSubmenu();
+		else if (FlxG.keys.justPressed.ANY)
+		{
+			// loop through existing keys and see if there are any alike
+			var checkKey = FlxG.keys.getIsDown()[0].ID;
+
+			// check if any keys use the same key lol
+			for (i in 0...otherKeys.members.length)
+			{
+				///*
+				if (otherKeys.members[i].text == checkKey.toString())
+				{
+					// switch them I guess???
+					var oldKey = Init.gameControls.get(keyOptions.members[curSelection].text)[0][curHorizontalSelection];
+					Init.gameControls.get(keyOptions.members[otherKeys.members[i].controlGroupID].text)[0][otherKeys.members[i].extensionJ] = oldKey;
+					otherKeys.members[i].text = getStringKey(oldKey);
+				}
+				//*/
+			}
+
+			// now check if its the key we want to change
+			Init.gameControls.get(keyOptions.members[curSelection].text)[0][curHorizontalSelection] = checkKey;
+			otherKeys.members[(curSelection * 2) + curHorizontalSelection].text = getStringKey(checkKey);
+
+			// refresh keys
+			controls.setKeyboardScheme(None, false);
+
+			// update all keys on screen to have the right values
+			// inefficient so I rewrote it lolllll
+			/*for (i in 0...otherKeys.members.length)
+				{
+					var stringKey = getStringKey(Init.gameControls.get(keyOptions.members[otherKeys.members[i].controlGroupID].text)[0][otherKeys.members[i].extensionJ]);
+					trace('running $i times, options menu');
+			}*/
+
+			// close the submenu
+			closeSubmenu();
+		}
+		//
 	}
 }

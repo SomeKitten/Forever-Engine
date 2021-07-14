@@ -49,7 +49,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		// small info bar, kinda like the KE watermark
 		// based on scoretxt which I will set up as well
 		var infoDisplay:String = CoolUtil.dashToSpace(PlayState.SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(PlayState.storyDifficulty)
-			+ " - FF BETA v0.2.0";
+			+ " - FF BETA v0.2.1";
 
 		infoBar = new FlxText(5, FlxG.height - 30, 0, infoDisplay, 20);
 		infoBar.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -126,12 +126,26 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		var importMisses = PlayState.misses;
 		scoreBar.text = 'Score: $importSongScore';
 		// testing purposes
-		var displayAccuracy:Bool = true;
+		var displayAccuracy:Bool = Init.gameSettings.get('Display Accuracy')[0];
 		if (displayAccuracy)
+		{
 			scoreBar.text += ' // Accuracy: ' + Std.string(Math.floor(Timings.accuracy * 100) / 100) + '%';
-
-		scoreBar.text += ' // Rank: ' + Std.string(Timings.returnScoreRating().toUpperCase());
+			scoreBar.text += ' // Rank: ' + Std.string(Timings.returnScoreRating().toUpperCase());
+		}
 
 		scoreBar.x = ((FlxG.width / 2) - (scoreBar.width / 2));
+	}
+
+	public function beatHit()
+	{
+		if (!Init.gameSettings.get('Reduced Movements')[0])
+		{
+			iconP1.setGraphicSize(Std.int(iconP1.width + 45));
+			iconP2.setGraphicSize(Std.int(iconP2.width + 45));
+
+			iconP1.updateHitbox();
+			iconP2.updateHitbox();
+		}
+		//
 	}
 }

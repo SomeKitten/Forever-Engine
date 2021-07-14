@@ -116,9 +116,8 @@ class PlayState extends MusicBeatState
 	var iconRPC:String = "";
 	var songLength:Float = 0;
 
-	public var stageBuild:Stage;
-
-	public var uiHUD:ClassHUD;
+	private var stageBuild:Stage;
+	private var uiHUD:ClassHUD;
 
 	public static var daPixelZoom:Float = 6;
 	public static var isPixel:Bool = false;
@@ -295,7 +294,7 @@ class PlayState extends MusicBeatState
 		for (i in 0...2)
 			generateStaticArrows(i);
 
-		var uiHUD:ClassHUD = new ClassHUD();
+		uiHUD = new ClassHUD();
 		add(uiHUD);
 		uiHUD.cameras = [camHUD];
 		//
@@ -564,19 +563,7 @@ class PlayState extends MusicBeatState
 				}
 
 				// animations stuffs
-				// alright so we determine which animation needs to play
-				var stringArrow:String = '';
-				var altString:String = '';
-				if (daNote.noteAlt > 0)
-					altString = '-alt';
-
-				stringArrow = 'sing' + UIBabyArrow.getArrowFromNumber(daNote.noteData).toUpperCase() + altString;
-				if (daNote.noteString != "")
-					stringArrow = daNote.noteString;
-
-				char.playAnim(stringArrow, true);
-
-				char.holdTimer = 0;
+				characterPlayAnimation(daNote, char);
 				//
 
 				// make sure voices are called properly
@@ -866,8 +853,7 @@ class PlayState extends MusicBeatState
 			// check if anything is pressed
 			if (pressControls.contains(true))
 			{
-				// reset holdtimer bitch
-				character.holdTimer = 0;
+				// reset possible notes
 				var possibleNoteList:Array<Note> = [];
 				var pressedNotes:Array<Note> = [];
 
@@ -1233,17 +1219,7 @@ class PlayState extends MusicBeatState
 				Timings.updateAccuracy(0);
 			}
 
-			var stringArrow:String = '';
-			var altString:String = '';
-			if (coolNote.noteAlt > 0)
-				altString = '-alt';
-
-			stringArrow = 'sing' + UIBabyArrow.getArrowFromNumber(coolNote.noteData).toUpperCase() + altString;
-			if (coolNote.noteString != "")
-				stringArrow = coolNote.noteString;
-
-			character.playAnim(stringArrow);
-
+			characterPlayAnimation(coolNote, character);
 			characterStrums.members[coolNote.noteData].playAnim('confirm', true);
 
 			if (!coolNote.isSustainNote)
@@ -1269,6 +1245,31 @@ class PlayState extends MusicBeatState
 			decreaseCombo();
 			//
 		}
+	}
+
+	function characterPlayAnimation(coolNote:Note, character:Character)
+	{
+		// alright so we determine which animation needs to play
+		// get alt strings and stuffs
+		var stringArrow:String = '';
+		var altString:String = '';
+
+		// I tried doing xor and it didnt work lollll
+		if (coolNote.noteAlt > 0)
+			altString = '-alt';
+		if ((SONG.notes[Math.floor(curStep / 16)] != null) && (SONG.notes[Math.floor(curStep / 16)].altAnim))
+		{
+			if (altString != '-alt')
+				altString = '-alt';
+			else
+				altString = '';
+		}
+
+		stringArrow = 'sing' + UIBabyArrow.getArrowFromNumber(coolNote.noteData).toUpperCase() + altString;
+		if (coolNote.noteString != "")
+			stringArrow = coolNote.noteString;
+
+		character.playAnim(stringArrow);
 	}
 
 	//
@@ -1433,11 +1434,13 @@ class PlayState extends MusicBeatState
 				notes.sort(FlxSort.byY, FlxSort.DESCENDING);
 		}*/
 
-		if (camZooming && FlxG.camera.zoom < 1.35 && curBeat % 4 == 0)
+		if ((camZooming && FlxG.camera.zoom < 1.35 && curBeat % 4 == 0) && (!Init.gameSettings.get('Reduced Movements')[0]))
 		{
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.05;
 		}
+
+		uiHUD.beatHit();
 
 		if (curBeat % gfSpeed == 0)
 			gf.dance();

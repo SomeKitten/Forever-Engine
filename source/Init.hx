@@ -17,8 +17,8 @@ class Init extends FlxState
 	// GLOBAL VALUES (FOR SAVING)
 	public static var gameSettings:Map<String, Dynamic> = [
 		'Downscroll' => [false, 0], 'Auto Pause' => [true, 1], 'FPS Counter' => [true, 2], 'Memory Counter' => [true, 3], 'Debug Info' => [false, 4],
-		"Disable Flashing" => [false, 5], "Deuteranopia" => [false, 6], "Protanopia" => [false, 7], "Tritanopia" => [false, 8],
-		"No camera note movement" => [false, 9],
+		'Reduced Movements' => [false, 5], 'Display Accuracy' => [true, 10], "Deuteranopia" => [false, 6], "Protanopia" => [false, 7],
+		"Tritanopia" => [false, 8], 'No camera note movement' => [false, 9],
 	];
 
 	public static var gameControls:Map<String, Dynamic> = [

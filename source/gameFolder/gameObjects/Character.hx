@@ -568,19 +568,15 @@ class Character extends FNFSprite
 		if (curCharacter == 'gf')
 		{
 			if (AnimName == 'singLEFT')
-			{
 				danced = true;
-			}
 			else if (AnimName == 'singRIGHT')
-			{
 				danced = false;
-			}
 
 			if (AnimName == 'singUP' || AnimName == 'singDOWN')
-			{
 				danced = !danced;
-			}
 		}
+
+		holdTimer = 0;
 	}
 
 	public function simplifyCharacter():String
