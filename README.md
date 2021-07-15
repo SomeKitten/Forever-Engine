@@ -55,7 +55,7 @@ Current Features:
 CREDITS:
 ----------------------------------------------
 
-[Yoshubs](https://github.com/Yoshubs) - she fucking sucks what a fucking idiot holy shit imagine being yoshubs (also made the engine lmao)
+[Yoshubs](https://github.com/Yoshubs) - she fucking sucks what a fucking idiot holy shit imagine being shubs (also made the engine lmao)
 
 [Pixloen](https://github.com/PixlJacket) - Assets, general Rhythm game expertise, revisions, inspiration, being a perfect human being
 
