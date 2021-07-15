@@ -1,4 +1,4 @@
-# FunkinForever
+# [Funkin Forever Engine](https://github.com/Yoshubs/FunkinForever)
 An open-source [Friday Night Funkin'](https://www.newgrounds.com/portal/view/770371) mod engine
 ----------------------------------------------
 Funkin' Forever, or Forever Engine is an open source modification of the Friday Night Funkin' engine. The engine is still unfinished, but it's getting there. Within the span of a week, if all goes well, it should be perfectly fine to use, as long as I don't forget to fix FNF songs themselves, aside from that, with the exception of custom controls, the engine is completely useable.
@@ -54,6 +54,8 @@ Current Features:
 
 CREDITS:
 ----------------------------------------------
+
+[Yoshubs](https://github.com/Yoshubs) - she fucking sucks what a fucking idiot holy shit imagine being yoshubs (also made the engine lmao)
 
 [Pixloen](https://github.com/PixlJacket) - Assets, general Rhythm game expertise, revisions, inspiration, being a perfect human being
 
