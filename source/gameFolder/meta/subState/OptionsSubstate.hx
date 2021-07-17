@@ -16,11 +16,11 @@ using StringTools;
 class OptionsSubstate extends MusicBeatSubState
 {
 	private var curSelection = 0;
-	var totalSize = Lambda.count(Init.gameControls);
+	private var totalSize = Lambda.count(Init.gameControls);
 	private var submenuGroup:FlxTypedGroup<FlxBasic>;
 	private var submenuoffsetGroup:FlxTypedGroup<FlxBasic>;
 
-	var offsetTemp:Float = Init.gameSettings['Offset'][1];
+	private var offsetTemp:Float;
 
 	// the controls class thingy
 	override public function create():Void
@@ -60,6 +60,7 @@ class OptionsSubstate extends MusicBeatSubState
 		submenuGroup.add(submenuText2);
 
 		// submenuoffset group
+		// this code by codist
 		var submenuOffsetText = new Alphabet(0, 0, "Left or Right to edit.", true, false);
 		submenuOffsetText.screenCenter();
 		submenuOffsetText.y -= 144;
@@ -70,19 +71,24 @@ class OptionsSubstate extends MusicBeatSubState
 		submenuOffsetText2.y -= 80;
 		submenuoffsetGroup.add(submenuOffsetText2);
 
-		var submenuOffsetText3 = new Alphabet(0, 0, "Escape to Save", true, false);
+		var submenuOffsetText3 = new Alphabet(0, 0, "Escape to Cancel", true, false);
 		submenuOffsetText3.screenCenter();
 		submenuOffsetText3.y += 102;
 		submenuoffsetGroup.add(submenuOffsetText3);
 
-		var submenuOffsetValue:FlxText = new FlxText(0, 0, "< 0ms >", 50, false);
+		var submenuOffsetText4 = new Alphabet(0, 0, "Enter to Save", true, false);
+		submenuOffsetText4.screenCenter();
+		submenuOffsetText4.y += 164;
+		submenuoffsetGroup.add(submenuOffsetText4);
+
+		var submenuOffsetValue:FlxText = new FlxText(0, 0, 0, "< 0ms >", 50, false);
 		submenuOffsetValue.screenCenter();
 		submenuOffsetValue.borderColor = FlxColor.BLACK;
 		submenuOffsetValue.borderSize = 5;
 		submenuOffsetValue.borderStyle = FlxTextBorderStyle.OUTLINE;
-		submenuOffsetValue.autoSize = false;
-		submenuOffsetValue.alignment = FlxTextAlign.CENTER;
 		submenuoffsetGroup.add(submenuOffsetValue);
+
+		// alright back to my code :ebic:
 
 		add(submenu);
 		add(submenuGroup);
@@ -310,6 +316,8 @@ class OptionsSubstate extends MusicBeatSubState
 
 	private function openSubmenu()
 	{
+		offsetTemp = Init.gameSettings['Offset'][1];
+
 		submenu.visible = true;
 		if (curSelection != keyOptions.length - 1)
 			submenuGroup.visible = true;
@@ -329,6 +337,7 @@ class OptionsSubstate extends MusicBeatSubState
 
 	private function subMenuControl()
 	{
+		// I dont really like hardcoded shit so I'm probably gonna change this lmao
 		if (curSelection != keyOptions.length - 1)
 		{
 			// be able to close the submenu
@@ -375,11 +384,13 @@ class OptionsSubstate extends MusicBeatSubState
 		}
 		else
 		{
-			if (FlxG.keys.justPressed.ESCAPE)
+			if (FlxG.keys.justPressed.ENTER)
 			{
 				Init.gameSettings['Offset'][1] = offsetTemp;
 				closeSubmenu();
 			}
+			else if (FlxG.keys.justPressed.ESCAPE)
+				closeSubmenu();
 
 			var move = 0;
 			if (FlxG.keys.pressed.LEFT)
@@ -391,7 +402,8 @@ class OptionsSubstate extends MusicBeatSubState
 
 			submenuoffsetGroup.forEachOfType(FlxText, str ->
 			{
-				str.text = "<" + Std.string(Math.floor(offsetTemp * 10) / 10) + " >";
+				str.text = "< " + Std.string(Math.floor(offsetTemp * 10) / 10) + " >";
+				str.screenCenter(X);
 			});
 		}
 	}

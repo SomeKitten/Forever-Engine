@@ -32,7 +32,6 @@ class Character extends FNFSprite
 		this.isPlayer = isPlayer;
 
 		var tex:FlxAtlasFrames;
-		var flipOffsets = false;
 		antialiasing = true;
 
 		switch (curCharacter)
@@ -575,8 +574,6 @@ class Character extends FNFSprite
 			if (AnimName == 'singUP' || AnimName == 'singDOWN')
 				danced = !danced;
 		}
-
-		holdTimer = 0;
 	}
 
 	public function simplifyCharacter():String

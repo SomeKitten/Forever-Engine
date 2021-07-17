@@ -348,6 +348,9 @@ class AlphaCharacter extends FlxSprite
 			case "!":
 				animation.addByPrefix(letter, 'exclamation point', 24);
 				animation.play(letter);
+			default:
+				animation.addByPrefix(letter, letter, 24);
+				animation.play(letter);
 		}
 
 		updateHitbox();

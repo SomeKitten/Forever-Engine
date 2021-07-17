@@ -30,6 +30,10 @@ class UIBabyArrow extends FlxSprite
 	public var initialX:Int;
 	public var initialY:Int;
 
+	public var xTo:Float;
+	public var yTo:Float;
+	public var angleTo:Float;
+
 	public function new(x:Float, y:Float, ?babyArrowType:Int = 0)
 	{
 		// this extension is just going to rely a lot on preexisting code as I wanna try to write an extension before I do options and stuff
@@ -101,9 +105,9 @@ class UIBabyArrow extends FlxSprite
 		}
 		else
 		{
-			addOffset('static', -75, -75);
-			addOffset('pressed', -75, -75);
-			addOffset('confirm', -75, -75);
+			addOffset('static', -67, -75);
+			addOffset('pressed', -67, -75);
+			addOffset('confirm', -67, -75);
 		}
 
 		updateHitbox();

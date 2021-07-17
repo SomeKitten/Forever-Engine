@@ -41,8 +41,6 @@ class PlayState extends MusicBeatState
 	public static var storyPlaylist:Array<String> = [];
 	public static var storyDifficulty:Int = 2;
 
-	public var downscroll:Bool = true;
-
 	public static var songMusic:FlxSound;
 	public static var vocals:FlxSound;
 
@@ -76,7 +74,9 @@ class PlayState extends MusicBeatState
 
 	// strums
 	private var strumLine:FlxTypedGroup<FlxSprite>;
-	private var strumLineNotes:FlxTypedGroup<UIBabyArrow>;
+
+	public static var strumLineNotes:FlxTypedGroup<UIBabyArrow>;
+
 	private var boyfriendStrums:FlxTypedGroup<UIBabyArrow>;
 	private var dadStrums:FlxTypedGroup<UIBabyArrow>;
 
@@ -99,8 +99,7 @@ class PlayState extends MusicBeatState
 	var lastReportedPlayheadPosition:Int = 0;
 	var songTime:Float = 0;
 
-	private var camHUD:FlxCamera;
-
+	public static var camHUD:FlxCamera;
 	public static var camGame:FlxCamera;
 
 	private var camDisplaceX:Float = 0;
@@ -108,7 +107,7 @@ class PlayState extends MusicBeatState
 
 	public static var defaultCamZoom:Float = 1.05;
 
-	private var camZooming:Bool = true;
+	public static var forceZoom:Array<Float>;
 
 	public static var songScore:Int = 0;
 
@@ -135,7 +134,9 @@ class PlayState extends MusicBeatState
 		combo = 0;
 		health = 1;
 		misses = 0;
+
 		defaultCamZoom = 1.05;
+		forceZoom = [0, 0, 0, 0];
 
 		Timings.callAccuracy();
 
@@ -151,6 +152,7 @@ class PlayState extends MusicBeatState
 
 		// create the game camera
 		camGame = new FlxCamera();
+
 		// create the hud camera (separate so the hud stays on screen)
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
@@ -448,10 +450,25 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		if (camZooming)
+		var easeLerp = 0.95;
+		// camera stuffs
+		FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom + forceZoom[0], FlxG.camera.zoom, easeLerp);
+		camHUD.zoom = FlxMath.lerp(1 + forceZoom[1], camHUD.zoom, easeLerp);
+
+		// not even forcezoom anymore but still
+		FlxG.camera.angle = FlxMath.lerp(0 + forceZoom[2], FlxG.camera.angle, easeLerp);
+		camHUD.angle = FlxMath.lerp(0 + forceZoom[3], camHUD.angle, easeLerp);
+
+		if ((strumLineNotes.members.length > 0) && (!startingSong))
 		{
-			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, 0.95);
-			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, 0.95);
+			// fuckin uh strumline note stuffs
+			for (i in 0...strumLineNotes.members.length)
+			{
+				strumLineNotes.members[i].x = FlxMath.lerp(strumLineNotes.members[i].xTo, strumLineNotes.members[i].x, easeLerp);
+				strumLineNotes.members[i].y = FlxMath.lerp(strumLineNotes.members[i].yTo, strumLineNotes.members[i].y, easeLerp);
+
+				strumLineNotes.members[i].angle = FlxMath.lerp(strumLineNotes.members[i].angleTo, strumLineNotes.members[i].angle, easeLerp);
+			}
 		}
 
 		if (health <= 0 && startedCountdown)
@@ -505,18 +522,18 @@ class PlayState extends MusicBeatState
 			charCallType = 1;
 
 		// uh if condition from the original game
-		// I have no idea what I have done
 
-		// im very sorry for this if condition I made it worse lmao
-		///*
+		// I have no idea what I have done
 		var downscrollMultiplier = 1;
 		if (Init.gameSettings.get('Downscroll')[0])
 			downscrollMultiplier = -1;
 
+		// im very sorry for this if condition I made it worse lmao
+		///*
 		if (daNote.isSustainNote
 			&& (((daNote.y + daNote.offset.y <= (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y + Note.swagWidth / 2))
 				&& !Init.gameSettings.get('Downscroll')[0])
-				|| ((((daNote.y - daNote.offset.y) + daNote.height * 2) >= (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
+				|| (((daNote.y - (daNote.offset.y * daNote.scale.y) + daNote.height) >= (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
 					+ Note.swagWidth / 2))
 					&& Init.gameSettings.get('Downscroll')[0]))
 			&& (autoplay || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
@@ -599,6 +616,8 @@ class PlayState extends MusicBeatState
 						Timings.updateAccuracy(0);
 					}
 				}
+
+				daNote.callMods();
 				daNote.kill();
 				notes.remove(daNote, true);
 				daNote.destroy();
@@ -794,7 +813,7 @@ class PlayState extends MusicBeatState
 
 				// also set note rotation
 				if (daNote.isSustainNote == false)
-					daNote.angle = strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].angle;
+					daNote.angle = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].angle;
 
 				// hell breaks loose here, we're using nested scripts!
 				// get the note lane and run the corresponding script
@@ -1224,6 +1243,7 @@ class PlayState extends MusicBeatState
 
 			if (!coolNote.isSustainNote)
 			{
+				coolNote.callMods();
 				coolNote.kill();
 				notes.remove(coolNote, true);
 				coolNote.destroy();
@@ -1254,10 +1274,13 @@ class PlayState extends MusicBeatState
 		var stringArrow:String = '';
 		var altString:String = '';
 
+		var baseString = 'sing' + UIBabyArrow.getArrowFromNumber(coolNote.noteData).toUpperCase();
+
 		// I tried doing xor and it didnt work lollll
 		if (coolNote.noteAlt > 0)
 			altString = '-alt';
-		if ((SONG.notes[Math.floor(curStep / 16)] != null) && (SONG.notes[Math.floor(curStep / 16)].altAnim))
+		if (((SONG.notes[Math.floor(curStep / 16)] != null) && (SONG.notes[Math.floor(curStep / 16)].altAnim))
+			&& (character.animOffsets.exists(baseString + '-alt')))
 		{
 			if (altString != '-alt')
 				altString = '-alt';
@@ -1265,11 +1288,12 @@ class PlayState extends MusicBeatState
 				altString = '';
 		}
 
-		stringArrow = 'sing' + UIBabyArrow.getArrowFromNumber(coolNote.noteData).toUpperCase() + altString;
+		stringArrow = baseString + altString;
 		if (coolNote.noteString != "")
 			stringArrow = coolNote.noteString;
 
 		character.playAnim(stringArrow);
+		character.holdTimer = 0;
 	}
 
 	//
@@ -1372,6 +1396,10 @@ class PlayState extends MusicBeatState
 			babyArrow.initialX = Math.floor(babyArrow.x);
 			babyArrow.initialY = Math.floor(babyArrow.y);
 
+			babyArrow.xTo = babyArrow.initialX;
+			babyArrow.yTo = babyArrow.initialY;
+			babyArrow.angleTo = 0;
+
 			babyArrow.y -= 10;
 			babyArrow.alpha = 0;
 			FlxTween.tween(babyArrow, {y: babyArrow.initialY, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
@@ -1434,7 +1462,7 @@ class PlayState extends MusicBeatState
 				notes.sort(FlxSort.byY, FlxSort.DESCENDING);
 		}*/
 
-		if ((camZooming && FlxG.camera.zoom < 1.35 && curBeat % 4 == 0) && (!Init.gameSettings.get('Reduced Movements')[0]))
+		if ((FlxG.camera.zoom < 1.35 && curBeat % 4 == 0) && (!Init.gameSettings.get('Reduced Movements')[0]))
 		{
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.05;
@@ -1663,8 +1691,7 @@ class PlayState extends MusicBeatState
 
 	public function startCountdown():Void
 	{
-		Conductor.songPosition = 0;
-		Conductor.songPosition -= Conductor.crochet * 5;
+		Conductor.songPosition = -(Conductor.crochet * 5);
 
 		swagCounter = 0;
 

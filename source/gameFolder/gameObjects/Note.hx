@@ -1,8 +1,10 @@
 package gameFolder.gameObjects;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import gameFolder.gameObjects.userInterface.UIBabyArrow;
 import gameFolder.meta.*;
@@ -37,12 +39,24 @@ class Note extends FNFSprite
 	public var rawNoteData:Int;
 
 	public static var swagWidth:Float = 160 * 0.7;
-	public static var PURP_NOTE:Int = 0;
-	public static var GREEN_NOTE:Int = 2;
-	public static var BLUE_NOTE:Int = 1;
-	public static var RED_NOTE:Int = 3;
 
-	public function new(strumTime:Float, noteData:Int, noteAlt:Float, noteType:Float, noteString:String, ?prevNote:Note, ?sustainNote:Bool = false)
+	// people really gon go 'oh she uses a lot of maps' of course I do lmao I like loading info like this so I only have to set it up once
+	public var foreverMods:Map<String, Array<Dynamic>> = [
+		/*  here we'll be setting some strings and stuff yknow cus I like that a lot honestly???
+			the idea behind this is you'll be able to easily add stuff here and the chart editor will work with it
+			and then you can set what the stuff here does when the notes are actually hit
+			which will be a function
+		 */
+		'type' => [0],
+		'zoom' => [false, 0],
+		'camZoom' => [false, 0],
+		'angle' => [false, 0],
+		'camAngle' => [false, 0],
+		// which one (of 8, 0...7), to what x, to what y, angle of the arrow
+		'moveStrumarrow' => [false, 0, 0, 0, 0]
+	];
+
+	public function new(strumTime:Float, noteData:Int, noteAlt:Float, ?prevNote:Note, ?sustainNote:Bool = false)
 	{
 		super(x, y);
 
@@ -53,16 +67,47 @@ class Note extends FNFSprite
 		isSustainNote = sustainNote;
 
 		x += 50;
-		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
 		this.strumTime = strumTime;
-
 		this.noteData = noteData;
-
 		this.noteAlt = noteAlt;
-		this.noteType = noteType;
-		this.noteString = noteString;
 
+		decideNote();
+	}
+
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		if (mustPress)
+		{
+			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset)
+				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset))
+				canBeHit = true;
+			else
+				canBeHit = false;
+
+			if (strumTime < Conductor.songPosition - (Conductor.safeZoneOffset * 1.5) && !wasGoodHit)
+				tooLate = true;
+		}
+		else // make sure the note can't be hit if it's the dad's I guess
+			canBeHit = false;
+
+		if (tooLate)
+		{
+			if (alpha > 0.3)
+				alpha -= 0.05;
+		}
+
+		if (foreverMods.get('type')[0] != noteType)
+		{
+			noteType = foreverMods.get('type')[0];
+			decideNote();
+		}
+	}
+
+	private function decideNote()
+	{
 		// frames originally go here
 		switch (noteType)
 		{
@@ -89,6 +134,7 @@ class Note extends FNFSprite
 					animation.add('bluehold', [1]);
 				}
 
+				antialiasing = false;
 				setGraphicSize(Std.int(width * PlayState.daPixelZoom));
 				updateHitbox();
 
@@ -139,28 +185,47 @@ class Note extends FNFSprite
 		}
 	}
 
-	override function update(elapsed:Float)
+	public function callMods()
 	{
-		super.update(elapsed);
-
-		if (mustPress)
+		// call upon the note end functions
+		trace('call upon mods');
+		for (mods in foreverMods.keys())
 		{
-			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset)
-				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset))
-				canBeHit = true;
-			else
-				canBeHit = false;
+			if (foreverMods.get(mods)[0])
+			{
+				switch (mods)
+				{
+					case 'zoom':
+						var amount = foreverMods.get(mods)[1];
+						if (amount != 0)
+							PlayState.forceZoom[0] += amount;
+						trace('$mods $amount');
+					case 'camZoom':
+						var amount = foreverMods.get(mods)[1];
+						if (amount != 0)
+							PlayState.forceZoom[1] += amount;
+						trace('$mods $amount');
+					case 'angle':
+						var amount = foreverMods.get(mods)[1];
+						if (amount != 0)
+							PlayState.forceZoom[2] += amount;
+						trace('$mods $amount');
+					case 'camAngle':
+						var amount = foreverMods.get(mods)[1];
+						if (amount != 0)
+							PlayState.forceZoom[3] += amount;
+						trace('$mods $amount');
 
-			if (strumTime < Conductor.songPosition - (Conductor.safeZoneOffset * 1.5) && !wasGoodHit)
-				tooLate = true;
+					// these get real repetitive so heres a divider
+					case 'moveStrumarrow':
+						PlayState.strumLineNotes.members[foreverMods.get(mods)[1]].xTo += foreverMods.get(mods)[2];
+						PlayState.strumLineNotes.members[foreverMods.get(mods)[1]].yTo += foreverMods.get(mods)[3];
+						PlayState.strumLineNotes.members[foreverMods.get(mods)[1]].angleTo += foreverMods.get(mods)[4];
+				}
+				//
+			}
 		}
-		else // make sure the note can't be hit if it's the dad's I guess
-			canBeHit = false;
 
-		if (tooLate)
-		{
-			if (alpha > 0.3)
-				alpha -= 0.05;
-		}
+		// finish actions!
 	}
 }
