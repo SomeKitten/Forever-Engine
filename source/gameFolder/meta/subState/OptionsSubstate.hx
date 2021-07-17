@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.effects.FlxFlicker;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
+import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import gameFolder.meta.MusicBeat.MusicBeatSubState;
 import gameFolder.meta.data.font.Alphabet;
@@ -17,6 +18,9 @@ class OptionsSubstate extends MusicBeatSubState
 	private var curSelection = 0;
 	var totalSize = Lambda.count(Init.gameControls);
 	private var submenuGroup:FlxTypedGroup<FlxBasic>;
+	private var submenuoffsetGroup:FlxTypedGroup<FlxBasic>;
+
+	var offsetTemp:Float = Init.gameSettings['Offset'][1];
 
 	// the controls class thingy
 	override public function create():Void
@@ -39,11 +43,12 @@ class OptionsSubstate extends MusicBeatSubState
 		updateSelection();
 
 		submenuGroup = new FlxTypedGroup<FlxBasic>();
+		submenuoffsetGroup = new FlxTypedGroup<FlxBasic>();
 
 		submenu = new FlxSprite(0, 0).makeGraphic(FlxG.width - 200, FlxG.height - 200, FlxColor.fromRGB(250, 253, 109));
 		submenu.screenCenter();
-		submenuGroup.add(submenu);
 
+		// submenu group
 		var submenuText = new Alphabet(0, 0, "Press any key to rebind", true, false);
 		submenuText.screenCenter();
 		submenuText.y -= 32;
@@ -54,8 +59,37 @@ class OptionsSubstate extends MusicBeatSubState
 		submenuText2.y += 32;
 		submenuGroup.add(submenuText2);
 
+		// submenuoffset group
+		var submenuOffsetText = new Alphabet(0, 0, "Left or Right to edit.", true, false);
+		submenuOffsetText.screenCenter();
+		submenuOffsetText.y -= 144;
+		submenuoffsetGroup.add(submenuOffsetText);
+
+		var submenuOffsetText2 = new Alphabet(0, 0, "Negative is Late", true, false);
+		submenuOffsetText2.screenCenter();
+		submenuOffsetText2.y -= 80;
+		submenuoffsetGroup.add(submenuOffsetText2);
+
+		var submenuOffsetText3 = new Alphabet(0, 0, "Escape to Save", true, false);
+		submenuOffsetText3.screenCenter();
+		submenuOffsetText3.y += 102;
+		submenuoffsetGroup.add(submenuOffsetText3);
+
+		var submenuOffsetValue:FlxText = new FlxText(0, 0, "< 0ms >", 50, false);
+		submenuOffsetValue.screenCenter();
+		submenuOffsetValue.borderColor = FlxColor.BLACK;
+		submenuOffsetValue.borderSize = 5;
+		submenuOffsetValue.borderStyle = FlxTextBorderStyle.OUTLINE;
+		submenuOffsetValue.autoSize = false;
+		submenuOffsetValue.alignment = FlxTextAlign.CENTER;
+		submenuoffsetGroup.add(submenuOffsetValue);
+
+		add(submenu);
 		add(submenuGroup);
+		add(submenuoffsetGroup);
+		submenu.visible = false;
 		submenuGroup.visible = false;
+		submenuoffsetGroup.visible = false;
 	}
 
 	private var keyOptions:FlxTypedGroup<Alphabet>;
@@ -70,6 +104,8 @@ class OptionsSubstate extends MusicBeatSubState
 		for (controlString in Init.gameControls.keys())
 			arrayTemp[Init.gameControls.get(controlString)[1]] = controlString;
 
+		arrayTemp.push("EDIT OFFSET"); // append edit offset to the end of the array
+
 		for (i in 0...arrayTemp.length)
 		{
 			// generate key options lol
@@ -80,6 +116,7 @@ class OptionsSubstate extends MusicBeatSubState
 			optionsText.disableX = true;
 			optionsText.isMenuItem = true;
 			optionsText.alpha = 0.6;
+
 			keyOptions.add(optionsText);
 		}
 
@@ -98,7 +135,10 @@ class OptionsSubstate extends MusicBeatSubState
 		{
 			for (j in 0...2)
 			{
-				var keyString = getStringKey(Init.gameControls.get(arrayTemp[i])[0][j]);
+				var keyString = "";
+
+				if (arrayTemp[i] != "EDIT OFFSET")
+					keyString = getStringKey(Init.gameControls.get(arrayTemp[i])[0][j]);
 
 				var secondaryText:Alphabet = new Alphabet(0, 0, keyString, false, false);
 				secondaryText.screenCenter();
@@ -251,7 +291,8 @@ class OptionsSubstate extends MusicBeatSubState
 	override public function close()
 	{
 		//
-		Init.saveControls();
+		Init.saveControls(); // for controls
+		Init.saveSettings(); // for offset
 		super.close();
 	}
 
@@ -269,57 +310,89 @@ class OptionsSubstate extends MusicBeatSubState
 
 	private function openSubmenu()
 	{
-		submenuGroup.visible = true;
+		submenu.visible = true;
+		if (curSelection != keyOptions.length - 1)
+			submenuGroup.visible = true;
+		else
+			submenuoffsetGroup.visible = true;
 	}
 
 	private function closeSubmenu()
 	{
 		submenuOpen = false;
+
+		submenu.visible = false;
+
 		submenuGroup.visible = false;
+		submenuoffsetGroup.visible = false;
 	}
 
 	private function subMenuControl()
 	{
-		// be able to close the submenu
-		if (FlxG.keys.justPressed.ESCAPE)
-			closeSubmenu();
-		else if (FlxG.keys.justPressed.ANY)
+		if (curSelection != keyOptions.length - 1)
 		{
-			// loop through existing keys and see if there are any alike
-			var checkKey = FlxG.keys.getIsDown()[0].ID;
-
-			// check if any keys use the same key lol
-			for (i in 0...otherKeys.members.length)
+			// be able to close the submenu
+			if (FlxG.keys.justPressed.ESCAPE)
+				closeSubmenu();
+			else if (FlxG.keys.justPressed.ANY)
 			{
-				///*
-				if (otherKeys.members[i].text == checkKey.toString())
+				// loop through existing keys and see if there are any alike
+				var checkKey = FlxG.keys.getIsDown()[0].ID;
+
+				// check if any keys use the same key lol
+				for (i in 0...otherKeys.members.length)
 				{
-					// switch them I guess???
-					var oldKey = Init.gameControls.get(keyOptions.members[curSelection].text)[0][curHorizontalSelection];
-					Init.gameControls.get(keyOptions.members[otherKeys.members[i].controlGroupID].text)[0][otherKeys.members[i].extensionJ] = oldKey;
-					otherKeys.members[i].text = getStringKey(oldKey);
+					///*
+					if (otherKeys.members[i].text == checkKey.toString())
+					{
+						// switch them I guess???
+						var oldKey = Init.gameControls.get(keyOptions.members[curSelection].text)[0][curHorizontalSelection];
+						Init.gameControls.get(keyOptions.members[otherKeys.members[i].controlGroupID].text)[0][otherKeys.members[i].extensionJ] = oldKey;
+						otherKeys.members[i].text = getStringKey(oldKey);
+					}
+					//*/
 				}
-				//*/
+
+				// now check if its the key we want to change
+				Init.gameControls.get(keyOptions.members[curSelection].text)[0][curHorizontalSelection] = checkKey;
+				otherKeys.members[(curSelection * 2) + curHorizontalSelection].text = getStringKey(checkKey);
+
+				// refresh keys
+				controls.setKeyboardScheme(None, false);
+
+				// update all keys on screen to have the right values
+				// inefficient so I rewrote it lolllll
+				/*for (i in 0...otherKeys.members.length)
+					{
+						var stringKey = getStringKey(Init.gameControls.get(keyOptions.members[otherKeys.members[i].controlGroupID].text)[0][otherKeys.members[i].extensionJ]);
+						trace('running $i times, options menu');
+				}*/
+
+				// close the submenu
+				closeSubmenu();
+			}
+			//
+		}
+		else
+		{
+			if (FlxG.keys.justPressed.ESCAPE)
+			{
+				Init.gameSettings['Offset'][1] = offsetTemp;
+				closeSubmenu();
 			}
 
-			// now check if its the key we want to change
-			Init.gameControls.get(keyOptions.members[curSelection].text)[0][curHorizontalSelection] = checkKey;
-			otherKeys.members[(curSelection * 2) + curHorizontalSelection].text = getStringKey(checkKey);
+			var move = 0;
+			if (FlxG.keys.pressed.LEFT)
+				move = -1;
+			else if (FlxG.keys.pressed.RIGHT)
+				move = 1;
 
-			// refresh keys
-			controls.setKeyboardScheme(None, false);
+			offsetTemp += move * 0.1;
 
-			// update all keys on screen to have the right values
-			// inefficient so I rewrote it lolllll
-			/*for (i in 0...otherKeys.members.length)
-				{
-					var stringKey = getStringKey(Init.gameControls.get(keyOptions.members[otherKeys.members[i].controlGroupID].text)[0][otherKeys.members[i].extensionJ]);
-					trace('running $i times, options menu');
-			}*/
-
-			// close the submenu
-			closeSubmenu();
+			submenuoffsetGroup.forEachOfType(FlxText, str ->
+			{
+				str.text = "<" + Std.string(Math.floor(offsetTemp * 10) / 10) + " >";
+			});
 		}
-		//
 	}
 }
