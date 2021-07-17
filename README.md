@@ -59,7 +59,7 @@ CREDITS:
 
 [Pixloen](https://github.com/PixlJacket) - Assets, general Rhythm game expertise, revisions, inspiration, being a perfect human being
 
-[ImCodist](https://github.com/ImCodist) - Miscelaneous Assets, creator of the obsidian soul (real, stole my iron in minecraft (fuck you)
+[ImCodist](https://github.com/ImCodist) - Miscelaneous Assets, Note Offsets, creator of the obsidian soul (real, stole my iron in minecraft (fuck you)
 
 [HelloSammu](https://github.com/hellosammu) - Some code enhancements, being a better programmer than me, being able to use twitter comprehensively
 
