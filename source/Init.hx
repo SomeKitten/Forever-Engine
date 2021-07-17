@@ -18,7 +18,7 @@ class Init extends FlxState
 	public static var gameSettings:Map<String, Dynamic> = [
 		'Downscroll' => [false, 0], 'Auto Pause' => [true, 1], 'FPS Counter' => [true, 2], 'Memory Counter' => [true, 3], 'Debug Info' => [false, 4],
 		'Reduced Movements' => [false, 5], 'Display Accuracy' => [true, 10], "Deuteranopia" => [false, 6], "Protanopia" => [false, 7],
-		"Tritanopia" => [false, 8], 'No camera note movement' => [false, 9],
+		"Tritanopia" => [false, 8], 'No camera note movement' => [false, 9], 'Offset' => [false, 0],
 	];
 
 	public static var gameControls:Map<String, Dynamic> = [
