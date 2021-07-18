@@ -31,7 +31,8 @@
 	<set name="BUILD_DIR" value="export" />
 	<source path="source" />
 	<assets path="assets" />
-	<assets path="mods" />
+	<!-- Fuck you codist lmao -->
+	<!--<assets path="mods" />-->
 
 	<!-- _______________________________ Libraries ______________________________ -->
 

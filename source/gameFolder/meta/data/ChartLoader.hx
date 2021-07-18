@@ -73,7 +73,9 @@ class ChartLoader
 							oldNote = null;
 
 						// create the new note
-						var swagNote:Note = new Note(daStrumTime, daNoteData, daNoteAlt, 0, "", oldNote);
+						var swagNote:Note = new Note(daStrumTime, daNoteData, daNoteAlt, oldNote);
+						if (PlayState.isPixel)
+							swagNote.foreverMods.get('type')[0] = 1;
 
 						// set the note's length (sustain note)
 						swagNote.sustainLength = songNotes[2];
@@ -89,9 +91,12 @@ class ChartLoader
 						for (susNote in 0...Math.floor(susLength))
 						{
 							oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
-							var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, daNoteAlt, 0,
-								"", oldNote, true);
+							var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, daNoteAlt,
+								oldNote, true);
+							if (PlayState.isPixel)
+								sustainNote.foreverMods.get('type')[0] = 1;
 							sustainNote.scrollFactor.set();
+
 							unspawnNotes.push(sustainNote);
 							sustainNote.mustPress = gottaHitNote;
 							/*
@@ -130,68 +135,5 @@ class ChartLoader
 	public static function flushUnspawnNotes()
 	{
 		unspawnNotes = [];
-	}
-
-	public static function generateChartingArrows(i:Array<Int>, curSection:Int, _song:SwagSong)
-	{
-		var GRID_SIZE = ChartingState.GRID_SIZE;
-		// note modifiers based on shit like idk the funny chart types
-		var daNoteInfo = i[1];
-		var daStrumTime = i[0];
-		var daSus = i[2];
-		var daNoteType = 0;
-		var daNoteAlt = 0;
-
-		if (i.length > 2)
-			daNoteAlt = i[3];
-
-		// for now I'mma just use the fnf style for a test
-		var note:Note = new Note(daStrumTime, daNoteInfo % 4, daNoteAlt, 0, "");
-
-		// if the note is on the other side, flip the base section of the note
-		var gottaHitNote:Bool = _song.notes[curSection].mustHitSection;
-		if (daNoteInfo > 3)
-			gottaHitNote = !gottaHitNote;
-
-		note.rawNoteData = daNoteInfo; // raw data
-
-		note.sustainLength = daSus;
-		note.noteType = daNoteType;
-		note.setGraphicSize(GRID_SIZE, GRID_SIZE);
-		note.updateHitbox();
-		note.x = ((FlxG.width / 2) - (GRID_SIZE * 4));
-
-		note.x += Math.floor((daNoteInfo % 4) * GRID_SIZE);
-		if (gottaHitNote)
-			note.x += (4 * GRID_SIZE);
-
-		// when the equation is painful
-		note.y = Math.floor(ChartingState.getYfromStrum((daStrumTime - ChartingState.sectionStartTime(curSection,
-			_song)) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps), curSection));
-
-		ChartingState.curRenderedNotes.add(note);
-
-		if (daSus > 0)
-		{
-			var sustainVis:FlxSprite = new FlxSprite(note.x + (GRID_SIZE / 2),
-				note.y + GRID_SIZE).makeGraphic(8, Math.floor(FlxMath.remapToRange(daSus, 0, Conductor.stepCrochet * 16, 0, GRID_SIZE * 16)));
-			note.chartSustain = sustainVis;
-			ChartingState.curRenderedSustains.add(sustainVis);
-		}
-
-		// pain
-
-		// hell in a shell even
-
-		// play mario rabbids
-
-		// unoptimised asf but for testing purposes
-		if (ChartingState.renderTestActive)
-		{
-			var newText:FlxText = new FlxText(note.x, note.y, 0, Std.string(daNoteInfo) + ', ' + Std.string(daNoteInfo % 4));
-			newText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			ChartingState.renderTextTest.add(newText);
-		}
-		//
 	}
 }
