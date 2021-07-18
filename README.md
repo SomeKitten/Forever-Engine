@@ -7,6 +7,10 @@ Funkin' Forever, or Forever Engine is an open source modification of the Friday 
 This Engine is mostly a restructure but also in a lot of ways a rewrite of the base Funkin engine that you can find [here](https://github.com/ninjamuffin99/Funkin).
 
 ----------------------------------------------
+CHANGELOG UNMARKED HOTFIX
+* Removes leftover tankman assets, the game will still load them if provided with the sprites but will no longer come with the week 7 songs or sprites, both out of respect for newgrounds and compliance of gamebanana modding rules (that I had no idea existed lmao)
+* fixed some misc stuff, like the game refusing to compile, bugs with loading note stuffs (I'm working on an improved note map system, stay tuned, you'll be able to do some powerful shit with it and it'll be really easy to edit!)
+
 CHANGELOG v0.2.1
 * custom controls lmao
 * fixed some misc bugs and glitches
