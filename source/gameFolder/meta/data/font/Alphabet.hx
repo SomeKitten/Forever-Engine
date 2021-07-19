@@ -256,12 +256,13 @@ class Alphabet extends FlxSpriteGroup
 		{
 			var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
 
-			y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48), 0.1);
+			var lerpVal = Main.framerateAdjust(0.1);
+			y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48), lerpVal);
 			// lmao
 			if (!disableX)
-				x = FlxMath.lerp(x, (targetY * 20) + 90, 0.1);
+				x = FlxMath.lerp(x, (targetY * 20) + 90, lerpVal);
 			else
-				x = FlxMath.lerp(x, xTo, 0.1);
+				x = FlxMath.lerp(x, xTo, lerpVal);
 		}
 
 		if ((text != textInit))

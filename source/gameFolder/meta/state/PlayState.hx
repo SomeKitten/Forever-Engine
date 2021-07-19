@@ -283,7 +283,8 @@ class PlayState extends MusicBeatState
 		notes.cameras = [camHUD];
 
 		// actually set the camera up
-		FlxG.camera.follow(camFollow, LOCKON, 0.02);
+		var camLerp = Main.framerateAdjust(0.02);
+		FlxG.camera.follow(camFollow, LOCKON, camLerp);
 		FlxG.camera.zoom = defaultCamZoom;
 		FlxG.camera.focusOn(camFollow.getPosition());
 
