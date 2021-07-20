@@ -53,7 +53,8 @@ class Note extends FNFSprite
 		'angle' => [false, 0],
 		'camAngle' => [false, 0],
 		// which one (of 8, 0...7), to what x, to what y, angle of the arrow
-		'moveStrumarrow' => [false, 0, 0, 0, 0]
+		'moveStrumarrow' => [false, 0, 0, 0, 0],
+		'string' => ['']
 	];
 
 	public function new(strumTime:Float, noteData:Int, noteAlt:Float, ?prevNote:Note, ?sustainNote:Bool = false)

@@ -4,6 +4,7 @@ import flixel.input.keyboard.FlxKey;
 import gameFolder.meta.InfoHud;
 import gameFolder.meta.data.Highscore;
 import gameFolder.meta.state.*;
+import gameFolder.meta.state.charting.*;
 import openfl.filters.BitmapFilter;
 import openfl.filters.ColorMatrixFilter;
 

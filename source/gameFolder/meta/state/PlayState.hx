@@ -25,7 +25,7 @@ import gameFolder.meta.*;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Song.SwagSong;
-import gameFolder.meta.state.ChartingState;
+import gameFolder.meta.state.charting.ChartingState;
 import gameFolder.meta.subState.*;
 
 using StringTools;
@@ -515,7 +515,7 @@ class PlayState extends MusicBeatState
 	//
 	//----------------------------------------------------------------
 
-	private function mainControls(daNote:Note, char:Character, autoplay:Bool, ?otherSide:Int = 0):Void
+	private function mainControls(daNote:Note, char:Character, charStrum:FlxTypedGroup<UIBabyArrow>, autoplay:Bool, ?otherSide:Int = 0):Void
 	{
 		// call character type for later I'm so sorry this is painful
 		var charCallType:Int = 0;
@@ -566,32 +566,18 @@ class PlayState extends MusicBeatState
 			{
 				// use a switch thing cus it feels right idk lol
 				// make sure the strum is played for the autoplay stuffs
-				switch (charCallType)
-				{
-					case 1:
-						boyfriendStrums.forEach(function(cStrum:UIBabyArrow)
-						{
-							strumCallsAuto(cStrum, 0, daNote);
-						});
-					default:
-						dadStrums.forEach(function(cStrum:UIBabyArrow)
-						{
-							strumCallsAuto(cStrum, 0, daNote);
-						});
-				}
-
-				// animations stuffs
-				characterPlayAnimation(daNote, char);
-				//
-
-				// make sure voices are called properly
-				if (SONG.needsVoices)
-					vocals.volume = 1;
+				/*
+					charStrum.forEach(function(cStrum:UIBabyArrow)
+					{
+						strumCallsAuto(cStrum, 0, daNote);
+					});
+				 */
 
 				// kill the note, then remove it from the array
+				var canDisplayRating = false;
 				if (charCallType == 1)
 				{
-					var canDisplayRating = true;
+					canDisplayRating = true;
 					for (noteDouble in notesPressedAutoplay)
 					{
 						if (noteDouble.noteData == daNote.noteData)
@@ -604,24 +590,9 @@ class PlayState extends MusicBeatState
 						//
 					}
 					notesPressedAutoplay.push(daNote);
-
-					if ((!daNote.isSustainNote) && (canDisplayRating))
-					{
-						increaseCombo();
-						popUpScore(Conductor.songPosition, daNote);
-						health += 0.023;
-					}
-					else if ((daNote.isSustainNote) && (canDisplayRating))
-					{
-						health += 0.004;
-						Timings.updateAccuracy(0);
-					}
 				}
 
-				daNote.callMods();
-				daNote.kill();
-				notes.remove(daNote, true);
-				daNote.destroy();
+				goodNoteHit(daNote, char, charStrum, canDisplayRating);
 			}
 			//
 		}
@@ -820,9 +791,9 @@ class PlayState extends MusicBeatState
 				// get the note lane and run the corresponding script
 				///*
 				if (daNote.mustPress)
-					mainControls(daNote, boyfriend, boyfriendAutoplay, otherSide);
+					mainControls(daNote, boyfriend, boyfriendStrums, boyfriendAutoplay, otherSide);
 				else
-					mainControls(daNote, dadOpponent, dadAutoplay); // dadOpponent autoplay is true by default and should be true unless neccessary
+					mainControls(daNote, dadOpponent, dadStrums, dadAutoplay); // dadOpponent autoplay is true by default and should be true unless neccessary
 				// */
 
 				// check where the note is and make sure it is either active or inactive
@@ -841,13 +812,16 @@ class PlayState extends MusicBeatState
 				if (((!Init.gameSettings.get('Downscroll')[0]) && (daNote.y < -daNote.height))
 					|| ((Init.gameSettings.get('Downscroll')[0]) && (daNote.y > (FlxG.height + daNote.height))))
 				{
-					if (daNote.tooLate || !daNote.wasGoodHit)
+					if ((daNote.tooLate || !daNote.wasGoodHit) && (daNote.mustPress))
 					{
-						health -= 0.0475;
+						healthCall(false);
 						vocals.volume = 0;
 
 						// I'll ask pixl if this is wrong and if he says yes I'll remove it
 						decreaseCombo();
+
+						// ambiguous name
+						Timings.updateAccuracy(0);
 					}
 
 					daNote.active = false;
@@ -961,42 +935,12 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	public var ratingTiming:String = "";
+	private var ratingTiming:String = "";
 
-	function popUpScore(strumTime:Float, coolNote:Note)
+	function popUpScore(daRatings:Map<String, Array<Dynamic>>, baseRating:String, coolNote:Note)
 	{
-		// just base game but a lil cleaner
-		var noteDiff:Float = Math.abs(strumTime - Conductor.songPosition);
-		vocals.volume = 1;
-
 		// set up the rating
 		var score:Int = 50;
-
-		// call the rating
-		// also thanks sammu :mariocool:
-
-		// call the ratings over from the timing class
-		var daRatings = Timings.daRatings;
-
-		var foundRating = false;
-		// loop through all avaliable ratings
-		var baseRating:String = "sick";
-		for (myRating in daRatings.keys())
-		{
-			if ((daRatings.get(myRating)[0] != null)
-				&& (((noteDiff > Conductor.safeZoneOffset * daRatings.get(myRating)[0])) && (!foundRating)))
-			{
-				// get the timing
-				if (strumTime < Conductor.songPosition)
-					ratingTiming = "late";
-				else
-					ratingTiming = "early";
-
-				// call the rating itself
-				baseRating = myRating;
-				foundRating = true;
-			}
-		}
 
 		// notesplashes
 		if (baseRating == "sick")
@@ -1012,7 +956,7 @@ class PlayState extends MusicBeatState
 		}
 
 		displayRating(baseRating);
-		Timings.updateAccuracy(daRatings.get(baseRating)[2]);
+		Timings.updateAccuracy(daRatings.get(baseRating)[3]);
 		score = Std.int(daRatings.get(baseRating)[1]);
 
 		songScore += score;
@@ -1226,17 +1170,48 @@ class PlayState extends MusicBeatState
 			coolNote.wasGoodHit = true;
 			vocals.volume = 1;
 
-			if ((!coolNote.isSustainNote) && (canDisplayRating))
+			if (canDisplayRating)
 			{
-				increaseCombo();
-				popUpScore(coolNote.strumTime, coolNote);
-				health += 0.023;
-			}
-			else if ((coolNote.isSustainNote) && (canDisplayRating))
-			{
-				health += 0.004;
-				// call updated accuracy stuffs
-				Timings.updateAccuracy(0);
+				// we'll need to call the rating here as it will also be used to determine health
+				var noteDiff:Float = Math.abs(coolNote.strumTime - Conductor.songPosition);
+				// also thanks sammu :mariocool:
+
+				// call the ratings over from the timing class
+				var daRatings = Timings.daRatings;
+
+				var foundRating = false;
+				// loop through all avaliable ratings
+				var baseRating:String = "sick";
+				for (myRating in daRatings.keys())
+				{
+					if ((daRatings.get(myRating)[0] != null)
+						&& (((noteDiff > Conductor.safeZoneOffset * daRatings.get(myRating)[0])) && (!foundRating)))
+					{
+						// get the timing
+						if (coolNote.strumTime < Conductor.songPosition)
+							ratingTiming = "late";
+						else
+							ratingTiming = "early";
+
+						// call the rating itself
+						baseRating = myRating;
+						foundRating = true;
+					}
+				}
+
+				if (!coolNote.isSustainNote)
+				{
+					increaseCombo();
+					popUpScore(daRatings, baseRating, coolNote);
+					// health += 0.023;
+				}
+				else if (coolNote.isSustainNote)
+				{
+					// health += 0.004;
+					// call updated accuracy stuffs
+					Timings.updateAccuracy(100);
+				}
+				healthCall(true, coolNote, daRatings.get(baseRating)[3]);
 			}
 
 			characterPlayAnimation(coolNote, character);
@@ -1253,11 +1228,29 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	function healthCall(increase:Bool, ?coolNote:Note, ?ratingMultiplier:Float = 0)
+	{
+		// health += 0.012;
+		var healthBase:Float = 0.024 * 2.5;
+
+		// self explanatory checks
+		if (increase)
+		{
+			//
+			if ((coolNote.isSustainNote) && (coolNote.animation.name.endsWith('holdend')))
+				health += healthBase;
+			else if (!coolNote.isSustainNote)
+				health += healthBase * (ratingMultiplier / 100);
+		}
+		else
+			health -= healthBase;
+	}
+
 	function missNoteCheck(direction:Int = 0, pressControls:Array<Bool>, character:Character)
 	{
 		if (pressControls[direction])
 		{
-			health -= 0.0475;
+			healthCall(false);
 			var stringDirection:String = UIBabyArrow.getArrowFromNumber(direction);
 
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
@@ -1290,10 +1283,10 @@ class PlayState extends MusicBeatState
 		}
 
 		stringArrow = baseString + altString;
-		if (coolNote.noteString != "")
+		if (coolNote.foreverMods.get('string')[0] != "")
 			stringArrow = coolNote.noteString;
 
-		character.playAnim(stringArrow);
+		character.playAnim(stringArrow, true);
 		character.holdTimer = 0;
 	}
 

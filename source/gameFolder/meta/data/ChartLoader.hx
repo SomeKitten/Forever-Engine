@@ -8,8 +8,8 @@ import flixel.util.FlxColor;
 import gameFolder.gameObjects.Note;
 import gameFolder.meta.data.Section.SwagSection;
 import gameFolder.meta.data.Song.SwagSong;
-import gameFolder.meta.state.ChartingState;
 import gameFolder.meta.state.PlayState;
+import gameFolder.meta.state.charting.ChartingState;
 
 /**
 	This is the chartloader class. it loads in charts, but also exports charts, the chart parameters are based on the type of chart, 

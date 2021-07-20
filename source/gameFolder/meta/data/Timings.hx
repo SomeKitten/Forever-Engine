@@ -9,18 +9,22 @@ class Timings
 {
 	//
 	public static var accuracy:Float;
+	public static var trueAccuracy:Float;
 	public static var judgementRates:Array<Float>;
 
 	public static var daRatings:Map<String, Array<Dynamic>>;
 	public static var scoreRating:Map<String, Int>;
 
 	public static var ratingFinal:String = "f";
+	public static var notesHit:Int = 0;
 
 	public static function callAccuracy()
 	{
 		// reset the accuracy to 0%
 		accuracy = 0.001;
+		trueAccuracy = 0;
 		judgementRates = new Array<Float>();
+		notesHit = 0;
 		ratingFinal = "f";
 	}
 
@@ -45,19 +49,10 @@ class Timings
 		// chance, score from it, id and percentage
 		daRatings = [
 			"sick" => [null, 350, 0, 100],
-			"good" => [0.15, 200, 1, 50],
-			"bad" => [0.5, 100, 2, 25],
+			"good" => [0.2, 200, 1, 60],
+			"bad" => [0.5, 100, 2, 20],
 			"shit" => [0.7, 50, 3, 5],
 		];
-
-		for (myRating in daRatings.keys())
-		{
-			// call the judgements for their funny little uh score thingy
-
-			// so basically, a judgement is the accuracy of the rating divided by the amount of notes in the chart
-			// mines would give you a sick rating if you miss them, holds give you sicks, etc
-			judgementRates[daRatings.get(myRating)[2]] = (daRatings.get(myRating)[3] / totalNotes);
-		}
 
 		// set the score ratings for later use
 		scoreRating = ["s" => 90, "a" => 80, "b" => 70, "c" => 50, "d" => 40, "e" => 20, "f" => 0,];
@@ -65,13 +60,15 @@ class Timings
 
 	public static function updateAccuracy(judgement:Int)
 	{
-		accuracy += judgementRates[judgement];
+		notesHit++;
+		accuracy += judgement;
+		trueAccuracy = (accuracy / notesHit);
 		updateScoreRating();
 	}
 
 	public static function getAccuracy()
 	{
-		return accuracy;
+		return trueAccuracy;
 	}
 
 	public static function updateScoreRating()
@@ -79,7 +76,7 @@ class Timings
 		var biggest:Int = 0;
 		for (score in scoreRating.keys())
 		{
-			if ((scoreRating.get(score) <= accuracy) && (scoreRating.get(score) >= biggest))
+			if ((scoreRating.get(score) <= trueAccuracy) && (scoreRating.get(score) >= biggest))
 			{
 				biggest = scoreRating.get(score);
 				ratingFinal = score;

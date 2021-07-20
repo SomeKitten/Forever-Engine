@@ -36,7 +36,6 @@ class OptionsMenuState extends MusicBeatState
 
 		var preferenceOptions:Array<String> = [
 			'Downscroll',
-			'Auto Pause',
 			'FPS Counter',
 			'Memory Counter',
 			'Debug Info',

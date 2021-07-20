@@ -49,7 +49,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		// small info bar, kinda like the KE watermark
 		// based on scoretxt which I will set up as well
 		var infoDisplay:String = CoolUtil.dashToSpace(PlayState.SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(PlayState.storyDifficulty)
-			+ " - FF BETA v0.2.1.1";
+			+ " - FF BETA " + Main.gameVersion;
 
 		infoBar = new FlxText(5, FlxG.height - 30, 0, infoDisplay, 20);
 		infoBar.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -130,7 +130,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		var displayAccuracy:Bool = Init.gameSettings.get('Display Accuracy')[0];
 		if (displayAccuracy)
 		{
-			scoreBar.text += ' // Accuracy: ' + Std.string(Math.floor(Timings.accuracy * 100) / 100) + '%';
+			scoreBar.text += ' // Accuracy: ' + Std.string(Math.floor(Timings.getAccuracy() * 100) / 100) + '%';
 			scoreBar.text += ' // Rank: ' + Std.string(Timings.returnScoreRating().toUpperCase());
 		}
 
