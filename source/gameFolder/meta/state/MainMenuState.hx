@@ -117,7 +117,8 @@ class MainMenuState extends MusicBeatState
 		}
 
 		// set the camera to actually follow the camera object that was created before
-		FlxG.camera.follow(camFollow, null, 0.06);
+		var camLerp = Main.framerateAdjust(0.06);
+		FlxG.camera.follow(camFollow, null, camLerp);
 
 		updateSelection();
 

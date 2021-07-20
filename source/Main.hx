@@ -59,7 +59,9 @@ class Main extends Sprite
 		That would change the game's main class to freeplay, as it is the active class at the moment.
 	 */
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
-	var framerate:Int = 120; // How many frames per second the game should run at.
+
+	public static var framerate:Int = 120; // How many frames per second the game should run at.
+
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var infoCounter:InfoHud; // initialize the heads up display that shows information before creating it.
 
@@ -77,6 +79,11 @@ class Main extends Sprite
 		super();
 
 		setupGame(); // oh right yeah actually run the game lmfao what a fucking dumbass I am
+	}
+
+	public static function framerateAdjust(input:Float)
+	{
+		return input * (120 / framerate);
 	}
 
 	private function setupGame():Void
@@ -97,6 +104,17 @@ class Main extends Sprite
 			// this just kind of sets up the camera zoom in accordance to the surface width and camera zoom.
 			// if set to negative one, it is done so automatically, which is the default.
 		}
+
+		/**
+			ok so, haxe html5 CANNOT do 120 fps. it just cannot.
+			so here i just set the framerate to 60 if its complied in html5.
+			reason why we dont just keep it because the game will act as if its 120 fps, and cause
+			note studders and shit its weird.
+		**/
+
+		#if html5
+		framerate = 60;
+		#end
 
 		// here we set up the base game
 		var gameCreate:FlxGame;

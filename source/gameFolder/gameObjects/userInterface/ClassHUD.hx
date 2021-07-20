@@ -97,8 +97,9 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 
 		updateScoreText();
 
-		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
-		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
+		var iconLerp = 0.5;
+		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, iconLerp)));
+		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, iconLerp)));
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();

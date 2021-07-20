@@ -189,7 +189,8 @@ class FreeplayState extends MusicBeatState
 		if (FlxG.sound.music.volume < 0.7)
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 
-		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.1));
+		var lerpVal = Main.framerateAdjust(0.1);
+		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, lerpVal));
 
 		if (Math.abs(lerpScore - intendedScore) <= 10)
 			lerpScore = intendedScore;
