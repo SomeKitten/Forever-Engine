@@ -16,6 +16,7 @@ CHANGELOG v0.2.1
 * fixed some misc bugs and glitches
 
   * 0.2.1.1 fixes a stupid oversight
+  * 0.2.1.2 fixes html5 and accuracy
 
 CHANGELOG v0.2.0
 * removed most week 7 stuffs because I respect newgrounds and they werent meant to be in for the release I just wanted to test
