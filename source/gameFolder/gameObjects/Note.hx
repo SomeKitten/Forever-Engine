@@ -200,22 +200,18 @@ class Note extends FNFSprite
 						var amount = foreverMods.get(mods)[1];
 						if (amount != 0)
 							PlayState.forceZoom[0] += amount;
-						trace('$mods $amount');
 					case 'camZoom':
 						var amount = foreverMods.get(mods)[1];
 						if (amount != 0)
 							PlayState.forceZoom[1] += amount;
-						trace('$mods $amount');
 					case 'angle':
 						var amount = foreverMods.get(mods)[1];
 						if (amount != 0)
 							PlayState.forceZoom[2] += amount;
-						trace('$mods $amount');
 					case 'camAngle':
 						var amount = foreverMods.get(mods)[1];
 						if (amount != 0)
 							PlayState.forceZoom[3] += amount;
-						trace('$mods $amount');
 
 					// these get real repetitive so heres a divider
 					case 'moveStrumarrow':
@@ -224,6 +220,8 @@ class Note extends FNFSprite
 						PlayState.strumLineNotes.members[foreverMods.get(mods)[1]].angleTo += foreverMods.get(mods)[4];
 				}
 				//
+
+				// trace('$mods $amount');
 			}
 		}
 

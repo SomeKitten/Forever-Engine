@@ -16,10 +16,40 @@ import openfl.filters.ColorMatrixFilter;
 class Init extends FlxState
 {
 	// GLOBAL VALUES (FOR SAVING)
+	/*
+		Couple notes! These are CASE SENSITIVE and if your pause menu crashes when going into preferences, it may be because its trying to load 
+		something that doesnt exist/does not have a value assigned to it. I'll get around to fixing this eventually, but it's also very useful depending
+		on how you look at it, so I might end up not fixing it.
+	 */
 	public static var gameSettings:Map<String, Dynamic> = [
-		'Downscroll' => [false, 0], 'Auto Pause' => [true, 1], 'FPS Counter' => [true, 2], 'Memory Counter' => [true, 3], 'Debug Info' => [false, 4],
-		'Reduced Movements' => [false, 5], 'Display Accuracy' => [true, 10], "Deuteranopia" => [false, 6], "Protanopia" => [false, 7],
-		"Tritanopia" => [false, 8], 'No camera note movement' => [false, 9], 'Offset' => [false, 0],
+		'Downscroll' => [false, 0],
+		'Auto Pause' => [true, 1],
+		'FPS Counter' => [true, 2],
+		'Memory Counter' => [true, 3],
+		'Debug Info' => [false, 4],
+		'Reduced Movements' => [false, 5],
+		'Display Accuracy' => [true, 10],
+		"Deuteranopia" => [false, 6],
+		"Protanopia" => [false, 7],
+		"Tritanopia" => [false, 8],
+		'No Camera Note Movement' => [false, 9],
+		'Offset' => [false, 0],
+		'Use Forever Chart Editor' => [true, 11],
+		// introduced a new system that checks for the settings version
+		'version' => '1',
+	];
+
+	public static var settingsDescriptions:Map<String, String> = [
+		'Downscroll' => 'Whether or not to display the strum line at the bottom of the screen instead of at the top',
+		'Auto Pause' => 'Whether or not the game automatically pauses on lost focus',
+		'FPS Counter' => 'Displays the framerate counter at the top left corner of the screen',
+		'Memory Counter' => 'Displays the native memory counter at the top left corner of the screen',
+		'Debug Info' => 'Displays debug information on the top left corner of the screen',
+		'Reduced Movements' => 'Disables things like camera zooming and icon bopping',
+		'Display Accuracy' => 'Enables the display of the accuracy counter, and by extension, your stage ranking',
+		"Deuteranopia" => 'Enables the colorblind filter for Deuteranopia', "Protanopia" => 'Enables the colorblind filter for Protanopia',
+		"Tritanopia" => 'Enables the colorblind filter for Tritanopia', 'No Camera Note Movement' => "Disables forever engine's note-based camera movement",
+		'Use Forever Chart Editor' => "Enables the usage of forever engine's custom chart editor (not recommended for now)"
 	];
 
 	public static var gameControls:Map<String, Dynamic> = [
@@ -33,8 +63,6 @@ class Init extends FlxState
 		'RESET' => [[R, null], 7]
 	];
 
-	// SETTING MAPS
-	public static var settingsMap:Array<Dynamic> = new Array<Dynamic>();
 	public static var filters:Array<BitmapFilter> = []; // the filters the game has active
 	/// initalise filters here
 	public static var gameFilters:Map<String, {filter:BitmapFilter, ?onUpdate:Void->Void}> = [
@@ -85,14 +113,13 @@ class Init extends FlxState
 
 	public static function loadSettings():Void
 	{
-		if ((FlxG.save.data.gameSettings != null) && (Lambda.count(FlxG.save.data.gameSettings) == Lambda.count(gameSettings)))
+		if ((FlxG.save.data.gameSettings != null) && (FlxG.save.data.gameSettings.get('version') == gameSettings.get('version')))
 			gameSettings = FlxG.save.data.gameSettings;
-		/* else // was originally gonna have something to reset the settings or some shit but then
-			I realised that was unneccessary and would just break savefiles sometimes so if you launch an older version
-			it automatically wipes your save, I only want it to wipe your save if its like updated settings or something
-			lol
-		}*/
+		/* okay so the new system kinda just checks if the version number is the same. I hope it doesn't crash, because if it's null it shouldnt be the same
+			and then the save fill will be overriden. I should really just do a system that regenerates the settings file if they have any null settings honestly
+		 */
 
+		saveSettings();
 		updateAll();
 	}
 
@@ -100,6 +127,8 @@ class Init extends FlxState
 	{
 		if ((FlxG.save.data.gameControls != null) && (Lambda.count(FlxG.save.data.gameControls) == Lambda.count(gameControls)))
 			gameControls = FlxG.save.data.gameControls;
+
+		saveControls();
 	}
 
 	public static function saveSettings():Void

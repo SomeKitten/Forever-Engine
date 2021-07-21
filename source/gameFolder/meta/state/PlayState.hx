@@ -25,7 +25,7 @@ import gameFolder.meta.*;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Song.SwagSong;
-import gameFolder.meta.state.charting.ChartingState;
+import gameFolder.meta.state.charting.*;
 import gameFolder.meta.subState.*;
 
 using StringTools;
@@ -239,8 +239,10 @@ class PlayState extends MusicBeatState
 		// create strums and ui elements
 		strumLine = new FlxTypedGroup<FlxSprite>();
 		var strumLineY:Int = 50;
+		// trace('downscroll test');
 		if (Init.gameSettings.get('Downscroll')[0])
 			strumLineY = FlxG.height - (strumLineY * 3);
+		// trace('downscroll works???');
 
 		for (i in 0...8)
 		{
@@ -341,7 +343,10 @@ class PlayState extends MusicBeatState
 			if ((FlxG.keys.justPressed.SEVEN) && (!startingSong))
 			{
 				resetMusic();
-				Main.switchState(new ChartingState());
+				if (Init.gameSettings.get('Use Forever Chart Editor')[0])
+					Main.switchState(new ChartingState());
+				else
+					Main.switchState(new OriginalChartingState());
 			}
 
 			if (FlxG.keys.justPressed.SIX)
@@ -643,7 +648,7 @@ class PlayState extends MusicBeatState
 
 	private function strumCameraRoll(cStrum:FlxTypedGroup<UIBabyArrow>, mustHit:Bool)
 	{
-		if (!Init.gameSettings.get('No camera note movement')[0])
+		if (!Init.gameSettings.get('No Camera Note Movement')[0])
 		{
 			var camDisplaceExtend:Float = 1.5;
 			var camDisplaceSpeed = 0.0125;
@@ -765,20 +770,23 @@ class PlayState extends MusicBeatState
 
 					EDIT: I'm gonna try to revise it but no promises
 					ya I give up if you wanna fix it go ahead idc anymore
+					UPDATE: I MIGHT HAVE FIXED IT!!!!
 				 */
 
-				if ((Init.gameSettings.get('Downscroll')[0]) && (daNote.isSustainNote))
+				if (daNote.isSustainNote)
 				{
 					// note alignments (thanks pixl for pointing out what made old downscroll weird)
-					if (daNote.animation.curAnim.name.endsWith('holdend'))
+					if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
 					{
-						daNote.flipY = true;
-						if (daNote.prevNote != null)
-							daNote.y += (daNote.prevNote.height / 2);
+						if (Init.gameSettings.get('Downscroll')[0])
+							daNote.y += (daNote.prevNote.height);
+						else
+							daNote.y -= ((daNote.prevNote.height / 2));
 					}
-					//	daNote.y += ((daNote.prevNote.height * 1.3) / SONG.speed);
-					// else
-					daNote.y += daNote.height / 2;
+					else
+						daNote.y -= ((daNote.height / 2) * downscrollMultiplier);
+					if (Init.gameSettings.get('Downscroll')[0])
+						daNote.flipY = true;
 				}
 
 				daNote.x = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].x + 25 + otherSustain;
@@ -1499,23 +1507,23 @@ class PlayState extends MusicBeatState
 	{
 		if (paused)
 		{
-			trace('null song');
+			// trace('null song');
 			if (songMusic != null)
 			{
-				trace('nulled song');
+				//	trace('nulled song');
 				songMusic.pause();
 				vocals.pause();
-				trace('nulled song finished');
+				//	trace('nulled song finished');
 			}
 
-			trace('ui shit break');
+			// trace('ui shit break');
 			if ((startTimer != null) && (!startTimer.finished))
 				startTimer.active = false;
 		}
 
-		trace('open substate');
+		// trace('open substate');
 		super.openSubState(SubState);
-		trace('open substate end ');
+		// trace('open substate end ');
 	}
 
 	override function closeSubState()
@@ -1708,25 +1716,16 @@ class PlayState extends MusicBeatState
 			switch (swagCounter)
 			{
 				case 0:
-					trace('1');
 					FlxG.sound.play(Paths.sound('intro3'), 0.6);
 				case 1:
-					trace('2');
 					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
-					trace('3');
 					ready.scrollFactor.set();
-					trace('4');
 					ready.updateHitbox();
 
-					trace('5');
 					if (PlayState.isPixel)
 						ready.setGraphicSize(Std.int(ready.width * PlayState.daPixelZoom));
-
-					trace('6');
 					ready.screenCenter();
-					trace('7');
 					add(ready);
-					trace('8');
 					FlxTween.tween(ready, {y: ready.y += 100, alpha: 0}, Conductor.crochet / 1000, {
 						ease: FlxEase.cubeInOut,
 						onComplete: function(twn:FlxTween)
@@ -1734,10 +1733,8 @@ class PlayState extends MusicBeatState
 							ready.destroy();
 						}
 					});
-					trace('9');
 					FlxG.sound.play(Paths.sound('intro2'), 0.6);
 				case 2:
-					trace('10');
 					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
 					set.scrollFactor.set();
 

@@ -472,11 +472,11 @@ class Stage extends FlxTypedGroup<FlxBasic>
 
 	public function stageUpdate()
 	{
-		trace('update backgrounds');
+		// trace('update backgrounds');
 		switch (PlayState.curStage)
 		{
 			case 'highway':
-				trace('highway update');
+				// trace('highway update');
 				grpLimoDancers.forEach(function(dancer:BackgroundDancer)
 				{
 					dancer.dance();

@@ -4,6 +4,10 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.effects.FlxFlicker;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxMath;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import gameFolder.gameObjects.userInterface.menu.Checkmark;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.font.Alphabet;
@@ -12,6 +16,9 @@ import gameFolder.meta.subState.OptionsSubstate;
 /**
 	Here I'll set up the options menu, based on the one in week 7. It's just going to be a remake of it though, so you may notice some inconsistencies.
 	these are probably just going to be things that I didn't like about the original and such. 
+
+	This may look intimidating at first, but there's only a couple of steps you really need to add anything, 
+	though this mostly only works with booleans as of now, I'll add support for floats/ints/selective strings later
 **/
 class OptionsMenuState extends MusicBeatState
 {
@@ -28,24 +35,40 @@ class OptionsMenuState extends MusicBeatState
 	var curSelection:Int = 0;
 	var optionSelected:Bool = false;
 
+	var infoText:FlxText;
+	var finalText:String;
+
+	var blackBarScreen:FlxSprite;
+	var textValue:String = '';
+
 	override public function create():Void
 	{
 		// create option subgroups and handle options information
 		var groupBaseOptions:Array<String> = ['preferences', 'controls', 'accessibility', 'exit'];
 		groupBase = generateGroup(groupBaseOptions);
 
+		/* basically just add an option to the init, then add it here
+			afterwards just do something along the lines of a check like
+			"if (Init.gameSettings.get(your option in a string here)[0])"
+		 */
 		var preferenceOptions:Array<String> = [
 			'Downscroll',
 			'FPS Counter',
 			'Memory Counter',
 			'Debug Info',
-			'No camera note movement',
+			'Use Forever Chart Editor',
 			'Display Accuracy'
 		];
 		preferenceGroup = generateGroup(preferenceOptions, true);
 		preferenceCheckmarks = generateCheckmarks(preferenceOptions);
 
-		var accessibilityOptions:Array<String> = ['Reduced Movements', "Deuteranopia", "Protanopia", "Tritanopia"];
+		var accessibilityOptions:Array<String> = [
+			'Reduced Movements',
+			'No Camera Note Movement',
+			"Deuteranopia",
+			"Protanopia",
+			"Tritanopia"
+		];
 		accessibilityGroup = generateGroup(accessibilityOptions, true);
 		accessibilityCheckmarks = generateCheckmarks(accessibilityOptions);
 		//
@@ -69,6 +92,15 @@ class OptionsMenuState extends MusicBeatState
 		add(bg);
 
 		updateGroup(optionsSubgroups.get(selectedGroup)[0], optionsSubgroups.get(selectedGroup)[1]);
+
+		// info display thingy at the bottom of the screen
+		blackBarScreen = new FlxSprite(5, FlxG.height - 26).makeGraphic(0, 24, FlxColor.BLACK);
+		blackBarScreen.alpha = 0.85;
+		// add(blackBarScreen);
+
+		infoText = new FlxText(5, FlxG.height - 24, 0, "", 32);
+		infoText.setFormat("VCR OSD Mono", 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(infoText);
 
 		super.create();
 	}
@@ -134,10 +166,50 @@ class OptionsMenuState extends MusicBeatState
 				optionsSubgroups.get(selectedGroup)[1].members[i].x = optionsSubgroups.get(selectedGroup)[0].members[i].x - 100;
 				optionsSubgroups.get(selectedGroup)[1].members[i].y = optionsSubgroups.get(selectedGroup)[0].members[i].y - 48;
 			}
+
+			// stuff for updating the info text at the bottom of the screen
+			textValue = Init.settingsDescriptions.get(optionsSubgroups.get(selectedGroup)[0].members[curSelection].text);
+			if (textValue == null)
+				textValue = "";
+
+			if (finalText != textValue)
+			{
+				// trace('call??');
+				// trace(textValue);
+				regenInfoText();
+
+				var textSplit = [];
+				finalText = textValue;
+				textSplit = finalText.split("");
+
+				var loopTimes = 0;
+				infoTimer = new FlxTimer().start(0.025, function(tmr:FlxTimer)
+				{
+					//
+					infoText.text += textSplit[loopTimes];
+					infoText.screenCenter(X);
+
+					loopTimes++;
+
+					blackBarScreen.setSize(loopTimes * 20, blackBarScreen.height);
+					blackBarScreen.updateHitbox();
+					// blackBarScreen.setPosition(infoText.x, infoText.y);
+				}, textSplit.length);
+			}
 		} //*/
 
 		super.update(elapsed);
 	}
+
+	private function regenInfoText()
+	{
+		if (infoTimer != null)
+			infoTimer.cancel();
+		if (infoText != null)
+			infoText.text = "";
+	}
+
+	private var infoTimer:FlxTimer;
 
 	private function generateGroup(arrayOptions:Array<String>, isMenuMove:Bool = false)
 	{
@@ -170,7 +242,10 @@ class OptionsMenuState extends MusicBeatState
 	private function updateGroup(optionsGroup:FlxTypedGroup<Alphabet>, optionsCheckmarks:FlxTypedGroup<Checkmark>, curGroup:FlxTypedGroup<Alphabet> = null,
 			curCheckmarks:FlxTypedGroup<Checkmark> = null)
 	{
-		trace('begin update group');
+		// trace('begin update group');
+		finalText = "";
+		textValue = "";
+		regenInfoText();
 
 		if (curGroup != null)
 		{
@@ -181,7 +256,7 @@ class OptionsMenuState extends MusicBeatState
 
 		add(optionsGroup);
 		// reset position
-		trace('reset option group position');
+		// trace('reset option group position');
 		for (i in 0...optionsGroup.length)
 		{
 			optionsGroup.members[i].screenCenter();
@@ -193,21 +268,21 @@ class OptionsMenuState extends MusicBeatState
 				updateCheckmarks(i, optionsGroup, optionsCheckmarks);
 		}
 
-		trace('add checkmarks I guess');
+		// trace('add checkmarks I guess');
 		if (optionsCheckmarks != null)
 			add(optionsCheckmarks);
 
 		curSelection = 0;
 
-		trace('update selection');
+		// trace('update selection');
 		updateSelection(optionsGroup);
-		trace('get the group string');
+		// trace('get the group string');
 		for (myGroup in optionsSubgroups.keys())
 		{
 			if (optionsSubgroups.get(myGroup)[0] == optionsGroup)
 				selectedGroup = myGroup;
 		}
-		trace('finish doing that');
+		// trace('finish doing that');
 	}
 
 	private function updateSelection(optionsGroup:FlxTypedGroup<Alphabet>, equal:Int = 0)

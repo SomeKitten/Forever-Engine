@@ -176,7 +176,7 @@ class ChartingState extends MusicBeatState
 
 		for (section in _song.notes)
 		{
-			trace('generating section $section');
+			// trace('generating section $section');
 			var curGridSprite:FlxSprite = FlxGridOverlay.create(gridSize, gridSize, gridSize * keysTotal, gridSize * 16, true);
 			curGridSprite.screenCenter(X);
 			curGridSprite.y += ((gridSize * 16) * sectionsMax);
