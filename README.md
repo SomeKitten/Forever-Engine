@@ -26,7 +26,7 @@ CREDITS:
 
 [Pixloen](https://github.com/PixlJacket) - Pixl made a lot of the custom assets that forever engine uses, he also gave me a lot of general advice on how to improve the engine as well as his input on both how to improve upon the base game and how the input system felt and such. He basically co-owns the engine lmao
 
-[rest of the rise n' skate team] - that mod is the reason im even making an engine right now so like I kind of owe you guys this whole engine and more for that honestly and I will actually do more so stay tuned
+rest of the rise n' skate team - that mod is the reason im even making an engine right now so like I kind of owe you guys this whole engine and more for that honestly and I will actually do more so stay tuned
 
 [ImCodist](https://github.com/ImCodist) - Codist helped with a couple of pull requests and issue fixes, but, I'm not gonna give him any credit at all, because he stole my obsidian soul in minecraft and I will never forgive him for that!!!!
 
