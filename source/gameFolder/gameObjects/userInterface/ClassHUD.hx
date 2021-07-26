@@ -49,7 +49,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		// small info bar, kinda like the KE watermark
 		// based on scoretxt which I will set up as well
 		var infoDisplay:String = CoolUtil.dashToSpace(PlayState.SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(PlayState.storyDifficulty)
-			+ " - FF BETA " + Main.gameVersion;
+			+ " - Forever BETA v" + Main.gameVersion;
 
 		infoBar = new FlxText(5, FlxG.height - 30, 0, infoDisplay, 20);
 		infoBar.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
