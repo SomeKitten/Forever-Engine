@@ -1091,7 +1091,7 @@ class PlayState extends MusicBeatState
 			if (assetModifier == 'basepixel' || assetModifier == 'foreverpixel')
 				newWidth = 26;
 
-			timing.loadGraphic(Paths.image('UI/' + assetModifier + '/ratings/' + daRating + '-timings'), true, newWidth);
+			timing.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('ratings/$daRating-timings', assetModifier, 'UI')), true, newWidth);
 			timing.alpha = 1;
 			// this code is quickly becoming painful lmao
 			timing.animation.add('early', [0]);

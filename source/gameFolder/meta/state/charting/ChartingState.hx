@@ -4,6 +4,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUI9SliceSprite;
@@ -25,6 +26,7 @@ import flixel.tweens.FlxTween;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
 import flixel.util.FlxColor;
+import flixel.util.FlxGradient;
 import gameFolder.gameObjects.*;
 import gameFolder.gameObjects.userInterface.*;
 import gameFolder.meta.MusicBeat.MusicBeatState;
@@ -58,13 +60,9 @@ class ChartingState extends MusicBeatState
 	var camGame:FlxCamera;
 	var strumLineCam:FlxObject;
 
-	private var leftIcon:HealthIcon;
-	private var rightIcon:HealthIcon;
-
 	var songMusic:FlxSound;
 	var vocals:FlxSound;
 
-	private var gridSize = 40;
 	private var keysTotal = 8;
 
 	private var dummyArrow:FlxSprite;
@@ -92,6 +90,7 @@ class ChartingState extends MusicBeatState
 
 		// generate the chart itself
 		loadSong(_song.song);
+		generateBackground();
 		generateChart();
 
 		// epic strum line
@@ -101,20 +100,6 @@ class ChartingState extends MusicBeatState
 
 		strumLineCam = new FlxObject(0, 0);
 		strumLineCam.screenCenter(X);
-
-		// generate ui elements and stuffs
-		leftIcon = new HealthIcon(_song.player2);
-		rightIcon = new HealthIcon(_song.player1);
-		leftIcon.setGraphicSize(Std.int(leftIcon.width / 2));
-		rightIcon.setGraphicSize(Std.int(rightIcon.width / 2));
-		leftIcon.screenCenter(X);
-		rightIcon.screenCenter(X);
-
-		leftIcon.x -= gridSize * 2;
-		rightIcon.x += gridSize * 2;
-
-		add(leftIcon);
-		add(rightIcon);
 
 		// cursor
 		dummyArrow = new FlxSprite().makeGraphic(gridSize, gridSize);
@@ -132,9 +117,6 @@ class ChartingState extends MusicBeatState
 		//
 		Conductor.changeBPM(_song.bpm);
 		Conductor.mapBPMChanges(_song);
-
-		leftIcon.cameras = [camHUD];
-		rightIcon.cameras = [camHUD];
 
 		FlxG.camera.follow(strumLineCam);
 		super.create();
@@ -164,6 +146,36 @@ class ChartingState extends MusicBeatState
 		//
 	}
 
+	override public function update(elapsed:Float)
+	{
+		var beatTime:Float = ((Conductor.songPosition / 1000) * (Conductor.bpm / 60));
+		// coolGrid.y = (750 * (Math.cos((beatTime / 5) * Math.PI)));
+		// coolGrid.x = Conductor.songPosition;
+
+		super.update(elapsed);
+	}
+
+	var coolGrid:FlxBackdrop;
+	var coolGradient:FlxSprite;
+
+	private function generateBackground()
+	{
+		coolGrid = new FlxBackdrop(null, 1, 1, true, true, 1, 1);
+		coolGrid.loadGraphic(Paths.image('UI/forever/chart editor/grid'));
+		coolGrid.alpha = (32 / 255);
+		add(coolGrid);
+
+		// gradient
+		coolGradient = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height,
+			FlxColor.gradient(FlxColor.fromRGB(188, 158, 255, 200), FlxColor.fromRGB(80, 12, 108, 255), 16));
+		coolGradient.alpha = (32 / 255);
+		add(coolGradient);
+	}
+
+	var gridSize:Int = 51;
+	var horizontalSize:Int = 8;
+	var verticalSize:Int = 16;
+
 	private var sectionsMax:Int = 0;
 	private var sectionsAll:FlxTypedGroup<FlxSprite>;
 
@@ -177,7 +189,7 @@ class ChartingState extends MusicBeatState
 		for (section in _song.notes)
 		{
 			// trace('generating section $section');
-			var curGridSprite:FlxSprite = FlxGridOverlay.create(gridSize, gridSize, gridSize * keysTotal, gridSize * 16, true);
+			var curGridSprite:FlxSprite = FlxGridOverlay.create(gridSize, gridSize, gridSize * horizontalSize, gridSize * verticalSize, true);
 			curGridSprite.screenCenter(X);
 			curGridSprite.y += ((gridSize * 16) * sectionsMax);
 
@@ -204,7 +216,8 @@ class ChartingState extends MusicBeatState
 				note.setGraphicSize(gridSize, gridSize);
 				note.updateHitbox();
 				note.x = Math.floor(daNoteInfo * gridSize);
-				note.y = Math.floor(((daStrumTime - sectionStartTime(sectionsMax)) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps)));
+				note.y = 0;
+				// note.y = Math.floor(((daStrumTime - sectionStartTime(sectionsMax)) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps)));
 
 				curRenderedNotes.add(note);
 
@@ -224,75 +237,6 @@ class ChartingState extends MusicBeatState
 		add(curRenderedSustains);
 	}
 
-	private function sectionStartTime(section:Int)
-	{
-		// get the section's start time
-		var daBPM:Int = _song.bpm;
-		var daPos:Float = 0;
-		for (i in 0...section)
-		{
-			if (_song.notes[i].changeBPM)
-			{
-				daBPM = _song.notes[i].bpm;
-			}
-			daPos += 4 * (1000 * 60 / daBPM);
-		}
-		return daPos;
-	}
-
-	private function getYfromStrum(strumTime:Float, curSection:Int):Float
-	{
-		return FlxMath.remapToRange(strumTime, 0, 17 * Conductor.stepCrochet, (curSection * (gridSize * 16)),
-			(curSection * (gridSize * 16)) + (gridSize * 16));
-	}
-
-	override public function update(elapsed:Float)
-	{
-		///*
-		if (FlxG.mouse.x > ((FlxG.width / 2) - (gridSize * (keysTotal / 2)))
-			&& FlxG.mouse.x < ((FlxG.width / 2) + (gridSize * (keysTotal / 2)))
-			&& FlxG.mouse.y > 0
-			&& FlxG.mouse.y < (gridSize * 16) * sectionsMax)
-		{
-			dummyArrow.x = Math.floor(FlxG.mouse.x / gridSize) * gridSize;
-			if (FlxG.keys.pressed.SHIFT)
-				dummyArrow.y = FlxG.mouse.y;
-			else
-				dummyArrow.y = Math.floor(FlxG.mouse.y / gridSize) * gridSize;
-		}
-		// */
-
-		Conductor.songPosition = songMusic.time;
-
-		// strumline camera stuffs!
-		strumLineCam.y = strumLine.y + (FlxG.height / 3);
-
-		var strumSection = Math.floor(Math.min((strumLine.y + 10) / (16 * gridSize), sectionsMax));
-		strumLine.y = getYfromStrum((Conductor.songPosition - sectionStartTime(strumSection)) % (Conductor.stepCrochet * _song.notes[strumSection].lengthInSteps),
-			strumSection);
-
-		if (FlxG.keys.justPressed.SPACE)
-		{
-			if (songMusic.playing)
-			{
-				songMusic.pause();
-				vocals.pause();
-				// playButtonAnimation('pause');
-			}
-			else
-			{
-				vocals.play();
-				songMusic.play();
-				// for note tick sounds
-				// hasPlayedSound = [];
-
-				// playButtonAnimation('play');
-			}
-		}
-
-		super.update(elapsed);
-	}
-
 	private function regenerateSection(section:Int)
 	{
 		// this will be used to regenerate a box that shows what section the camera is focused on
@@ -310,4 +254,17 @@ class ChartingState extends MusicBeatState
 			curRenderedSustains.remove(curRenderedSustains.members[0], true);
 		}
 	}
+	/*
+		private function generateGrid()
+		{
+
+
+			// temp function for now
+			var noteGrid:FlxSprite = FlxGridOverlay.create(gridSize, gridSize, gridSize * horizontalSize, gridSize * verticalSize, true, FlxColor.WHITE,
+				FlxColor.BLACK);
+			noteGrid.alpha = (26 / 255);
+			add(noteGrid);
+			noteGrid.screenCenter();
+		}
+	 */
 }

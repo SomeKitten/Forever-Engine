@@ -85,7 +85,7 @@ class ForeverAssets
 		switch (assetModifier)
 		{
 			case 'basepixel' | 'foreverpixel':
-				tempSplash.loadGraphic(Paths.image('UI/$assetModifier/notes/splash-pixel'), true, 34, 34);
+				tempSplash.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('notes/splash-pixel', assetModifier, 'UI')), true, 34, 34);
 				tempSplash.animation.add('anim1', [noteData, 4 + noteData, 8 + noteData, 12 + noteData], 24, false);
 				tempSplash.animation.add('anim2', [16 + noteData, 20 + noteData, 24 + noteData, 28 + noteData], 24, false);
 				tempSplash.animation.play('anim1');
@@ -94,7 +94,8 @@ class ForeverAssets
 				tempSplash.setGraphicSize(Std.int(tempSplash.width * PlayState.daPixelZoom));
 
 			default:
-				tempSplash.loadGraphic(Paths.image('UI/$assetModifier/notes/noteSplashes'), true, 210, 210);
+				// 'UI/$assetModifier/notes/noteSplashes'
+				tempSplash.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('notes/noteSplashes', assetModifier, 'UI')), true, 210, 210);
 				tempSplash.animation.add('anim1', [
 					(noteData * 2 + 1),
 					8 + (noteData * 2 + 1),
@@ -157,7 +158,8 @@ class ForeverAssets
 				stringSect = UIBabyArrow.getArrowFromNumber(babyArrowType);
 
 				var framesArgument:String = "NOTE_assets";
-				newBabyArrow.frames = Paths.getSparrowAtlas('UI/$assetModifier/notes/$framesArgument');
+
+				newBabyArrow.frames = Paths.getSparrowAtlas(ForeverTools.returnSkinAsset('notes/$framesArgument', assetModifier, 'UI'));
 
 				// idk if this works or not lmao
 				newBabyArrow.animation.addByPrefix('static', 'arrow' + stringSect.toUpperCase());
