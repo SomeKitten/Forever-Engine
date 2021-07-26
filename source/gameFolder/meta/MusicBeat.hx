@@ -7,8 +7,8 @@ import flixel.addons.ui.FlxUIState;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
 import gameFolder.meta.*;
-import gameFolder.meta.Conductor.BPMChangeEvent;
 import gameFolder.meta.data.*;
+import gameFolder.meta.data.Conductor.BPMChangeEvent;
 
 /* 
 	Music beat state happens to be the first thing on my list of things to add, it just so happens to be the backbone of

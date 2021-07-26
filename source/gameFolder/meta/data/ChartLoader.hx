@@ -74,8 +74,8 @@ class ChartLoader
 
 						// create the new note
 						var swagNote:Note = new Note(daStrumTime, daNoteData, daNoteAlt, oldNote);
-						if (PlayState.isPixel)
-							swagNote.foreverMods.get('type')[0] = 1;
+						// if (PlayState.isPixel)
+						//	swagNote.foreverMods.get('type')[0] = 1;
 
 						// set the note's length (sustain note)
 						swagNote.sustainLength = songNotes[2];
@@ -93,8 +93,8 @@ class ChartLoader
 							oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 							var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, daNoteAlt,
 								oldNote, true);
-							if (PlayState.isPixel)
-								sustainNote.foreverMods.get('type')[0] = 1;
+							// if (PlayState.isPixel)
+							//	sustainNote.foreverMods.get('type')[0] = 1;
 							sustainNote.scrollFactor.set();
 
 							unspawnNotes.push(sustainNote);

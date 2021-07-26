@@ -1,4 +1,4 @@
-package gameFolder.meta.state;
+package gameFolder.meta.state.menus;
 
 import flash.text.TextField;
 import flixel.FlxG;
@@ -44,21 +44,6 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
-		/*
-			var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
-
-			for (i in 0...initSonglist.length)
-			{
-				songs.push(new SongMetadata(initSonglist[i], 1, 'gf'));
-		}*/
-		/* 
-			if (FlxG.sound.music != null)
-			{
-				if (!FlxG.sound.music.playing)
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			}
-		 */
-
 		///*
 		addWeek(['Tutorial', 'Bopeebo', 'Fresh', 'Dadbattle'], 1, ['gf', 'dad', 'dad', 'dad'], [FlxColor.fromRGB(129, 100, 223)]);
 
@@ -83,7 +68,7 @@ class FreeplayState extends MusicBeatState
 		}
 		// LOAD CHARACTERS
 
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/base/menuDesat'));
 		add(bg);
 
 		grpSongs = new FlxTypedGroup<Alphabet>();

@@ -6,10 +6,11 @@ import flixel.FlxSubState;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import gameFolder.gameObjects.Boyfriend;
-import gameFolder.meta.Conductor.BPMChangeEvent;
-import gameFolder.meta.Conductor;
 import gameFolder.meta.MusicBeat.MusicBeatSubState;
+import gameFolder.meta.data.Conductor.BPMChangeEvent;
+import gameFolder.meta.data.Conductor;
 import gameFolder.meta.state.*;
+import gameFolder.meta.state.menus.*;
 
 class GameOverSubstate extends MusicBeatSubState
 {
@@ -24,12 +25,16 @@ class GameOverSubstate extends MusicBeatSubState
 		var daBf:String = '';
 		switch (daBoyfriendType)
 		{
+			case 'bf-og':
+				daBf = daBoyfriendType;
 			case 'bf-pixel':
 				daBf = 'bf-pixel-dead';
 				stageSuffix = '-pixel';
 			default:
-				daBf = 'bf';
+				daBf = 'bf-dead';
 		}
+
+		PlayState.boyfriend.destroy();
 
 		super();
 
@@ -38,7 +43,7 @@ class GameOverSubstate extends MusicBeatSubState
 		bf = new Boyfriend(x, y, daBf);
 		add(bf);
 
-		camFollow = new FlxObject(bf.getGraphicMidpoint().x, bf.getGraphicMidpoint().y, 1, 1);
+		camFollow = new FlxObject(bf.getGraphicMidpoint().x + 20, bf.getGraphicMidpoint().y - 40, 1, 1);
 		add(camFollow);
 
 		FlxG.sound.play(Paths.sound('fnf_loss_sfx' + stageSuffix));

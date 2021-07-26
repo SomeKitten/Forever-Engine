@@ -141,6 +141,9 @@ class Main extends Sprite
 		// though I suppose this could be of use to people who want to load things between classes and such
 		// not that that would be of use to people who aren't already writing their own engines lmfao
 
+		// oh hey i'm using this now thank you past me for making this
+		// Paths.dumpCache();
+
 		// load the state
 		FlxG.switchState(target);
 	}

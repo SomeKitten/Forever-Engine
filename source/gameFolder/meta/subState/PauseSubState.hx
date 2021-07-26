@@ -14,6 +14,7 @@ import flixel.util.FlxColor;
 import gameFolder.meta.MusicBeat.MusicBeatSubState;
 import gameFolder.meta.data.font.Alphabet;
 import gameFolder.meta.state.*;
+import gameFolder.meta.state.menus.*;
 
 class PauseSubState extends MusicBeatSubState
 {

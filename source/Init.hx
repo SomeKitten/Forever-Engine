@@ -15,6 +15,14 @@ import openfl.filters.ColorMatrixFilter;
 **/
 class Init extends FlxState
 {
+	// FOREVER ENGINE VALUES
+	/* While we have our own user interface for the main menus and such, I wanted to give an option for mod makers using the engine to be able to
+		toggle the menu easily, I want this to be snazzy but cozy if needed, and all of the abstraction should help point things in the right direction:
+
+			simply said, it won't be a hassle to work with the engine, as the extra features will be toggleable entirely!
+	 */
+	public static var forceDisableForeverMenu:Bool = false;
+
 	// GLOBAL VALUES (FOR SAVING)
 	/*
 		Couple notes! These are CASE SENSITIVE and if your pause menu crashes when going into preferences, it may be because its trying to load 
@@ -35,7 +43,11 @@ class Init extends FlxState
 		'No Camera Note Movement' => [false, 9],
 		'Offset' => [false, 0],
 		'Use Forever Chart Editor' => [true, 11],
-		// introduced a new system that checks for the settings version
+		'Forever Engine Menus' => [!forceDisableForeverMenu, 12],
+		'Optimized Boyfriend' => [true, 13],
+		'Optimized Girlfriend' => [true, 14],
+		"use Forever Engine UI" => [true, 15],
+		// introduced a new system that checks for the settings version in case you/i wanna hard reset stuffs
 		'version' => '1',
 	];
 
@@ -49,7 +61,11 @@ class Init extends FlxState
 		'Display Accuracy' => 'Enables the display of the accuracy counter, and by extension, your stage ranking',
 		"Deuteranopia" => 'Enables the colorblind filter for Deuteranopia', "Protanopia" => 'Enables the colorblind filter for Protanopia',
 		"Tritanopia" => 'Enables the colorblind filter for Tritanopia', 'No Camera Note Movement' => "Disables forever engine's note-based camera movement",
-		'Use Forever Chart Editor' => "Enables the usage of forever engine's custom chart editor (not recommended for now)"
+		'Use Forever Chart Editor' => "Enables the usage of forever engine's custom chart editor (not recommended for now)",
+		'Forever Engine Menus' => "Enables the Forever Engine custom Menus (Applies when exiting the options menu)",
+		'Optimized Boyfriend' => "Whether to use Forever Engine's custom boyfriend sprites (Mostly an option for modding)",
+		'Optimized Girlfriend' => "Much like the last option, but for Girlfriend instead",
+		"use Forever Engine UI" => "Makes some changes to the UI, like ratings having colored outlines",
 	];
 
 	public static var gameControls:Map<String, Dynamic> = [
@@ -105,6 +121,9 @@ class Init extends FlxState
 		loadSettings();
 		loadControls();
 
+		if ((forceDisableForeverMenu) && (gameSettings.get('Forever Engine Menus')[0]))
+			gameSettings.get('Forever Engine Menus')[0] = false;
+
 		// apply saved filters
 		FlxG.game.setFilters(filters);
 
@@ -113,7 +132,9 @@ class Init extends FlxState
 
 	public static function loadSettings():Void
 	{
-		if ((FlxG.save.data.gameSettings != null) && (FlxG.save.data.gameSettings.get('version') == gameSettings.get('version')))
+		if ((FlxG.save.data.gameSettings != null)
+			&& (FlxG.save.data.gameSettings.get('version') == gameSettings.get('version'))
+			&& (Lambda.count(gameSettings) == Lambda.count(FlxG.save.data.gameSettings)))
 			gameSettings = FlxG.save.data.gameSettings;
 		/* okay so the new system kinda just checks if the version number is the same. I hope it doesn't crash, because if it's null it shouldnt be the same
 			and then the save fill will be overriden. I should really just do a system that regenerates the settings file if they have any null settings honestly

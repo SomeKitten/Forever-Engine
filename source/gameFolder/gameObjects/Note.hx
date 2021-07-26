@@ -8,6 +8,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import gameFolder.gameObjects.userInterface.UIBabyArrow;
 import gameFolder.meta.*;
+import gameFolder.meta.data.*;
 import gameFolder.meta.state.PlayState;
 
 using StringTools;
@@ -113,7 +114,7 @@ class Note extends FNFSprite
 		switch (noteType)
 		{
 			case 1: // pixel arrows
-				loadGraphic(Paths.image('notes/arrows-pixels'), true, 17, 17);
+				loadGraphic(Paths.image('UI/pixel/notes/arrows-pixels'), true, 17, 17);
 
 				animation.add('greenScroll', [6]);
 				animation.add('redScroll', [7]);
@@ -122,7 +123,7 @@ class Note extends FNFSprite
 
 				if (isSustainNote)
 				{
-					loadGraphic(Paths.image('notes/arrowEnds'), true, 7, 6);
+					loadGraphic(Paths.image('UI/pixel/notes/arrowEnds'), true, 7, 6);
 
 					animation.add('purpleholdend', [4]);
 					animation.add('greenholdend', [6]);
@@ -140,7 +141,7 @@ class Note extends FNFSprite
 				updateHitbox();
 
 			default: // base game arrows for no reason whatsoever
-				frames = Paths.getSparrowAtlas('notes/NOTE_assets');
+				frames = Paths.getSparrowAtlas('UI/base/notes/NOTE_assets');
 
 				animation.addByPrefix('greenScroll', 'green0');
 				animation.addByPrefix('redScroll', 'red0');

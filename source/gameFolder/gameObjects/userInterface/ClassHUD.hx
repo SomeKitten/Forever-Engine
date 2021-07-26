@@ -15,9 +15,9 @@ import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import gameFolder.meta.Conductor;
 import gameFolder.meta.CoolUtil;
 import gameFolder.meta.InfoHud;
+import gameFolder.meta.data.Conductor;
 import gameFolder.meta.data.Timings;
 import gameFolder.meta.state.PlayState;
 
@@ -64,7 +64,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		if (Init.gameSettings.get('Downscroll')[0])
 			barY = 64;
 
-		healthBarBG = new FlxSprite(0, barY).loadGraphic(Paths.image('UI/healthBar'));
+		healthBarBG = new FlxSprite(0, barY).loadGraphic(Paths.image('UI/base/healthBar'));
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
 		add(healthBarBG);

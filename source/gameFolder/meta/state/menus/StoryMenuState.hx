@@ -1,4 +1,4 @@
-package gameFolder.meta.state;
+package gameFolder.meta.state.menus;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -98,7 +98,7 @@ class StoryMenuState extends MusicBeatState
 		rankText.size = scoreText.size;
 		rankText.screenCenter(X);
 
-		var ui_tex = Paths.getSparrowAtlas('storymenu/campaign_menu_UI_assets');
+		var ui_tex = Paths.getSparrowAtlas('menus/base/storymenu/campaign_menu_UI_assets');
 		var yellowBG:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 400, 0xFFF9CF51);
 
 		grpWeekText = new FlxTypedGroup<MenuItem>();
@@ -179,9 +179,8 @@ class StoryMenuState extends MusicBeatState
 
 		sprDifficulty = new FlxSprite(leftArrow.x + 130, leftArrow.y);
 		sprDifficulty.frames = ui_tex;
-		sprDifficulty.animation.addByPrefix('easy', 'EASY');
-		sprDifficulty.animation.addByPrefix('normal', 'NORMAL');
-		sprDifficulty.animation.addByPrefix('hard', 'HARD');
+		for (i in CoolUtil.difficultyArray)
+			sprDifficulty.animation.addByPrefix(i.toLowerCase(), i.toUpperCase());
 		sprDifficulty.animation.play('easy');
 		changeDifficulty();
 

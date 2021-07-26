@@ -159,4 +159,39 @@ class Paths
 	{
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
+	/*	Dedicating this section to asset separation and such!
+		way this will work is, frames can be stored and such (from xml files themselves not actual sprites)
+
+		Shoutouts to tricky v2, I'm not a fan of how they do it, but it definitely gave me the idea to implement a system like this
+		I just dont want to preload everything because that would be REALLY bad honestly
+
+		WIP PLEASE STAND BY I WILL CORRECT THE ISSUES LATER
+	 */
+	/*
+		public static var cachedStuffs:Map<String, FlxAtlasFrames> = new Map<String, FlxAtlasFrames>();
+
+		public static function cacheSparrow(key:String)
+		{
+			// alright so here we'd want to cache the atlas for later usage
+			cachedStuffs.set(key, getSparrowAtlas(key));
+			// thats it lmfao
+		}
+
+		inline public static function loadCachedSparrow(key:String)
+		{
+			// return the cached sprite I think
+			if (cachedStuffs.get(key) == null)
+				Paths.cacheSparrow(key);
+
+			var cachedReturn:FlxAtlasFrames = cachedStuffs.get(key);
+			return cachedReturn;
+		}
+
+		public static function dumpCache()
+		{
+			// clear the map of cached stuffs
+			cachedStuffs.clear();
+			
+		}
+	 */
 }

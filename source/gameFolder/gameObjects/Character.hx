@@ -10,6 +10,7 @@ import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
 import gameFolder.meta.*;
 import gameFolder.meta.FNFSprite;
+import gameFolder.meta.data.*;
 import gameFolder.meta.state.PlayState;
 import openfl.utils.Assets as OpenFlAssets;
 
@@ -33,6 +34,10 @@ class Character extends FNFSprite
 
 		var tex:FlxAtlasFrames;
 		antialiasing = true;
+
+		if (((!Init.gameSettings.get('Optimized Boyfriend')[0]) || (!OpenFlAssets.exists(Paths.image('characters/forever/BOYFRIEND'))))
+			&& curCharacter == 'bf')
+			curCharacter += '-og';
 
 		switch (curCharacter)
 		{
@@ -211,8 +216,8 @@ class Character extends FNFSprite
 				flipX = true;
 
 			case 'bf':
-				var tex = Paths.getSparrowAtlas('characters/BOYFRIEND');
-				frames = tex;
+				frames = Paths.getSparrowAtlas('characters/BOYFRIEND');
+
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
 				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
 				animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
@@ -223,14 +228,42 @@ class Character extends FNFSprite
 				animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
 				animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
 				animation.addByPrefix('hey', 'BF HEY', 24, false);
+				animation.addByPrefix('scared', 'BF idle shaking', 24);
+
+				playAnim('idle');
+
+				flipX = true;
+
+			case 'bf-og':
+				frames = Paths.getSparrowAtlas('characters/og/BOYFRIEND');
+
+				animation.addByPrefix('idle', 'BF idle dance', 24, false);
+				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
+				animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
+				animation.addByPrefix('singRIGHT', 'BF NOTE RIGHT0', 24, false);
+				animation.addByPrefix('singDOWN', 'BF NOTE DOWN0', 24, false);
+				animation.addByPrefix('singUPmiss', 'BF NOTE UP MISS', 24, false);
+				animation.addByPrefix('singLEFTmiss', 'BF NOTE LEFT MISS', 24, false);
+				animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
+				animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
+				animation.addByPrefix('hey', 'BF HEY', 24, false);
+				animation.addByPrefix('scared', 'BF idle shaking', 24);
+				animation.addByPrefix('firstDeath', "BF dies", 24, false);
+				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
+				animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
+
+				playAnim('idle');
+
+				flipX = true;
+
+			case 'bf-dead':
+				frames = Paths.getSparrowAtlas('characters/BF_DEATH');
 
 				animation.addByPrefix('firstDeath', "BF dies", 24, false);
 				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
 				animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
 
-				animation.addByPrefix('scared', 'BF idle shaking', 24);
-
-				playAnim('idle');
+				playAnim('firstDeath');
 
 				flipX = true;
 

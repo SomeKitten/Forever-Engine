@@ -1,4 +1,4 @@
-package gameFolder.meta.state;
+package gameFolder.meta.state.menus;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -27,6 +27,8 @@ class OptionsMenuState extends MusicBeatState
 	var preferenceCheckmarks:FlxTypedGroup<Checkmark>;
 	var accessibilityGroup:FlxTypedGroup<Alphabet>;
 	var accessibilityCheckmarks:FlxTypedGroup<Checkmark>;
+	var foreverGroup:FlxTypedGroup<Alphabet>;
+	var foreverCheckmarks:FlxTypedGroup<Checkmark>;
 
 	var optionsSubgroups:Map<String, Dynamic>;
 	var selectedGroup:String = 'base';
@@ -44,21 +46,16 @@ class OptionsMenuState extends MusicBeatState
 	override public function create():Void
 	{
 		// create option subgroups and handle options information
-		var groupBaseOptions:Array<String> = ['preferences', 'controls', 'accessibility', 'exit'];
+		var groupBaseOptions:Array<String> = ['preferences', 'controls', 'accessibility', 'forever settings', 'exit'];
+
 		groupBase = generateGroup(groupBaseOptions);
 
 		/* basically just add an option to the init, then add it here
 			afterwards just do something along the lines of a check like
 			"if (Init.gameSettings.get(your option in a string here)[0])"
 		 */
-		var preferenceOptions:Array<String> = [
-			'Downscroll',
-			'FPS Counter',
-			'Memory Counter',
-			'Debug Info',
-			'Use Forever Chart Editor',
-			'Display Accuracy'
-		];
+		var preferenceOptions:Array<String> = ['Downscroll', 'FPS Counter', 'Memory Counter', 'Debug Info', 'Display Accuracy'];
+
 		preferenceGroup = generateGroup(preferenceOptions, true);
 		preferenceCheckmarks = generateCheckmarks(preferenceOptions);
 
@@ -69,19 +66,28 @@ class OptionsMenuState extends MusicBeatState
 			"Protanopia",
 			"Tritanopia"
 		];
+
 		accessibilityGroup = generateGroup(accessibilityOptions, true);
 		accessibilityCheckmarks = generateCheckmarks(accessibilityOptions);
 		//
 
+		var foreverOptions:Array<String> = ['Use Forever Chart Editor', 'Optimized Boyfriend', 'Optimized Girlfriend'];
+		if (!Init.forceDisableForeverMenu)
+			foreverOptions.push('Forever Engine Menus');
+
+		foreverGroup = generateGroup(foreverOptions, true);
+		foreverCheckmarks = generateCheckmarks(foreverOptions);
+
 		optionsSubgroups = [
 			'base' => [groupBase],
 			'preferences' => [preferenceGroup, preferenceCheckmarks],
-			'accessibility' => [accessibilityGroup, accessibilityCheckmarks]
+			'accessibility' => [accessibilityGroup, accessibilityCheckmarks],
+			'forever settings' => [foreverGroup, foreverCheckmarks],
 		];
 
 		// call the options menu
 		var bg = new FlxSprite(-85);
-		bg.loadGraphic(Paths.image('menuDesat'));
+		bg.loadGraphic(Paths.image('menus/base/menuDesat'));
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.18;
 		bg.setGraphicSize(Std.int(bg.width * 1.1));
@@ -231,7 +237,7 @@ class OptionsMenuState extends MusicBeatState
 		var optionsGroup:FlxTypedGroup<Checkmark> = new FlxTypedGroup<Checkmark>();
 		for (i in 0...arrayOptions.length)
 		{
-			var checkmark:Checkmark = new Checkmark(10, i);
+			var checkmark:Checkmark = ForeverAssets.generateCheckmark(10, i, 'checkboxThingie', 'base', 'UI');
 			optionsGroup.add(checkmark);
 		}
 
@@ -322,6 +328,11 @@ class OptionsMenuState extends MusicBeatState
 				// updateGroup(optionsSubgroups.get(optionsGroup.members[curSelection].text), optionsSubgroups.get(selectedGroup));
 				openSubState(new OptionsSubstate());
 			case 'accessibility':
+				// go to the preferences menu
+				updateGroup(optionsSubgroups.get(optionsGroup.members[curSelection].text)[0],
+					optionsSubgroups.get(optionsGroup.members[curSelection].text)[1], optionsSubgroups.get(selectedGroup)[0],
+					optionsSubgroups.get(selectedGroup)[1]);
+			case 'forever settings':
 				// go to the preferences menu
 				updateGroup(optionsSubgroups.get(optionsGroup.members[curSelection].text)[0],
 					optionsSubgroups.get(optionsGroup.members[curSelection].text)[1], optionsSubgroups.get(selectedGroup)[0],

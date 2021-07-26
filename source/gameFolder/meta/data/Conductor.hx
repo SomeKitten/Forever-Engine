@@ -1,4 +1,4 @@
-package gameFolder.meta;
+package gameFolder.meta.data;
 
 import gameFolder.meta.data.Song.SwagSong;
 

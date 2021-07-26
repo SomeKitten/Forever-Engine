@@ -1,4 +1,4 @@
-package gameFolder.meta.state;
+package gameFolder.meta.state.menus;
 
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -39,15 +39,14 @@ class MainMenuState extends MusicBeatState
 		transOut = FlxTransitionableState.defaultTransOut;
 
 		// make sure the music is playing
-		if (!FlxG.sound.music.playing)
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		ForeverTools.resetMenuMusic();
 
 		// uh
 		persistentUpdate = persistentDraw = true;
 
 		// background
 		bg = new FlxSprite(-85);
-		bg.loadGraphic(Paths.image('menuBG'));
+		bg.loadGraphic(Paths.image('menus/base/menuBG'));
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.18;
 		bg.setGraphicSize(Std.int(bg.width * 1.1));
@@ -56,7 +55,7 @@ class MainMenuState extends MusicBeatState
 		bg.antialiasing = true;
 		add(bg);
 
-		magenta = new FlxSprite(-85).loadGraphic(Paths.image('menuDesat'));
+		magenta = new FlxSprite(-85).loadGraphic(Paths.image('menus/base/menuDesat'));
 		magenta.scrollFactor.x = 0;
 		magenta.scrollFactor.y = 0.18;
 		magenta.setGraphicSize(Std.int(magenta.width * 1.1));
@@ -76,7 +75,7 @@ class MainMenuState extends MusicBeatState
 		add(menuItems);
 
 		// create the menu items themselves
-		var tex = Paths.getSparrowAtlas('title/FNF_main_menu_assets');
+		var tex = Paths.getSparrowAtlas('menus/base/title/FNF_main_menu_assets');
 
 		// loop through the menu options
 		for (i in 0...optionShit.length)
@@ -124,7 +123,7 @@ class MainMenuState extends MusicBeatState
 
 		// from the base game lol
 
-		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "Funkin' Forever Engine v" + Main.gameVersion, 12);
+		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "Forever Engine v" + Main.gameVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
