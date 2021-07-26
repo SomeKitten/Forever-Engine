@@ -5,69 +5,34 @@ Forever Engine is an open source modification of the Friday Night Funkin' engine
 ----------------------------------------------
 The Forever Engine is based off of the aforementioned [Friday Night Funkin' Source](https://github.com/ninjamuffin99/Funkin). It's made to be more accessible and easier to build off of, as well as having a lot of quality of life changes and a much more focused direction on the more traditional feel of rhythm games, all while still keeping the same style and feel of Friday Night Funkin'. I know a lot of source codes are hard to work with for friday night funkin', usually very unoptimised or very unorganised, I wanted to fix both of these issues with Forever Engine and Funkin' Forever in the future. True to the spirit of [Newgrounds](https://www.newgrounds.com), Friday Night Funkin' should be accessible by everyone, both modders and gamers alike, and I wanted to make it my goal to fix a lot of the issues that prevented people from being able to use the base game's engine, as well as create a more polished engines, as I was unhappy with the current existing ones at the time.
 
+Forever Engine is getting a massive overhaul soon, hopefully you all enjoy it! It's meant to both optimise the engine more and allow for more customisations, I want this engine to be really customisable both by the player and by the mod makers using it, and I also wanted it to be lightweight and clean, this being some of the major reasons why I want to rewrite the engine entirely and why I separated Forever Engine and Funkin' Forever.
 ----------------------------------------------
-CHANGELOG UNMARKED HOTFIX
-* Removes leftover tankman assets, the game will still load them if provided with the sprites but will no longer come with the week 7 songs or sprites, both out of respect for newgrounds and compliance of gamebanana modding rules (that I had no idea existed lmao)
-* fixed some misc stuff, like the game refusing to compile, bugs with loading note stuffs (I'm working on an improved note map system, stay tuned, you'll be able to do some powerful shit with it and it'll be really easy to edit!)
+Changelog 0.2
+* entirely recreated the menus from the base game
+* working options menu
+* working custom controls
+* pretty soon the game will be on par with the base game itself, which is pretty cool to think about
 
-CHANGELOG v0.2.1
-* custom controls lmao
-* fixed some misc bugs and glitches
-
-  * 0.2.1.1 fixes a stupid oversight
-  * 0.2.1.2 fixes html5 and accuracy
-
-CHANGELOG v0.2.0
-* removed most week 7 stuffs because I respect newgrounds and they werent meant to be in for the release I just wanted to test
-* options menu, main menu, title screen, story menu, freeplay menu
-* custom color coding freeplay menu based on weeks! (or songs)
-* week 7 icon formatting
-* week 7 offset formatting (offset editor coming soon)
-* no changes to the chart editor (don't use it yet its still very buggy and limited)
-* some stuff got overhauled
-* note timings and better ratings
-* negative combos and epic pixel stuffs I think (missing the miss rating for pixel still)
-
-* forked skater from the engine (madness comes next)
 ----------------------------------------------
 
+Future Features: 
+ All the future feature stuffs have been redirected to funkin' forever once that comes out, personally I want forever engine to be as lightweight and easy to use, so it most likely wont feature modcharts, if you want the TRUE DEFINITIVE RHYTHM GAME EXPERIENCE, all inside of your newgrounds love letter, I really hope you enjoy funkin' forever itself once its in a playable state!
 
-Planned Features:
-* Offset Editor based on .txt files
-* Custom Controls
-* Translations (if enough support is given)
-* Adjustable Note Colors
-* Misc Rhythm Game features
-  * Offsets (maybe)
-  * Note colors based on Rhythm
-  * Modcharts
-  * Other general features that will make this engine stand out from others
-* Modularity (? idk it sounds cool and smart [not like me lmao])
-
-Current Features:
-* Unfinished song editor
-* A much more organised PlayState
-* comments that are kind of funny
-* idk im struggling to come up with features
-* seriously this is very work in progress please understand
-* probably a better input system idk???
-* even less features than last time lmao
-* no seriously I have to add filler features like this
-* to make it look somewhat longer
-* because I actually removed and maintained some things
-
+----------------------------------------------
 CREDITS:
 ----------------------------------------------
 
-[Yoshubs](https://github.com/Yoshubs) - she fucking sucks what a fucking idiot holy shit imagine being shubs (also made the engine lmao)
+[Yoshubs](https://github.com/Yoshubs) - idiot programmer made the engine and wasted her time lmao
 
-[Pixloen](https://github.com/PixlJacket) - Assets, general Rhythm game expertise, revisions, inspiration, being a perfect human being
+[Pixloen](https://github.com/PixlJacket) - Pixl made a lot of the custom assets that forever engine uses, he also gave me a lot of general advice on how to improve the engine as well as his input on both how to improve upon the base game and how the input system felt and such. He basically co-owns the engine lmao
 
-[ImCodist](https://github.com/ImCodist) - Miscelaneous Assets, Note Offsets, creator of the obsidian soul (real, stole my iron in minecraft (fuck you)
+[rest of the rise n' skate team] - that mod is the reason im even making an engine right now so like I kind of owe you guys this whole engine and more for that honestly and I will actually do more so stay tuned
 
-[HelloSammu](https://github.com/hellosammu) - Some code enhancements, being a better programmer than me, being able to use twitter comprehensively
+[ImCodist](https://github.com/ImCodist) - Codist helped with a couple of pull requests and issue fixes, but, I'm not gonna give him any credit at all, because he stole my obsidian soul in minecraft and I will never forgive him for that!!!!
 
-[ninjamuffin99](https://twitter.com/ninja_muffin99) - he believes in me (I will never forget [maybe I will
+[HelloSammu](https://github.com/hellosammu) - theyre weird lol
+
+[ninjamuffin99](https://ninjamuffin99.newgrounds.com/) - HE MADE THE BASE GAME SO LIKE WITHOUT HIM THIS WOULD NOT BE POSSIBLE GO CHECK HIM OUT RIGHT NOW
 
 rest of fnf team (they are very good and very real ESPECIALLY PHANTOMARCADE HES GAMING
 
@@ -79,5 +44,4 @@ If you want some external sources that will better walk you through how to compi
 
 ----------------------------------------------
 Thank you for checking out my engine! Got any questions? DM me at Shubs#0404 on Discord!
-I'm **really** scared this will become obsolete when week 7 source comes out lmao so I'm gonna make it more classic rhythm game oriented in the future, as well as mod friendly, much like the base game, but much more hopefully!
 ----------------------------------------------
