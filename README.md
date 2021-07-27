@@ -22,15 +22,15 @@ Future Features:
 CREDITS:
 ----------------------------------------------
 
-[Yoshubs](https://github.com/Yoshubs) - idiot programmer made the engine and wasted her time lmao
+[Yoshubs](https://github.com/Yoshubs) - made the engine (she's not a good programmer
 
-[Pixloen](https://github.com/PixlJacket) - Pixl made a lot of the custom assets that forever engine uses, he also gave me a lot of general advice on how to improve the engine as well as his input on both how to improve upon the base game and how the input system felt and such. He basically co-owns the engine lmao
+[Pixloen](https://github.com/PixlJacket) - made a lot of the custom assets that forever engine uses, he also gave me a lot of general advice on how to improve the engine as well as his input on both how to improve upon the base game and how the input system felt and such. He basically co-owns the engine lmao
 
 rest of the rise n' skate team - that mod is the reason im even making an engine right now so like I kind of owe you guys this whole engine and more for that honestly and I will actually do more so stay tuned
 
-[ImCodist](https://github.com/ImCodist) - Codist helped with a couple of pull requests and issue fixes, but, I'm not gonna give him any credit at all, because he stole my obsidian soul in minecraft and I will never forgive him for that!!!!
+[ImCodist](https://github.com/ImCodist) - helped with a couple of pull requests and issue fixes, but, I'm not gonna give him any credit at all, because he stole my obsidian soul in minecraft and I will never forgive him for that!!!!
 
-[HelloSammu](https://github.com/hellosammu) - theyre weird lol
+[HelloSammu](https://github.com/hellosammu) - weird catgirl programmer, they scare me
 
 [ninjamuffin99](https://ninjamuffin99.newgrounds.com/) - HE MADE THE BASE GAME SO LIKE WITHOUT HIM THIS WOULD NOT BE POSSIBLE GO CHECK HIM OUT RIGHT NOW
 
