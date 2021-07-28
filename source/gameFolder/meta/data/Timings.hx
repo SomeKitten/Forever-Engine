@@ -50,8 +50,8 @@ class Timings
 		daRatings = [
 			"sick" => [null, 350, 0, 100],
 			"good" => [0.2, 200, 1, 60],
-			"bad" => [0.5, 100, 2, 20],
-			"shit" => [0.7, 50, 3, 5],
+			"bad" => [0.5, 100, 2, 15],
+			"shit" => [0.7, 50, 3, 0],
 		];
 
 		// set the score ratings for later use

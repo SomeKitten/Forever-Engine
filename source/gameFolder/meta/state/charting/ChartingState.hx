@@ -79,7 +79,7 @@ class ChartingState extends MusicBeatState
 		if (PlayState.SONG != null)
 			_song = PlayState.SONG;
 		else
-			_song = Song.loadFromJson('dadbattle-hard', 'dadbattle');
+			_song = Song.loadFromJson('fresh-hard', 'fresh');
 
 		PlayState.resetMusic();
 		if (FlxG.sound.music != null)
@@ -87,6 +87,9 @@ class ChartingState extends MusicBeatState
 			FlxG.sound.music.stop();
 			// vocals.stop();
 		}
+
+		strumLineCam = new FlxObject(0, 0);
+		strumLineCam.screenCenter(X);
 
 		// generate the chart itself
 		loadSong(_song.song);
@@ -97,9 +100,6 @@ class ChartingState extends MusicBeatState
 		strumLine = new FlxSprite(0, 0).makeGraphic(Std.int(FlxG.width / 2), 4);
 		strumLine.screenCenter(X);
 		add(strumLine);
-
-		strumLineCam = new FlxObject(0, 0);
-		strumLineCam.screenCenter(X);
 
 		// cursor
 		dummyArrow = new FlxSprite().makeGraphic(gridSize, gridSize);
@@ -152,6 +152,34 @@ class ChartingState extends MusicBeatState
 		// coolGrid.y = (750 * (Math.cos((beatTime / 5) * Math.PI)));
 		// coolGrid.x = Conductor.songPosition;
 
+		if (FlxG.keys.justPressed.SPACE)
+		{
+			if (songMusic.playing)
+			{
+				songMusic.pause();
+				vocals.pause();
+				// playButtonAnimation('pause');
+			}
+			else
+			{
+				vocals.play();
+				songMusic.play();
+				// for note tick sounds
+				// hasPlayedSound = [];
+
+				// playButtonAnimation('play');
+			}
+		}
+
+		// strumline camera stuffs!
+		Conductor.songPosition = songMusic.time;
+
+		strumLine.y = getYfromStrum(Conductor.songPosition / 2);
+		strumLineCam.y = strumLine.y + (FlxG.height / 3);
+
+		coolGradient.y = strumLineCam.y - (FlxG.height / 2);
+		coolGrid.y = strumLineCam.y - (FlxG.height / 2);
+
 		super.update(elapsed);
 	}
 
@@ -189,7 +217,9 @@ class ChartingState extends MusicBeatState
 		for (section in _song.notes)
 		{
 			// trace('generating section $section');
-			var curGridSprite:FlxSprite = FlxGridOverlay.create(gridSize, gridSize, gridSize * horizontalSize, gridSize * verticalSize, true);
+			var curGridSprite:FlxSprite = FlxGridOverlay.create(gridSize, gridSize, gridSize * horizontalSize, gridSize * verticalSize, true, FlxColor.WHITE,
+				FlxColor.BLACK);
+			curGridSprite.alpha = (26 / 255);
 			curGridSprite.screenCenter(X);
 			curGridSprite.y += ((gridSize * 16) * sectionsMax);
 
@@ -215,9 +245,11 @@ class ChartingState extends MusicBeatState
 				note.sustainLength = daSus;
 				note.setGraphicSize(gridSize, gridSize);
 				note.updateHitbox();
+
+				note.screenCenter(X);
+				note.x -= (gridSize * 2);
 				note.x = Math.floor(daNoteInfo * gridSize);
-				note.y = 0;
-				// note.y = Math.floor(((daStrumTime - sectionStartTime(sectionsMax)) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps)));
+				note.y = Math.floor(getYfromStrum(daStrumTime));
 
 				curRenderedNotes.add(note);
 
@@ -228,8 +260,8 @@ class ChartingState extends MusicBeatState
 					curRenderedSustains.add(sustainVis);
 				}
 			}
-			//
 
+			//
 			sectionsMax++;
 		}
 		add(sectionsAll);
@@ -254,11 +286,10 @@ class ChartingState extends MusicBeatState
 			curRenderedSustains.remove(curRenderedSustains.members[0], true);
 		}
 	}
+
 	/*
 		private function generateGrid()
 		{
-
-
 			// temp function for now
 			var noteGrid:FlxSprite = FlxGridOverlay.create(gridSize, gridSize, gridSize * horizontalSize, gridSize * verticalSize, true, FlxColor.WHITE,
 				FlxColor.BLACK);
@@ -267,4 +298,14 @@ class ChartingState extends MusicBeatState
 			noteGrid.screenCenter();
 		}
 	 */
+	function getStrumTime(yPos:Float):Float
+	{
+		return FlxMath.remapToRange(yPos, 0, sectionsMax * (gridSize * verticalSize), 0, 16 * Conductor.stepCrochet);
+	}
+
+	function getYfromStrum(strumTime:Float):Float
+	{
+		var lengthSong = ((sectionsMax * (gridSize * verticalSize)));
+		return FlxMath.remapToRange(strumTime, 0, lengthSong, 0, lengthSong);
+	}
 }

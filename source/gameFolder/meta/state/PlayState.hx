@@ -858,8 +858,6 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	// good notes hit
-
 	function controlPlayer(character:Character, autoplay:Bool, characterStrums:FlxTypedGroup<UIBabyArrow>, holdControls:Array<Bool>,
 			pressControls:Array<Bool>, releaseControls:Array<Bool>, ?mustPress = true)
 	{
@@ -868,22 +866,22 @@ class PlayState extends MusicBeatState
 			// check if anything is pressed
 			if (pressControls.contains(true))
 			{
-				// reset possible notes
-				var possibleNoteList:Array<Note> = [];
-				var pressedNotes:Array<Note> = [];
-
-				notes.forEachAlive(function(daNote:Note)
-				{
-					if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit)
-					{
-						possibleNoteList.push(daNote);
-						possibleNoteList.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
-					}
-				});
-
 				// check all of the controls
 				for (i in 0...pressControls.length)
 				{
+					// improved this a little bit, maybe its a lil
+					var possibleNoteList:Array<Note> = [];
+					var pressedNotes:Array<Note> = [];
+
+					notes.forEachAlive(function(daNote:Note)
+					{
+						if ((daNote.noteData == i) && daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit)
+						{
+							possibleNoteList.push(daNote);
+							possibleNoteList.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+						}
+					});
+
 					// if there is a list of notes that exists for that control
 					if (possibleNoteList.length > 0)
 					{
@@ -898,13 +896,12 @@ class PlayState extends MusicBeatState
 							if (pressControls[coolNote.noteData])
 							{
 								for (noteDouble in pressedNotes)
-									if (noteDouble.noteData == coolNote.noteData)
-									{
-										if (Math.abs(noteDouble.strumTime - coolNote.strumTime) < 10)
-											firstNote = false;
-										else
-											eligable = false;
-									}
+								{
+									if (Math.abs(noteDouble.strumTime - coolNote.strumTime) < 10)
+										firstNote = false;
+									else
+										eligable = false;
+								}
 
 								if (eligable)
 								{
@@ -1218,10 +1215,11 @@ class PlayState extends MusicBeatState
 		if (increase)
 		{
 			//
+			var trueHealth = healthBase * 0.75;
 			if ((coolNote.isSustainNote) && (coolNote.animation.name.endsWith('holdend')))
-				health += healthBase;
+				health += trueHealth;
 			else if (!coolNote.isSustainNote)
-				health += healthBase * (ratingMultiplier / 100);
+				health += trueHealth * (ratingMultiplier / 100);
 		}
 		else
 			health -= healthBase;
@@ -1271,7 +1269,6 @@ class PlayState extends MusicBeatState
 		character.holdTimer = 0;
 	}
 
-	//
 	//
 	//
 	//	please spare me
