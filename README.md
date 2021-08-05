@@ -22,7 +22,7 @@ Future Features:
 CREDITS:
 ----------------------------------------------
 
-[Yoshubs](https://github.com/Yoshubs) - made the engine (she's not a good programmer
+[Yoshubs](https://github.com/Yoshubs) - made the engine (not a good programmer
 
 [Pixloen](https://github.com/PixlJacket) - made a lot of the custom assets that forever engine uses, he also gave me a lot of general advice on how to improve the engine as well as his input on both how to improve upon the base game and how the input system felt and such. He basically co-owns the engine lmao
 
