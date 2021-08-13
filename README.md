@@ -28,6 +28,8 @@ CREDITS:
 
 rest of the rise n' skate team - that mod is the reason im even making an engine right now so like I kind of owe you guys this whole engine and more for that honestly and I will actually do more so stay tuned
 
+[Oneilr](https://oneilr.newgrounds.com/) - custom assets, bunger
+
 [ImCodist](https://github.com/ImCodist) - helped with a couple of pull requests and issue fixes, but, I'm not gonna give him any credit at all, because he stole my obsidian soul in minecraft and I will never forgive him for that!!!!
 
 [HelloSammu](https://github.com/hellosammu) - weird catgirl programmer, they scare me
