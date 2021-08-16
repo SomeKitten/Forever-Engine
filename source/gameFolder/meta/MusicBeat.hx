@@ -3,12 +3,12 @@ package gameFolder.meta;
 import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.ui.FlxUIState;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
 import gameFolder.meta.*;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Conductor.BPMChangeEvent;
+import gameFolder.meta.data.dependency.FNFUIState;
 
 /* 
 	Music beat state happens to be the first thing on my list of things to add, it just so happens to be the backbone of
@@ -17,7 +17,7 @@ import gameFolder.meta.data.Conductor.BPMChangeEvent;
 	I'm not going to change any of this because I don't truly understand how songplaying works, 
 	I mostly just wanted to rewrite the actual gameplay side of things.
  */
-class MusicBeatState extends FlxUIState
+class MusicBeatState extends FNFUIState
 {
 	// original variables extended from original game source
 	private var lastBeat:Float = 0;

@@ -79,10 +79,10 @@ class PlayState extends MusicBeatState
 	// strums
 	private var strumLine:FlxTypedGroup<FlxSprite>;
 
-	public static var strumLineNotes:FlxTypedGroup<UIBabyArrow>;
+	public static var strumLineNotes:FlxTypedGroup<UIStaticArrow>;
 
-	private var boyfriendStrums:FlxTypedGroup<UIBabyArrow>;
-	private var dadStrums:FlxTypedGroup<UIBabyArrow>;
+	private var boyfriendStrums:FlxTypedGroup<UIStaticArrow>;
+	private var dadStrums:FlxTypedGroup<UIStaticArrow>;
 
 	private var curSong:String = "";
 	private var splashNotes:FlxTypedGroup<NoteSplash>;
@@ -166,7 +166,7 @@ class PlayState extends MusicBeatState
 
 		// default song
 		if (SONG == null)
-			SONG = Song.loadFromJson('tutorial-hard', 'tutorial');
+			SONG = Song.loadFromJson('test', 'test');
 
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
@@ -247,9 +247,7 @@ class PlayState extends MusicBeatState
 		// create strums and ui elements
 		strumLine = new FlxTypedGroup<FlxSprite>();
 		var strumLineY:Int = 50;
-		#if debug
-		trace('downscroll test');
-		#end
+
 		if (Init.gameSettings.get('Downscroll')[0])
 			strumLineY = FlxG.height - (strumLineY * 3);
 		// trace('downscroll works???');
@@ -263,7 +261,7 @@ class PlayState extends MusicBeatState
 		}
 
 		// set up the elements for the notes
-		strumLineNotes = new FlxTypedGroup<UIBabyArrow>();
+		strumLineNotes = new FlxTypedGroup<UIStaticArrow>();
 		add(strumLineNotes);
 
 		// now splash notes
@@ -271,8 +269,8 @@ class PlayState extends MusicBeatState
 		add(splashNotes);
 
 		// and now the note strums
-		boyfriendStrums = new FlxTypedGroup<UIBabyArrow>();
-		dadStrums = new FlxTypedGroup<UIBabyArrow>();
+		boyfriendStrums = new FlxTypedGroup<UIStaticArrow>();
+		dadStrums = new FlxTypedGroup<UIStaticArrow>();
 
 		// generate the song
 		generateSong(SONG.song);
@@ -351,7 +349,7 @@ class PlayState extends MusicBeatState
 			#end
 		}
 
-		// make sure its not cheating lol
+		// make sure you're not cheating lol
 		if (!isStoryMode)
 		{
 			// charting state (more on that later)
@@ -507,7 +505,7 @@ class PlayState extends MusicBeatState
 		// spawn in the notes from the array
 		if (unspawnNotes[0] != null)
 		{
-			if (unspawnNotes[0].strumTime - Conductor.songPosition < 3500)
+			if ((unspawnNotes[0].strumTime - Conductor.songPosition) < 3500)
 			{
 				var dunceNote:Note = unspawnNotes[0];
 				notes.add(dunceNote);
@@ -533,7 +531,7 @@ class PlayState extends MusicBeatState
 	//
 	//----------------------------------------------------------------
 
-	private function mainControls(daNote:Note, char:Character, charStrum:FlxTypedGroup<UIBabyArrow>, autoplay:Bool, ?otherSide:Int = 0):Void
+	private function mainControls(daNote:Note, char:Character, charStrum:FlxTypedGroup<UIStaticArrow>, autoplay:Bool, ?otherSide:Int = 0):Void
 	{
 		// call character type for later I'm so sorry this is painful
 		var charCallType:Int = 0;
@@ -585,7 +583,7 @@ class PlayState extends MusicBeatState
 				// use a switch thing cus it feels right idk lol
 				// make sure the strum is played for the autoplay stuffs
 				/*
-					charStrum.forEach(function(cStrum:UIBabyArrow)
+					charStrum.forEach(function(cStrum:UIStaticArrow)
 					{
 						strumCallsAuto(cStrum, 0, daNote);
 					});
@@ -635,7 +633,7 @@ class PlayState extends MusicBeatState
 	//
 	//----------------------------------------------------------------
 
-	private function strumCallsAuto(cStrum:UIBabyArrow, ?callType:Int = 1, ?daNote:Note):Void
+	private function strumCallsAuto(cStrum:UIStaticArrow, ?callType:Int = 1, ?daNote:Note):Void
 	{
 		switch (callType)
 		{
@@ -659,7 +657,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	private function strumCameraRoll(cStrum:FlxTypedGroup<UIBabyArrow>, mustHit:Bool)
+	private function strumCameraRoll(cStrum:FlxTypedGroup<UIStaticArrow>, mustHit:Bool)
 	{
 		if (!Init.gameSettings.get('No Camera Note Movement')[0])
 		{
@@ -733,12 +731,12 @@ class PlayState extends MusicBeatState
 		// reset strums
 		for (i in 0...4)
 		{
-			boyfriendStrums.forEach(function(cStrum:UIBabyArrow)
+			boyfriendStrums.forEach(function(cStrum:UIStaticArrow)
 			{
 				if (boyfriendAutoplay)
 					strumCallsAuto(cStrum);
 			});
-			dadStrums.forEach(function(cStrum:UIBabyArrow)
+			dadStrums.forEach(function(cStrum:UIStaticArrow)
 			{
 				if (dadAutoplay)
 					strumCallsAuto(cStrum);
@@ -858,7 +856,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function controlPlayer(character:Character, autoplay:Bool, characterStrums:FlxTypedGroup<UIBabyArrow>, holdControls:Array<Bool>,
+	function controlPlayer(character:Character, autoplay:Bool, characterStrums:FlxTypedGroup<UIStaticArrow>, holdControls:Array<Bool>,
 			pressControls:Array<Bool>, releaseControls:Array<Bool>, ?mustPress = true)
 	{
 		if (!autoplay)
@@ -935,7 +933,7 @@ class PlayState extends MusicBeatState
 			// control camera movements
 			// strumCameraRoll(characterStrums, true);
 
-			characterStrums.forEach(function(strum:UIBabyArrow)
+			characterStrums.forEach(function(strum:UIStaticArrow)
 			{
 				if ((pressControls[strum.ID]) && (strum.animation.curAnim.name != 'confirm'))
 					strum.playAnim('pressed');
@@ -1141,7 +1139,7 @@ class PlayState extends MusicBeatState
 		// */
 	}
 
-	function goodNoteHit(coolNote:Note, character:Character, characterStrums:FlxTypedGroup<UIBabyArrow>, ?canDisplayRating:Bool = true)
+	function goodNoteHit(coolNote:Note, character:Character, characterStrums:FlxTypedGroup<UIStaticArrow>, ?canDisplayRating:Bool = true)
 	{
 		if (!coolNote.wasGoodHit)
 		{
@@ -1230,7 +1228,7 @@ class PlayState extends MusicBeatState
 		if (pressControls[direction])
 		{
 			healthCall(false);
-			var stringDirection:String = UIBabyArrow.getArrowFromNumber(direction);
+			var stringDirection:String = UIStaticArrow.getArrowFromNumber(direction);
 
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 			character.playAnim('sing' + stringDirection.toUpperCase() + 'miss');
@@ -1247,7 +1245,7 @@ class PlayState extends MusicBeatState
 		var stringArrow:String = '';
 		var altString:String = '';
 
-		var baseString = 'sing' + UIBabyArrow.getArrowFromNumber(coolNote.noteData).toUpperCase();
+		var baseString = 'sing' + UIStaticArrow.getArrowFromNumber(coolNote.noteData).toUpperCase();
 
 		// I tried doing xor and it didnt work lollll
 		if (coolNote.noteAlt > 0)
@@ -1349,7 +1347,7 @@ class PlayState extends MusicBeatState
 		{
 			// FlxG.log.add(i);
 			// var babyArrow:FlxSprite = new FlxSprite(0, strumLine.y);
-			var babyArrow:UIBabyArrow = ForeverAssets.generateUIArrows(0, strumLine.members[Math.floor(i + (player * 4))].y - 25, i, assetModifier);
+			var babyArrow:UIStaticArrow = ForeverAssets.generateUIArrows(0, strumLine.members[Math.floor(i + (player * 4))].y - 25, i, assetModifier);
 			babyArrow.ID = i; // + (player * 4);
 
 			switch (player)
@@ -1372,10 +1370,11 @@ class PlayState extends MusicBeatState
 			babyArrow.angleTo = 0;
 
 			babyArrow.y -= 10;
-			babyArrow.alpha = 0;
-			FlxTween.tween(babyArrow, {y: babyArrow.initialY, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
-
 			babyArrow.playAnim('static');
+
+			babyArrow.alpha = 0;
+			FlxTween.tween(babyArrow, {y: babyArrow.initialY, alpha: babyArrow.setAlpha}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
+
 			strumLineNotes.add(babyArrow);
 
 			// generate note splashes
@@ -1415,23 +1414,22 @@ class PlayState extends MusicBeatState
 		//*/
 	}
 
-	public static function everyoneDance()
+	private function charactersDance(curBeat:Int)
 	{
-		// this is sorta useful I guess for cutscenes and such
-		dadOpponent.dance();
-		gf.dance();
-		boyfriend.dance();
+		if ((curBeat % gfSpeed == 0) && (!gf.animation.curAnim.name.startsWith("sing")))
+			gf.dance();
+
+		if (!boyfriend.animation.curAnim.name.startsWith("sing"))
+			boyfriend.dance();
+
+		// added this for opponent cus it wasn't here before and skater would just freeze
+		if (!dadOpponent.animation.curAnim.name.startsWith("sing"))
+			dadOpponent.dance();
 	}
 
 	override function beatHit()
 	{
 		super.beatHit();
-
-		/*
-			if (generatedMusic)
-			{
-				notes.sort(FlxSort.byY, FlxSort.DESCENDING);
-		}*/
 
 		if ((FlxG.camera.zoom < 1.35 && curBeat % 4 == 0) && (!Init.gameSettings.get('Reduced Movements')[0]))
 		{
@@ -1441,19 +1439,11 @@ class PlayState extends MusicBeatState
 
 		uiHUD.beatHit();
 
-		if (curBeat % gfSpeed == 0)
-			gf.dance();
-
-		if (!boyfriend.animation.curAnim.name.startsWith("sing"))
-			boyfriend.dance();
-
-		// added this for opponent cus it wasn't here before and skater would just freeze
-		if (!dadOpponent.animation.curAnim.name.startsWith("sing"))
-			dadOpponent.dance();
+		//
+		charactersDance(curBeat);
 
 		// stage stuffs
 		stageBuild.stageUpdate(curBeat, boyfriend, gf, dadOpponent);
-		// uiHUD.hudUpdate();
 	}
 
 	//
@@ -1608,7 +1598,7 @@ class PlayState extends MusicBeatState
 		FlxTransitionableState.skipNextTransOut = true;
 
 		PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + difficulty, PlayState.storyPlaylist[0]);
-		songMusic.stop();
+		ForeverTools.killMusic([songMusic, vocals]);
 
 		Main.switchState(new PlayState());
 	}
@@ -1662,12 +1652,11 @@ class PlayState extends MusicBeatState
 	private function startCountdown():Void
 	{
 		Conductor.songPosition = -(Conductor.crochet * 5);
-
 		swagCounter = 0;
 
 		startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
 		{
-			everyoneDance();
+			beatHit();
 
 			var introAssets:Map<String, Array<String>> = new Map<String, Array<String>>();
 			introAssets.set('default', ['UI/$assetModifier/ready', 'UI/$assetModifier/set', 'UI/$assetModifier/go']);

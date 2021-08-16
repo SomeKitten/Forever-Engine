@@ -16,7 +16,6 @@ using StringTools;
 class OptionsSubstate extends MusicBeatSubState
 {
 	private var curSelection = 0;
-	private var totalSize = Lambda.count(Init.gameControls);
 	private var submenuGroup:FlxTypedGroup<FlxBasic>;
 	private var submenuoffsetGroup:FlxTypedGroup<FlxBasic>;
 
@@ -284,7 +283,8 @@ class OptionsSubstate extends MusicBeatSubState
 
 				FlxFlicker.flicker(otherKeys.members[(curSelection * 2) + curHorizontalSelection], 0.5, 0.06 * 2, true, false, function(flick:FlxFlicker)
 				{
-					openSubmenu();
+					if (submenuOpen)
+						openSubmenu();
 				});
 			}
 			else if (controls.BACK)

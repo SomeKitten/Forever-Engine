@@ -1,6 +1,7 @@
 package;
 
 import flixel.FlxG;
+import flixel.system.FlxSound;
 import gameFolder.meta.data.*;
 import openfl.utils.Assets;
 
@@ -26,9 +27,20 @@ class ForeverTools
 	public static function returnSkinAsset(asset:String, assetModifier:String = 'base', baseLibrary:String):String
 	{
 		var realAsset = '$baseLibrary/$assetModifier/$asset';
-		if (!Assets.exists(realAsset))
+		if (!Assets.exists(Paths.image(realAsset)))
 			realAsset = '$baseLibrary/base/$asset';
 
 		return realAsset;
+	}
+
+	public static function killMusic(songsArray:Array<FlxSound>)
+	{
+		// neat function thing for songs
+		for (i in 0...songsArray.length)
+		{
+			// stop
+			songsArray[i].stop();
+			songsArray[i].destroy();
+		}
 	}
 }

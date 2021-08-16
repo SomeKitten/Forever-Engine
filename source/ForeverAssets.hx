@@ -117,8 +117,8 @@ class ForeverAssets
 				/*
 					tempSplash.frames = Paths.getSparrowAtlas('UI/$assetModifier/notes/noteSplashes');
 					// get a random value for the note splash type
-					tempSplash.animation.addByPrefix('anim1', 'note impact 1 ' + UIBabyArrow.getColorFromNumber(noteData), 24, false);
-					tempSplash.animation.addByPrefix('anim2', 'note impact 2 ' + UIBabyArrow.getColorFromNumber(noteData), 24, false);
+					tempSplash.animation.addByPrefix('anim1', 'note impact 1 ' + UIStaticArrow.getColorFromNumber(noteData), 24, false);
+					tempSplash.animation.addByPrefix('anim2', 'note impact 2 ' + UIStaticArrow.getColorFromNumber(noteData), 24, false);
 					tempSplash.animation.play('anim1');
 
 					tempSplash.addOffset('anim1', 16, 16);
@@ -129,9 +129,9 @@ class ForeverAssets
 		return tempSplash;
 	}
 
-	public static function generateUIArrows(x:Float, y:Float, ?babyArrowType:Int = 0, assetModifier:String):UIBabyArrow
+	public static function generateUIArrows(x:Float, y:Float, ?babyArrowType:Int = 0, assetModifier:String):UIStaticArrow
 	{
-		var newBabyArrow:UIBabyArrow = new UIBabyArrow(x, y, babyArrowType);
+		var newBabyArrow:UIStaticArrow = new UIStaticArrow(x, y, babyArrowType);
 		switch (assetModifier)
 		{
 			case 'basepixel' | 'foreverpixel':
@@ -151,17 +151,29 @@ class ForeverAssets
 				newBabyArrow.addOffset('pressed', -67, -75);
 				newBabyArrow.addOffset('confirm', -67, -75);
 
+			case 'chart editor':
+				// look man you know me I fucking hate repeating code
+				// not even just a cleanliness thing it's just so annoying to tweak if something goes wrong like
+				// genuinely more programmers should make their code more modular
+				newBabyArrow.loadGraphic(Paths.image('UI/forever/chart editor/note_array'), true, 157, 156);
+				newBabyArrow.animation.add('static', [babyArrowType]);
+				newBabyArrow.animation.add('pressed', [16 + babyArrowType], 12, false);
+				newBabyArrow.animation.add('confirm', [4 + babyArrowType, 8 + babyArrowType, 16 + babyArrowType], 24, false);
+
+				newBabyArrow.addOffset('static');
+				newBabyArrow.addOffset('pressed');
+				newBabyArrow.addOffset('confirm');
+
 			default:
 				// probably gonna revise this and make it possible to add other arrow types but for now it's just pixel and normal
 				var stringSect:String = '';
 				// call arrow type I think
-				stringSect = UIBabyArrow.getArrowFromNumber(babyArrowType);
+				stringSect = UIStaticArrow.getArrowFromNumber(babyArrowType);
 
 				var framesArgument:String = "NOTE_assets";
 
 				newBabyArrow.frames = Paths.getSparrowAtlas(ForeverTools.returnSkinAsset('notes/$framesArgument', assetModifier, 'UI'));
 
-				// idk if this works or not lmao
 				newBabyArrow.animation.addByPrefix('static', 'arrow' + stringSect.toUpperCase());
 				newBabyArrow.animation.addByPrefix('pressed', stringSect + ' press', 24, false);
 				newBabyArrow.animation.addByPrefix('confirm', stringSect + ' confirm', 24, false);

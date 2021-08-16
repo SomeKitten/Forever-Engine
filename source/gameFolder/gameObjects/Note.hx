@@ -6,9 +6,10 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import gameFolder.gameObjects.userInterface.UIBabyArrow;
+import gameFolder.gameObjects.userInterface.UIStaticArrow;
 import gameFolder.meta.*;
 import gameFolder.meta.data.*;
+import gameFolder.meta.data.dependency.FNFSprite;
 import gameFolder.meta.state.PlayState;
 
 using StringTools;
@@ -164,7 +165,7 @@ class Note extends FNFSprite
 		}
 
 		//
-		animation.play(UIBabyArrow.getColorFromNumber(noteData) + 'Scroll');
+		animation.play(UIStaticArrow.getColorFromNumber(noteData) + 'Scroll');
 
 		// trace(prevNote);
 
@@ -172,13 +173,13 @@ class Note extends FNFSprite
 		{
 			alpha = 0.6;
 
-			animation.play(UIBabyArrow.getColorFromNumber(noteData) + 'holdend');
+			animation.play(UIStaticArrow.getColorFromNumber(noteData) + 'holdend');
 
 			updateHitbox();
 
 			if (prevNote.isSustainNote)
 			{
-				prevNote.animation.play(UIBabyArrow.getColorFromNumber(prevNote.noteData) + 'hold');
+				prevNote.animation.play(UIStaticArrow.getColorFromNumber(prevNote.noteData) + 'hold');
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();

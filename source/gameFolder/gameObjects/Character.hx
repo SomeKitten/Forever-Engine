@@ -9,8 +9,8 @@ import flixel.addons.util.FlxSimplex;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
 import gameFolder.meta.*;
-import gameFolder.meta.FNFSprite;
 import gameFolder.meta.data.*;
+import gameFolder.meta.data.dependency.FNFSprite;
 import gameFolder.meta.state.PlayState;
 import openfl.utils.Assets as OpenFlAssets;
 

@@ -127,7 +127,7 @@ class Init extends FlxState
 		// apply saved filters
 		FlxG.game.setFilters(filters);
 
-		Main.switchState(new TitleState());
+		Main.switchState(new PlayState());
 	}
 
 	public static function loadSettings():Void
