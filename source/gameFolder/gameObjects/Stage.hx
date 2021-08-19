@@ -13,6 +13,7 @@ import flixel.math.FlxPoint;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import gameFolder.gameObjects.background.*;
+import gameFolder.meta.CoolUtil;
 import gameFolder.meta.state.PlayState;
 
 using StringTools;
@@ -57,7 +58,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 		{
 			// this is because I want to avoid editing the fnf chart type
 			// custom stage stuffs will come with forever charts
-			switch (PlayState.SONG.song.toLowerCase())
+			switch (CoolUtil.spaceToDash(PlayState.SONG.song.toLowerCase()))
 			{
 				case 'spookeez' | 'south' | 'monster':
 					curStage = 'spooky';
