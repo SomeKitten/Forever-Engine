@@ -18,7 +18,10 @@ class CoolUtil
 
 	public static function dashToSpace(string:String):String
 	{
-		return string.replace("-", " ");
+		// lazy lmao
+		var replacedString = string.replace("-lol", "");
+		replacedString = replacedString.replace("-", " ");
+		return replacedString;
 	}
 
 	public static function coolTextFile(path:String):Array<String>

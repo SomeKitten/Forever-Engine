@@ -45,18 +45,8 @@ class FreeplayState extends MusicBeatState
 	override function create()
 	{
 		///*
-		addWeek(['Tutorial', 'Bopeebo', 'Fresh', 'Dadbattle'], 1, ['gf', 'dad', 'dad', 'dad'], [FlxColor.fromRGB(129, 100, 223)]);
+		addWeek(['Probed', 'Lazerz', 'Brainfuck', 'Annihilation'], 1, ['alien', 'alien', 'alien-pissed', 'alien-psychic'], [FlxColor.fromRGB(129, 100, 223)]);
 
-		addWeek(['Spookeez', 'South', 'Monster'], 2, ['spooky', 'spooky', 'monster'], [FlxColor.fromRGB(30, 45, 60)]);
-
-		addWeek(['Pico', 'Philly-Nice', 'Blammed'], 3, ['pico'], [FlxColor.fromRGB(111, 19, 60)]);
-
-		addWeek(['Satin-Panties', 'High', 'Milf'], 4, ['mom'], [FlxColor.fromRGB(203, 113, 170)]);
-
-		addWeek(['Cocoa', 'Eggnog', 'Winter-Horrorland'], 5, ['parents-christmas', 'parents-christmas', 'monster-christmas'],
-			[FlxColor.fromRGB(141, 165, 206)]);
-
-		addWeek(['Senpai', 'Roses', 'Thorns'], 6, ['senpai', 'senpai', 'spirit'], [FlxColor.fromRGB(206, 106, 169)]);
 		// */
 
 		// LOAD MUSIC
