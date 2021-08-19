@@ -36,10 +36,8 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 	private var healthBar:FlxBar;
 
 	private var SONG = PlayState.SONG;
-
-	public var iconP1:HealthIcon;
-	public var iconP2:HealthIcon;
-
+	private var iconP1:HealthIcon;
+	private var iconP2:HealthIcon;
 	private var stupidHealth:Float = 0;
 
 	// eep

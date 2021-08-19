@@ -9,17 +9,13 @@ class HealthIcon extends FlxSprite
 	// rewrite using da new icon system as ninjamuffin would say it
 	public var sprTracker:FlxSprite;
 
-	public var exclusions:Array<String> = ['pissed', 'psychic'];
-
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{
 		super();
 
-		// made a cooler system instead of the one from last time
-		if (char.contains('-'))
+		if ((!char.endsWith('pixel')) && (char.contains('-')))
 		{
-			if (!exclusions.contains(char.substring(char.indexOf('-') + 1, char.length)))
-				char = char.substring(0, char.indexOf('-'));
+			char = char.substring(0, char.indexOf('-'));
 		}
 
 		antialiasing = true;

@@ -12,7 +12,6 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import gameFolder.meta.MusicBeat.MusicBeatSubState;
-import gameFolder.meta.data.Song;
 import gameFolder.meta.data.font.Alphabet;
 import gameFolder.meta.state.*;
 import gameFolder.meta.state.menus.*;
@@ -21,7 +20,7 @@ class PauseSubState extends MusicBeatSubState
 {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
-	var menuItems:Array<String> = ['Resume', #if debug 'Skip Song', #end 'Restart Song', 'Exit to menu'];
+	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Exit to menu'];
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
@@ -137,14 +136,6 @@ class PauseSubState extends MusicBeatSubState
 			{
 				case "Resume":
 					close();
-				case 'Skip Song':
-					PlayState.storyPlaylist.remove(PlayState.storyPlaylist[0]);
-					PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase()
-						+ '-'
-						+ CoolUtil.difficultyFromNumber(PlayState.storyDifficulty).toLowerCase(),
-						PlayState.storyPlaylist[0]);
-					FlxG.resetState();
-
 				case "Restart Song":
 					FlxG.resetState();
 				case "Exit to menu":

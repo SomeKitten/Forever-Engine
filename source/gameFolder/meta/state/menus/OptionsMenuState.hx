@@ -71,7 +71,9 @@ class OptionsMenuState extends MusicBeatState
 		accessibilityCheckmarks = generateCheckmarks(accessibilityOptions);
 		//
 
-		var foreverOptions:Array<String> = ['Use Forever Chart Editor'];
+		var foreverOptions:Array<String> = ['Use Forever Chart Editor', 'Optimized Boyfriend', 'Optimized Girlfriend'];
+		if (!Init.forceDisableForeverMenu)
+			foreverOptions.push('Forever Engine Menus');
 
 		foreverGroup = generateGroup(foreverOptions, true);
 		foreverCheckmarks = generateCheckmarks(foreverOptions);

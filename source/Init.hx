@@ -40,10 +40,12 @@ class Init extends FlxState
 		"Deuteranopia" => [false, 6],
 		"Protanopia" => [false, 7],
 		"Tritanopia" => [false, 8],
-		'No Camera Note Movement' => [true, 9],
+		'No Camera Note Movement' => [false, 9],
 		'Offset' => [false, 0],
 		'Use Forever Chart Editor' => [true, 11],
 		'Forever Engine Menus' => [!forceDisableForeverMenu, 12],
+		'Optimized Boyfriend' => [true, 13],
+		'Optimized Girlfriend' => [true, 14],
 		"use Forever Engine UI" => [true, 15],
 		// introduced a new system that checks for the settings version in case you/i wanna hard reset stuffs
 		'version' => '1',
@@ -61,6 +63,8 @@ class Init extends FlxState
 		"Tritanopia" => 'Enables the colorblind filter for Tritanopia', 'No Camera Note Movement' => "Disables forever engine's note-based camera movement",
 		'Use Forever Chart Editor' => "Enables the usage of forever engine's custom chart editor (not recommended for now)",
 		'Forever Engine Menus' => "Enables the Forever Engine custom Menus (Applies when exiting the options menu)",
+		'Optimized Boyfriend' => "Whether to use Forever Engine's custom boyfriend sprites (Mostly an option for modding)",
+		'Optimized Girlfriend' => "Much like the last option, but for Girlfriend instead",
 		"use Forever Engine UI" => "Makes some changes to the UI, like ratings having colored outlines",
 	];
 
@@ -111,7 +115,7 @@ class Init extends FlxState
 
 	override public function create():Void
 	{
-		FlxG.save.bind('martian', 'mixtape');
+		FlxG.save.bind('funkin', 'forever');
 		Highscore.load();
 
 		loadSettings();
