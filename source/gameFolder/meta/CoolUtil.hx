@@ -21,6 +21,16 @@ class CoolUtil
 		return string.replace("-", " ");
 	}
 
+	public static function spaceToDash(string:String):String
+	{
+		return string.replace(" ", "-");
+	}
+
+	public static function swapSpaceDash(string:String):String
+	{
+		return StringTools.contains(string, '-') ? dashToSpace(string) : spaceToDash(string);
+	}
+
 	public static function coolTextFile(path:String):Array<String>
 	{
 		var daList:Array<String> = Assets.getText(path).trim().split('\n');

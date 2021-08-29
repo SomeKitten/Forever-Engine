@@ -5,6 +5,7 @@ package;
  */
 import flixel.FlxG;
 import flixel.graphics.frames.FlxAtlasFrames;
+import gameFolder.meta.CoolUtil;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
 
@@ -132,12 +133,22 @@ class Paths
 
 	inline static public function voices(song:String)
 	{
-		return getPath('songs/${song.toLowerCase()}/Voices.$SOUND_EXT', MUSIC, null);
+		var voicePath = 'songs/${song.toLowerCase()}/Voices.$SOUND_EXT';
+		if (!OpenFlAssets.exists(voicePath))
+		{
+			voicePath = 'songs/${CoolUtil.swapSpaceDash(song.toLowerCase())}/Voices.$SOUND_EXT';
+		}
+		return getPath(voicePath, MUSIC, null);
 	}
 
 	inline static public function inst(song:String)
 	{
-		return getPath('songs/${song.toLowerCase()}/Inst.$SOUND_EXT', MUSIC, null);
+		var instPath = 'songs/${song.toLowerCase()}/Inst.$SOUND_EXT';
+		if (!OpenFlAssets.exists(instPath))
+		{
+			instPath = 'songs/${CoolUtil.swapSpaceDash(song.toLowerCase())}/Inst.$SOUND_EXT';
+		}
+		return getPath(instPath, MUSIC, null);
 	}
 
 	inline static public function image(key:String, ?library:String)
