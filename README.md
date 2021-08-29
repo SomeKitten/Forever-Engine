@@ -45,8 +45,6 @@ I don't care how big this section gets over time, I will actually keep expanding
 
 [Oneilr](https://oneilr.newgrounds.com/) - Cool Guy Oneilr, made some of the custom assets, mostly the animated ones like the custom note splashes to avoid the week 7 embargo as well as some other things like the checkmarks in the options menu.
 
-[HThagomizer](https://github.com/HThagomizer) - not MURDERING ME for accidentally pushing the martian mixtape source code
-
 [ImCodist](https://github.com/ImCodist) - helped with a couple of pull requests and issue fixes, but, I'm not gonna give him any credit at all, because he stole my obsidian soul in minecraft and I will never forgive him for that!!!!
 
 [HelloSammu](https://github.com/hellosammu) - weird catgirl programmer, they scare me
@@ -59,7 +57,11 @@ rest of the rise n' skate team - that mod is the reason im even making an engine
 SHOUTOUTS
 ----------------------------------------------
 [Fl0pD00dle](https://fl0pd00dle.newgrounds.com/) - Is making some custom assets in the future, is a really cool and underrated guy who's awesome to talk to and I hope he feels better soon. WHEN THEY'RE IMPLEMENTED HE'LL GET BUMPED TO CONTRIBUTOR
+
+[HThagomizer](https://github.com/HThagomizer) - not MURDERING ME for accidentally pushing the martian mixtape source code
+
 [Tsuraran](https://twitter.com/_Tsuraran) - DOPE ASS CUSTOM MENU MUSIC INCOMING, also made vs skipper with clockwerk which is fucking hilarious ALSO YEAH I'LL BUMP AS WELL AFTER ITS IN THE ENGINE
+
 [Clockwerk](https://twitter.com/ClockwerkSmurf) - also made vs skipper, oh my god what were you guys thinking
 
 [Flippy](https://www.youtube.com/channel/UCMIGpjyL6H__IFp7emWErlw) - GIVING ME A LOT OF SUPPORT, INPUT, FEEDBACK, ETC ON THE ENGINE, IT WAS SO COOL TO MEET YOU DUDE AND YOU'RE AWESOME AND I REALLY APPRECIATE YOUR SUPPORT FOR THE ENGINE AS WELL AS YOUR DEDICATION TO THE MOD COMMUNITY!
