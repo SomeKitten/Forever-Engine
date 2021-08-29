@@ -96,11 +96,12 @@ class Alphabet extends FlxSpriteGroup
 			// }
 
 			if (character == " " || character == "-")
-			{
 				lastWasSpace = true;
-			}
 
-			if (AlphaCharacter.alphabet.indexOf(character.toLowerCase()) != -1)
+			var isNumber:Bool = AlphaCharacter.numbers.contains(character);
+			var isSymbol:Bool = AlphaCharacter.symbols.contains(character);
+
+			if ((AlphaCharacter.alphabet.indexOf(character.toLowerCase()) != -1) || (AlphaCharacter.numbers.contains(character)))
 				// if (AlphaCharacter.alphabet.contains(character.toLowerCase()))
 			{
 				if (xPosResetted)
@@ -127,7 +128,12 @@ class Alphabet extends FlxSpriteGroup
 					letter.createBold(character);
 				else
 				{
-					letter.createLetter(character);
+					if (isNumber)
+						letter.createNumber(character);
+					else if (isSymbol)
+						letter.createSymbol(character);
+					else
+						letter.createLetter(character);
 				}
 
 				arrayLetters.push(letter);
@@ -218,17 +224,11 @@ class Alphabet extends FlxSpriteGroup
 				else
 				{
 					if (isNumber)
-					{
 						letter.createNumber(splitWords[loopNum]);
-					}
 					else if (isSymbol)
-					{
 						letter.createSymbol(splitWords[loopNum]);
-					}
 					else
-					{
 						letter.createLetter(splitWords[loopNum]);
-					}
 
 					letter.x += 90;
 				}
@@ -256,7 +256,7 @@ class Alphabet extends FlxSpriteGroup
 		{
 			var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
 
-			var lerpVal = Main.framerateAdjust(0.1);
+			var lerpVal = Main.framerateAdjust(0.175);
 			y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48), lerpVal);
 			// lmao
 			if (!disableX)
@@ -292,17 +292,21 @@ class AlphaCharacter extends FlxSprite
 	public function new(x:Float, y:Float)
 	{
 		super(x, y);
-		var tex = Paths.getSparrowAtlas('UI/base/alphabet');
+		var tex = Paths.getSparrowAtlas('UI/default/base/alphabet');
 		frames = tex;
 
-		antialiasing = true;
+		antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
 	}
 
 	public function createBold(letter:String)
 	{
-		animation.addByPrefix(letter, letter.toUpperCase() + " bold", 24);
-		animation.play(letter);
-		updateHitbox();
+		if (AlphaCharacter.alphabet.indexOf(letter.toLowerCase()) != -1)
+		{
+			// or just load regular text
+			animation.addByPrefix(letter, letter.toUpperCase() + " bold", 24);
+			animation.play(letter);
+			updateHitbox();
+		}
 	}
 
 	public function createLetter(letter:String):Void

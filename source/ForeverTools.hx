@@ -24,11 +24,16 @@ class ForeverTools
 		//
 	}
 
-	public static function returnSkinAsset(asset:String, assetModifier:String = 'base', baseLibrary:String):String
+	public static function returnSkinAsset(asset:String, assetModifier:String = 'base', changeableSkin:String = 'default', baseLibrary:String,
+			?defaultChangeableSkin:String = 'default', ?defaultBaseAsset:String = 'base'):String
 	{
-		var realAsset = '$baseLibrary/$assetModifier/$asset';
+		var realAsset = '$baseLibrary/$changeableSkin/$assetModifier/$asset';
 		if (!Assets.exists(Paths.image(realAsset)))
-			realAsset = '$baseLibrary/base/$asset';
+		{
+			realAsset = '$baseLibrary/$defaultChangeableSkin/$assetModifier/$asset';
+			if (!Assets.exists(Paths.image(realAsset)))
+				realAsset = '$baseLibrary/$defaultChangeableSkin/$defaultBaseAsset/$asset';
+		}
 
 		return realAsset;
 	}

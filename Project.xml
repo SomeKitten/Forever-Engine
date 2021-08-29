@@ -18,7 +18,7 @@
 	<window width="1280" height="720" fps="" background="#000000" hardware="true" vsync="false" />
 
 	<!--HTML5-specific-->
-	<window if="html5" resizable="false" />
+	<window if="html5" resizable="true" />
 
 	<!--Desktop-specific-->
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />
@@ -38,14 +38,11 @@
 	<haxelib name="flixel" />
 	<haxedev set='webgl' />
 
-	<!--In case you want to use the addons package-->
 	<haxelib name="flixel-addons" />
 	<haxelib name="hscript" />
-
-	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
 	<haxelib name="polymod"/>
-	<haxelib name="discord_rpc" if="windows"/>
+	<haxelib name="discord_rpc"/>
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 

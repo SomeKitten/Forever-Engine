@@ -61,10 +61,10 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 
 		// le healthbar setup
 		var barY = FlxG.height * 0.875;
-		if (Init.gameSettings.get('Downscroll')[0])
+		if (Init.trueSettings.get('Downscroll'))
 			barY = 64;
 
-		healthBarBG = new FlxSprite(0, barY).loadGraphic(Paths.image('UI/base/healthBar'));
+		healthBarBG = new FlxSprite(0, barY).loadGraphic(Paths.image('UI/default/base/healthBar'));
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
 		add(healthBarBG);
@@ -127,10 +127,10 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		var importMisses = PlayState.misses;
 		scoreBar.text = 'Score: $importSongScore';
 		// testing purposes
-		var displayAccuracy:Bool = Init.gameSettings.get('Display Accuracy')[0];
+		var displayAccuracy:Bool = Init.trueSettings.get('Display Accuracy');
 		if (displayAccuracy)
 		{
-			scoreBar.text += ' // Accuracy: ' + Std.string(Math.floor(Timings.getAccuracy() * 100) / 100) + '%';
+			scoreBar.text += ' // Accuracy: ' + Std.string(Math.floor(Timings.getAccuracy() * 100) / 100) + '%' + Timings.comboDisplay;
 			scoreBar.text += ' // Rank: ' + Std.string(Timings.returnScoreRating().toUpperCase());
 		}
 
@@ -139,7 +139,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 
 	public function beatHit()
 	{
-		if (!Init.gameSettings.get('Reduced Movements')[0])
+		if (!Init.trueSettings.get('Reduced Movements'))
 		{
 			iconP1.setGraphicSize(Std.int(iconP1.width + 45));
 			iconP2.setGraphicSize(Std.int(iconP2.width + 45));

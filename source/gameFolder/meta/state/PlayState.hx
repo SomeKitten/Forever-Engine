@@ -12,7 +12,9 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRandom;
 import flixel.math.FlxRect;
+import flixel.system.FlxAssets.FlxSoundAsset;
 import flixel.system.FlxSound;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -28,6 +30,7 @@ import gameFolder.meta.data.Song.SwagSong;
 import gameFolder.meta.state.charting.*;
 import gameFolder.meta.state.menus.*;
 import gameFolder.meta.subState.*;
+import openfl.media.Sound;
 import openfl.utils.Assets;
 
 using StringTools;
@@ -56,7 +59,8 @@ class PlayState extends MusicBeatState
 
 	private var dadAutoplay:Bool = true; // this is for testing purposes
 
-	private var assetModifier:String = 'base';
+	public static var assetModifier:String = 'base';
+	public static var changeableSkin:String = 'default';
 
 	private var notes:FlxTypedGroup<Note>;
 	private var unspawnNotes:Array<Note> = [];
@@ -79,7 +83,7 @@ class PlayState extends MusicBeatState
 	// strums
 	private var strumLine:FlxTypedGroup<FlxSprite>;
 
-	public static var strumLineNotes:FlxTypedGroup<UIStaticArrow>;
+	private var strumLineNotes:FlxTypedGroup<UIStaticArrow>;
 
 	private var boyfriendStrums:FlxTypedGroup<UIStaticArrow>;
 	private var dadStrums:FlxTypedGroup<UIStaticArrow>;
@@ -132,6 +136,8 @@ class PlayState extends MusicBeatState
 	// at the beginning of the playstate
 	override public function create()
 	{
+		Main.dumpCache(this);
+
 		// reset any values and variables that are static
 		songScore = 0;
 		combo = 0;
@@ -142,6 +148,9 @@ class PlayState extends MusicBeatState
 		forceZoom = [0, 0, 0, 0];
 
 		Timings.callAccuracy();
+
+		assetModifier = 'base';
+		changeableSkin = 'default';
 
 		// initialise the groups!
 		ratingsGroup = new FlxTypedGroup<FlxSprite>();
@@ -170,11 +179,6 @@ class PlayState extends MusicBeatState
 
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
-
-		// will change this to make it better later!
-		// you'll be able to add your own uis
-		if (Init.gameSettings.get("use Forever Engine UI"))
-			assetModifier = 'forever';
 
 		/// here we determine the chart type!
 		// determine the chart type here
@@ -218,8 +222,9 @@ class PlayState extends MusicBeatState
 		// I don't like the way I'm doing this, but basically hardcode stages to charts if the chart type is the base fnf one
 		// (forever engine charts will have non hardcoded stages)
 
+		changeableSkin = Init.trueSettings.get("UI Skin");
 		if ((curStage.startsWith("school")) && ((determinedChartType == "FNF")))
-			assetModifier += 'pixel';
+			assetModifier = 'pixel';
 
 		// isPixel = true;
 
@@ -248,7 +253,7 @@ class PlayState extends MusicBeatState
 		strumLine = new FlxTypedGroup<FlxSprite>();
 		var strumLineY:Int = 50;
 
-		if (Init.gameSettings.get('Downscroll')[0])
+		if (Init.trueSettings.get('Downscroll'))
 			strumLineY = FlxG.height - (strumLineY * 3);
 		// trace('downscroll works???');
 
@@ -276,7 +281,7 @@ class PlayState extends MusicBeatState
 		generateSong(SONG.song);
 
 		// set the camera position to the center of the stage
-		camPos.set(gf.x + (gf.width / 2), gf.y + (gf.height / 2));
+		camPos.set(gf.x + (gf.frameWidth / 2), gf.y + (gf.frameHeight / 2));
 
 		// create the game camera
 		camFollow = new FlxObject(0, 0, 1, 1);
@@ -296,7 +301,7 @@ class PlayState extends MusicBeatState
 		notes.cameras = [camHUD];
 
 		// actually set the camera up
-		var camLerp = Main.framerateAdjust(0.02);
+		var camLerp = Main.framerateAdjust(0.04);
 		FlxG.camera.follow(camFollow, LOCKON, camLerp);
 		FlxG.camera.zoom = defaultCamZoom;
 		FlxG.camera.focusOn(camFollow.getPosition());
@@ -356,10 +361,10 @@ class PlayState extends MusicBeatState
 			if ((FlxG.keys.justPressed.SEVEN) && (!startingSong))
 			{
 				resetMusic();
-				if (Init.gameSettings.get('Use Forever Chart Editor')[0])
-					Main.switchState(new ChartingState());
+				if (Init.trueSettings.get('Use Forever Chart Editor'))
+					Main.switchState(this, new ChartingState());
 				else
-					Main.switchState(new OriginalChartingState());
+					Main.switchState(this, new OriginalChartingState());
 			}
 
 			if (FlxG.keys.justPressed.SIX)
@@ -397,7 +402,6 @@ class PlayState extends MusicBeatState
 			}
 
 			// Conductor.lastSongPos = FlxG.sound.music.time;
-
 			// song shit for testing lols
 		}
 
@@ -476,17 +480,18 @@ class PlayState extends MusicBeatState
 		FlxG.camera.angle = FlxMath.lerp(0 + forceZoom[2], FlxG.camera.angle, easeLerp);
 		camHUD.angle = FlxMath.lerp(0 + forceZoom[3], camHUD.angle, easeLerp);
 
-		if ((strumLineNotes.members.length > 0) && (!startingSong))
-		{
-			// fuckin uh strumline note stuffs
-			for (i in 0...strumLineNotes.members.length)
+		/*
+			if ((strumLineNotes != null) && (strumLineNotes.members.length > 0) && (!startingSong))
 			{
-				strumLineNotes.members[i].x = FlxMath.lerp(strumLineNotes.members[i].xTo, strumLineNotes.members[i].x, easeLerp);
-				strumLineNotes.members[i].y = FlxMath.lerp(strumLineNotes.members[i].yTo, strumLineNotes.members[i].y, easeLerp);
+				// fuckin uh strumline note stuffs
+				for (i in 0...strumLineNotes.members.length)
+				{
+					strumLineNotes.members[i].x = FlxMath.lerp(strumLineNotes.members[i].xTo, strumLineNotes.members[i].x, easeLerp);
+					strumLineNotes.members[i].y = FlxMath.lerp(strumLineNotes.members[i].yTo, strumLineNotes.members[i].y, easeLerp);
 
-				strumLineNotes.members[i].angle = FlxMath.lerp(strumLineNotes.members[i].angleTo, strumLineNotes.members[i].angle, easeLerp);
-			}
-		}
+					strumLineNotes.members[i].angle = FlxMath.lerp(strumLineNotes.members[i].angleTo, strumLineNotes.members[i].angle, easeLerp);
+				}
+		}*/
 
 		if (health <= 0 && startedCountdown)
 		{
@@ -513,7 +518,7 @@ class PlayState extends MusicBeatState
 				unspawnNotes.splice(unspawnNotes.indexOf(dunceNote), 1);
 
 				// thanks sammu I have no idea how this line works lmao
-				notes.sort(FlxSort.byY, (!Init.gameSettings.get('Downscroll')[0]) ? FlxSort.DESCENDING : FlxSort.ASCENDING);
+				notes.sort(FlxSort.byY, (!Init.trueSettings.get('Downscroll')) ? FlxSort.DESCENDING : FlxSort.ASCENDING);
 			}
 		}
 
@@ -542,24 +547,24 @@ class PlayState extends MusicBeatState
 
 		// I have no idea what I have done
 		var downscrollMultiplier = 1;
-		if (Init.gameSettings.get('Downscroll')[0])
+		if (Init.trueSettings.get('Downscroll'))
 			downscrollMultiplier = -1;
 
 		// im very sorry for this if condition I made it worse lmao
 		///*
 		if (daNote.isSustainNote
 			&& (((daNote.y + daNote.offset.y <= (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y + Note.swagWidth / 2))
-				&& !Init.gameSettings.get('Downscroll')[0])
+				&& !Init.trueSettings.get('Downscroll'))
 				|| (((daNote.y - (daNote.offset.y * daNote.scale.y) + daNote.height) >= (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
 					+ Note.swagWidth / 2))
-					&& Init.gameSettings.get('Downscroll')[0]))
+					&& Init.trueSettings.get('Downscroll')))
 			&& (autoplay || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
 		{
 			var swagRectY = ((strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y);
 			var swagRect = new FlxRect(0, 0, daNote.width * 2, daNote.height * 2);
 			// I feel genuine pain
 			// basically these should be flipped based on if it is downscroll or not
-			if (Init.gameSettings.get('Downscroll')[0])
+			if (Init.trueSettings.get('Downscroll'))
 			{
 				swagRect.height = swagRectY;
 				swagRect.y -= swagRect.height - daNote.height;
@@ -608,7 +613,7 @@ class PlayState extends MusicBeatState
 					notesPressedAutoplay.push(daNote);
 				}
 
-				goodNoteHit(daNote, char, charStrum, canDisplayRating);
+				goodNoteHit(daNote, daNote.strumTime, Conductor.songPosition, char, charStrum, canDisplayRating);
 			}
 			//
 		}
@@ -659,7 +664,7 @@ class PlayState extends MusicBeatState
 
 	private function strumCameraRoll(cStrum:FlxTypedGroup<UIStaticArrow>, mustHit:Bool)
 	{
-		if (!Init.gameSettings.get('No Camera Note Movement')[0])
+		if (!Init.trueSettings.get('No Camera Note Movement'))
 		{
 			var camDisplaceExtend:Float = 1.5;
 			var camDisplaceSpeed = 0.0125;
@@ -761,19 +766,17 @@ class PlayState extends MusicBeatState
 
 				// don't follow this it's hellaaaa stupid code
 				var otherSide = 0;
-				var otherSustain:Float = 0;
 				if (daNote.mustPress)
 					otherSide = 1;
-				if (daNote.isSustainNote)
-					otherSustain = daNote.width;
+				var noteSkin:String = Init.trueSettings.get("Note Skin");
 
 				// set the notes x and y
 				var downscrollMultiplier = 1;
-				if (Init.gameSettings.get('Downscroll')[0])
+				if (Init.trueSettings.get('Downscroll'))
 					downscrollMultiplier = -1;
 
 				daNote.y = (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
-					+ (downscrollMultiplier * -((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2)))));
+					+ (downscrollMultiplier * -((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(daNote.noteSpeed, 2)))));
 				/*
 					heres the part where I talk about how shitty my downscroll code is
 					mostly because I don't actually understand downscroll and I don't play downscroll so its really more
@@ -789,18 +792,18 @@ class PlayState extends MusicBeatState
 					// note alignments (thanks pixl for pointing out what made old downscroll weird)
 					if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
 					{
-						if (Init.gameSettings.get('Downscroll')[0])
+						if (Init.trueSettings.get('Downscroll'))
 							daNote.y += (daNote.prevNote.height);
 						else
 							daNote.y -= ((daNote.prevNote.height / 2));
 					}
 					else
 						daNote.y -= ((daNote.height / 2) * downscrollMultiplier);
-					if (Init.gameSettings.get('Downscroll')[0])
+					if (Init.trueSettings.get('Downscroll'))
 						daNote.flipY = true;
 				}
 
-				daNote.x = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].x + 25 + otherSustain;
+				daNote.x = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].x + 25 + daNote.noteVisualOffset;
 
 				// also set note rotation
 				if (daNote.isSustainNote == false)
@@ -828,8 +831,8 @@ class PlayState extends MusicBeatState
 				}
 
 				// if the note is off screen (above)
-				if (((!Init.gameSettings.get('Downscroll')[0]) && (daNote.y < -daNote.height))
-					|| ((Init.gameSettings.get('Downscroll')[0]) && (daNote.y > (FlxG.height + daNote.height))))
+				if (((!Init.trueSettings.get('Downscroll')) && (daNote.y < -daNote.height))
+					|| ((Init.trueSettings.get('Downscroll')) && (daNote.y > (FlxG.height + daNote.height))))
 				{
 					if ((daNote.tooLate || !daNote.wasGoodHit) && (daNote.mustPress))
 					{
@@ -903,7 +906,8 @@ class PlayState extends MusicBeatState
 
 								if (eligable)
 								{
-									goodNoteHit(coolNote, character, characterStrums, firstNote); // then hit the note
+									goodNoteHit(coolNote, coolNote.strumTime, Conductor.songPosition, character, characterStrums,
+										firstNote); // then hit the note
 									pressedNotes.push(coolNote);
 								}
 							}
@@ -926,7 +930,7 @@ class PlayState extends MusicBeatState
 				notes.forEachAlive(function(coolNote:Note)
 				{
 					if (coolNote.canBeHit && coolNote.mustPress && coolNote.isSustainNote && holdControls[coolNote.noteData])
-						goodNoteHit(coolNote, character, characterStrums);
+						goodNoteHit(coolNote, coolNote.strumTime, Conductor.songPosition, character, characterStrums);
 				});
 			}
 
@@ -959,20 +963,14 @@ class PlayState extends MusicBeatState
 		var score:Int = 50;
 
 		// notesplashes
-		if (baseRating == "sick")
-		{
-			// create the note splash if you hit a sick
+		if (baseRating == "sick") // create the note splash if you hit a sick
 			createSplash(coolNote);
-		}
-		else
-		{
-			// if it isn't a sick, and you had a sick combo, then it becomes not sick :(
+		else // if it isn't a sick, and you had a sick combo, then it becomes not sick :(
 			if (allSicks)
 				allSicks = false;
-		}
 
 		displayRating(baseRating);
-		Timings.updateAccuracy(daRatings.get(baseRating)[3]);
+		Timings.updateAccuracy(daRatings.get(baseRating)[2]);
 		score = Std.int(daRatings.get(baseRating)[1]);
 
 		songScore += score;
@@ -992,7 +990,8 @@ class PlayState extends MusicBeatState
 		for (scoreInt in 0...stringArray.length)
 		{
 			// numScore.loadGraphic(Paths.image('UI/' + pixelModifier + 'num' + stringArray[scoreInt]));
-			var numScore = ForeverAssets.generateCombo('num' + stringArray[scoreInt], assetModifier, 'UI', negative, createdColor, scoreInt, scoreGroup);
+			var numScore = ForeverAssets.generateCombo('num' + stringArray[scoreInt], assetModifier, changeableSkin, 'UI', negative, createdColor, scoreInt,
+				scoreGroup);
 			add(numScore);
 
 			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
@@ -1062,14 +1061,14 @@ class PlayState extends MusicBeatState
 		if ((daRating == "sick") || (daRating == "miss"))
 			noTiming = true;
 
-		var rating = ForeverAssets.generateRating('ratings/$daRating$perfectSickString', assetModifier, 'UI', ratingsGroup);
+		var rating = ForeverAssets.generateRating('ratings/$daRating$perfectSickString', assetModifier, changeableSkin, 'UI', ratingsGroup);
 
 		// this has to be loaded after unfortunately as much as I like to condense all of my code down
-		if (assetModifier == 'basepixel' || assetModifier == 'foreverpixel')
+		if (assetModifier == 'pixel')
 			rating.setGraphicSize(Std.int(rating.width * daPixelZoom * 0.7));
 		else
 		{
-			rating.antialiasing = true;
+			rating.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
 			rating.setGraphicSize(Std.int(rating.width * 0.7));
 		}
 
@@ -1083,10 +1082,10 @@ class PlayState extends MusicBeatState
 			// rating timing
 			// setting the width, it's half of the sprite's width, I don't like doing this but that code scares me in terms of optimisations
 			var newWidth = 166;
-			if (assetModifier == 'basepixel' || assetModifier == 'foreverpixel')
+			if (assetModifier == 'pixel')
 				newWidth = 26;
 
-			timing.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('ratings/$daRating-timings', assetModifier, 'UI')), true, newWidth);
+			timing.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('ratings/$daRating-timings', assetModifier, changeableSkin, 'UI')), true, newWidth);
 			timing.alpha = 1;
 			// this code is quickly becoming painful lmao
 			timing.animation.add('early', [0]);
@@ -1101,7 +1100,7 @@ class PlayState extends MusicBeatState
 
 			// messy messy pixel stuffs
 			// but thank you pixl your timings are awesome
-			if (assetModifier == 'basepixel' || assetModifier == 'foreverpixel')
+			if (assetModifier == 'pixel')
 			{
 				// positions are stupid
 				timing.x += (newWidth / 2) * daPixelZoom;
@@ -1111,7 +1110,7 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
-				timing.antialiasing = true;
+				timing.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
 				timing.setGraphicSize(Std.int(timing.width * 0.7));
 				if (ratingTiming == 'late')
 					timing.x += newWidth * 0.5;
@@ -1139,7 +1138,8 @@ class PlayState extends MusicBeatState
 		// */
 	}
 
-	function goodNoteHit(coolNote:Note, character:Character, characterStrums:FlxTypedGroup<UIStaticArrow>, ?canDisplayRating:Bool = true)
+	function goodNoteHit(coolNote:Note, noteStrum:Float, curSongPos:Float, character:Character, characterStrums:FlxTypedGroup<UIStaticArrow>,
+			?canDisplayRating:Bool = true)
 	{
 		if (!coolNote.wasGoodHit)
 		{
@@ -1149,7 +1149,7 @@ class PlayState extends MusicBeatState
 			if (canDisplayRating)
 			{
 				// we'll need to call the rating here as it will also be used to determine health
-				var noteDiff:Float = Math.abs(coolNote.strumTime - Conductor.songPosition);
+				var noteDiff:Float = Math.abs(noteStrum - curSongPos);
 				// also thanks sammu :mariocool:
 
 				// call the ratings over from the timing class
@@ -1164,7 +1164,7 @@ class PlayState extends MusicBeatState
 						&& (((noteDiff > Conductor.safeZoneOffset * daRatings.get(myRating)[0])) && (!foundRating)))
 					{
 						// get the timing
-						if (coolNote.strumTime < Conductor.songPosition)
+						if (noteStrum < curSongPos)
 							ratingTiming = "late";
 						else
 							ratingTiming = "early";
@@ -1185,9 +1185,9 @@ class PlayState extends MusicBeatState
 				{
 					// health += 0.004;
 					// call updated accuracy stuffs
-					Timings.updateAccuracy(100);
+					Timings.updateAccuracy(100, true);
 				}
-				healthCall(true, coolNote, daRatings.get(baseRating)[3]);
+				healthCall(true, coolNote, daRatings.get(baseRating)[2]);
 			}
 
 			characterPlayAnimation(coolNote, character);
@@ -1195,7 +1195,7 @@ class PlayState extends MusicBeatState
 
 			if (!coolNote.isSustainNote)
 			{
-				coolNote.callMods();
+				// coolNote.callMods();
 				coolNote.kill();
 				notes.remove(coolNote, true);
 				coolNote.destroy();
@@ -1234,6 +1234,9 @@ class PlayState extends MusicBeatState
 			character.playAnim('sing' + stringDirection.toUpperCase() + 'miss');
 
 			decreaseCombo();
+
+			// gotta do it manually here lol
+			Timings.updateFCDisplay();
 			//
 		}
 	}
@@ -1260,8 +1263,8 @@ class PlayState extends MusicBeatState
 		}
 
 		stringArrow = baseString + altString;
-		if (coolNote.foreverMods.get('string')[0] != "")
-			stringArrow = coolNote.noteString;
+		// if (coolNote.foreverMods.get('string')[0] != "")
+		//	stringArrow = coolNote.noteString;
 
 		character.playAnim(stringArrow, true);
 		character.holdTimer = 0;
@@ -1304,11 +1307,10 @@ class PlayState extends MusicBeatState
 		Conductor.changeBPM(songData.bpm);
 
 		curSong = songData.song;
-
-		songMusic = new FlxSound().loadEmbedded(Paths.inst(SONG.song));
+		songMusic = new FlxSound().loadEmbedded(Sound.fromFile('./' + Paths.inst(SONG.song)), false, true);
 
 		if (SONG.needsVoices)
-			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+			vocals = new FlxSound().loadEmbedded(Sound.fromFile('./' + Paths.voices(SONG.song)), false, true);
 		else
 			vocals = new FlxSound();
 
@@ -1380,7 +1382,7 @@ class PlayState extends MusicBeatState
 			// generate note splashes
 			if (player == 1)
 			{
-				var noteSplash:NoteSplash = ForeverAssets.generateNoteSplashes('notes/noteSplashes', assetModifier, 'UI', i);
+				var noteSplash:NoteSplash = ForeverAssets.generateNoteSplashes('noteSplashes', PlayState.assetModifier, 'UI', i);
 				noteSplash.x += Note.swagWidth * i;
 				noteSplash.x += ((FlxG.width / 2) * player);
 				splashNotes.add(noteSplash);
@@ -1431,7 +1433,7 @@ class PlayState extends MusicBeatState
 	{
 		super.beatHit();
 
-		if ((FlxG.camera.zoom < 1.35 && curBeat % 4 == 0) && (!Init.gameSettings.get('Reduced Movements')[0]))
+		if ((FlxG.camera.zoom < 1.35 && curBeat % 4 == 0) && (!Init.trueSettings.get('Reduced Movements')))
 		{
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.05;
@@ -1528,7 +1530,7 @@ class PlayState extends MusicBeatState
 			Highscore.saveScore(SONG.song, songScore, storyDifficulty);
 
 		if (!isStoryMode)
-			Main.switchState(new FreeplayState());
+			Main.switchState(this, new FreeplayState());
 		else
 		{
 			// set the campaign's score higher
@@ -1548,7 +1550,7 @@ class PlayState extends MusicBeatState
 				transOut = FlxTransitionableState.defaultTransOut;
 
 				// change to the menu state
-				Main.switchState(new StoryMenuState());
+				Main.switchState(this, new StoryMenuState());
 
 				// save the week's score if the score is valid
 				if (SONG.validScore)
@@ -1600,7 +1602,8 @@ class PlayState extends MusicBeatState
 		PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + difficulty, PlayState.storyPlaylist[0]);
 		ForeverTools.killMusic([songMusic, vocals]);
 
-		Main.switchState(new PlayState());
+		// deliberately did not use the main.switchstate as to not unload the assets
+		FlxG.switchState(new PlayState());
 	}
 
 	public function songIntroCutscene()
@@ -1640,7 +1643,12 @@ class PlayState extends MusicBeatState
 			// schoolIntro(doof);
 			default:
 				if (Assets.exists(Paths.txt(SONG.song.toLowerCase() + '/' + SONG.song.toLowerCase() + 'Dialogue')))
-					DialogueBox.createDialogue(CoolUtil.coolTextFile(Paths.txt(SONG.song.toLowerCase() + '/' + SONG.song.toLowerCase() + 'Dialogue')));
+				{
+					var dialogueBox:DialogueBox;
+					dialogueBox = DialogueBox.createDialogue(CoolUtil.coolTextFile(Paths.txt(SONG.song.toLowerCase() + '/' + SONG.song.toLowerCase()
+						+ 'Dialogue')));
+					dialogueBox.cameras = [camHUD];
+				}
 				else
 					startCountdown();
 		}
@@ -1656,10 +1664,14 @@ class PlayState extends MusicBeatState
 
 		startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
 		{
-			beatHit();
+			charactersDance(curBeat);
 
 			var introAssets:Map<String, Array<String>> = new Map<String, Array<String>>();
-			introAssets.set('default', ['UI/$assetModifier/ready', 'UI/$assetModifier/set', 'UI/$assetModifier/go']);
+			introAssets.set('default', [
+				ForeverTools.returnSkinAsset('ready', assetModifier, changeableSkin, 'UI'),
+				ForeverTools.returnSkinAsset('set', assetModifier, changeableSkin, 'UI'),
+				ForeverTools.returnSkinAsset('go', assetModifier, changeableSkin, 'UI')
+			]);
 
 			var introAlts:Array<String> = introAssets.get('default');
 			for (value in introAssets.keys())
@@ -1671,13 +1683,13 @@ class PlayState extends MusicBeatState
 			switch (swagCounter)
 			{
 				case 0:
-					FlxG.sound.play(Paths.sound('intro3'), 0.6);
+					FlxG.sound.play(Paths.sound('intro3-' + assetModifier), 0.6);
 				case 1:
 					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
 					ready.scrollFactor.set();
 					ready.updateHitbox();
 
-					if (assetModifier == 'basepixel' || assetModifier == 'foreverpixel')
+					if (assetModifier == 'pixel')
 						ready.setGraphicSize(Std.int(ready.width * PlayState.daPixelZoom));
 
 					ready.screenCenter();
@@ -1689,12 +1701,12 @@ class PlayState extends MusicBeatState
 							ready.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('intro2'), 0.6);
+					FlxG.sound.play(Paths.sound('intro2-' + assetModifier), 0.6);
 				case 2:
 					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
 					set.scrollFactor.set();
 
-					if (assetModifier == 'basepixel' || assetModifier == 'foreverpixel')
+					if (assetModifier == 'pixel')
 						set.setGraphicSize(Std.int(set.width * PlayState.daPixelZoom));
 
 					set.screenCenter();
@@ -1706,12 +1718,12 @@ class PlayState extends MusicBeatState
 							set.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('intro1'), 0.6);
+					FlxG.sound.play(Paths.sound('intro1-' + assetModifier), 0.6);
 				case 3:
 					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
 					go.scrollFactor.set();
 
-					if (assetModifier == 'basepixel' || assetModifier == 'foreverpixel')
+					if (assetModifier == 'pixel')
 						go.setGraphicSize(Std.int(go.width * PlayState.daPixelZoom));
 
 					go.updateHitbox();
@@ -1725,12 +1737,18 @@ class PlayState extends MusicBeatState
 							go.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('introGo'), 0.6);
+					FlxG.sound.play(Paths.sound('introGo-' + assetModifier), 0.6);
 				case 4:
 			}
 
 			swagCounter += 1;
 			// generateSong('fresh');
 		}, 5);
+	}
+
+	override function add(Object:FlxBasic):FlxBasic
+	{
+		Main.loadedAssets.insert(Main.loadedAssets.length, Object);
+		return super.add(Object);
 	}
 }

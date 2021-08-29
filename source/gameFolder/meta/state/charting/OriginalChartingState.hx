@@ -564,7 +564,7 @@ class OriginalChartingState extends MusicBeatState
 			PlayState.SONG = _song;
 			FlxG.sound.music.stop();
 			vocals.stop();
-			FlxG.switchState(new PlayState());
+			Main.switchState(this, new PlayState());
 		}
 
 		if (FlxG.keys.justPressed.E)
@@ -879,7 +879,7 @@ class OriginalChartingState extends MusicBeatState
 			if (i.length > 2)
 				daNoteType = i[3];
 
-			var note:Note = new Note(daStrumTime, daNoteInfo % 4, daNoteType);
+			var note:Note = ForeverAssets.generateArrow(PlayState.assetModifier, daStrumTime, daNoteInfo % 4, daNoteType, 0);
 			note.sustainLength = daSus;
 			note.noteType = daNoteType;
 			note.setGraphicSize(GRID_SIZE, GRID_SIZE);

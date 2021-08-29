@@ -33,11 +33,7 @@ class Character extends FNFSprite
 		this.isPlayer = isPlayer;
 
 		var tex:FlxAtlasFrames;
-		antialiasing = true;
-
-		if (((!Init.gameSettings.get('Optimized Boyfriend')[0]) || (!OpenFlAssets.exists(Paths.image('characters/forever/BOYFRIEND'))))
-			&& curCharacter == 'bf')
-			curCharacter += '-og';
+		antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
 
 		switch (curCharacter)
 		{
@@ -118,7 +114,7 @@ class Character extends FNFSprite
 				// DAD ANIMATION LOADING CODE
 				tex = Paths.getSparrowAtlas('characters/DADDY_DEAREST');
 				frames = tex;
-				animation.addByPrefix('idle', 'Dad idle dance', 30, false);
+				animation.addByPrefix('idle', 'Dad idle dance', 24, false);
 				animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
 				animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
 				animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
@@ -172,8 +168,8 @@ class Character extends FNFSprite
 				animation.addByPrefix('idle', 'monster idle', 24, false);
 				animation.addByPrefix('singUP', 'monster up note', 24, false);
 				animation.addByPrefix('singDOWN', 'monster down', 24, false);
-				animation.addByPrefix('singLEFT', 'Monster left note', 24, false);
-				animation.addByPrefix('singRIGHT', 'Monster Right note', 24, false);
+				animation.addByPrefix('singLEFT', 'Monster Right note', 24, false);
+				animation.addByPrefix('singRIGHT', 'Monster left note', 24, false);
 
 				playAnim('idle');
 			case 'monster-christmas':
@@ -233,28 +229,29 @@ class Character extends FNFSprite
 				playAnim('idle');
 
 				flipX = true;
+			/*
+				case 'bf-og':
+					frames = Paths.getSparrowAtlas('characters/og/BOYFRIEND');
 
-			case 'bf-og':
-				frames = Paths.getSparrowAtlas('characters/og/BOYFRIEND');
+					animation.addByPrefix('idle', 'BF idle dance', 24, false);
+					animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
+					animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
+					animation.addByPrefix('singRIGHT', 'BF NOTE RIGHT0', 24, false);
+					animation.addByPrefix('singDOWN', 'BF NOTE DOWN0', 24, false);
+					animation.addByPrefix('singUPmiss', 'BF NOTE UP MISS', 24, false);
+					animation.addByPrefix('singLEFTmiss', 'BF NOTE LEFT MISS', 24, false);
+					animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
+					animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
+					animation.addByPrefix('hey', 'BF HEY', 24, false);
+					animation.addByPrefix('scared', 'BF idle shaking', 24);
+					animation.addByPrefix('firstDeath', "BF dies", 24, false);
+					animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
+					animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
 
-				animation.addByPrefix('idle', 'BF idle dance', 24, false);
-				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
-				animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
-				animation.addByPrefix('singRIGHT', 'BF NOTE RIGHT0', 24, false);
-				animation.addByPrefix('singDOWN', 'BF NOTE DOWN0', 24, false);
-				animation.addByPrefix('singUPmiss', 'BF NOTE UP MISS', 24, false);
-				animation.addByPrefix('singLEFTmiss', 'BF NOTE LEFT MISS', 24, false);
-				animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
-				animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
-				animation.addByPrefix('hey', 'BF HEY', 24, false);
-				animation.addByPrefix('scared', 'BF idle shaking', 24);
-				animation.addByPrefix('firstDeath', "BF dies", 24, false);
-				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
-				animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
+					playAnim('idle');
 
-				playAnim('idle');
-
-				flipX = true;
+					flipX = true;
+			 */
 
 			case 'bf-dead':
 				frames = Paths.getSparrowAtlas('characters/BF_DEATH');
@@ -534,9 +531,6 @@ class Character extends FNFSprite
 			}
 
 			var dadVar:Float = 4;
-
-			if (curCharacter == 'dad')
-				dadVar = 6.1;
 			if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001)
 			{
 				dance();

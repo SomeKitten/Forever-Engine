@@ -5,6 +5,10 @@ import lime.utils.Assets;
 
 using StringTools;
 
+#if !html5
+import sys.FileSystem;
+#end
+
 class CoolUtil
 {
 	// tymgus45
@@ -51,11 +55,27 @@ class CoolUtil
 		var swagOffsets:Array<Array<String>> = [];
 
 		for (i in firstArray)
-		{
 			swagOffsets.push(i.split(' '));
-		}
 
 		return swagOffsets;
+	}
+
+	public static function returnAssetsLibrary(library:String, ?subDir:String = 'assets/images'):Array<String>
+	{
+		//
+		var libraryArray:Array<String> = [];
+		#if !html5
+		var unfilteredLibrary = FileSystem.readDirectory('$subDir/$library');
+
+		for (folder in unfilteredLibrary)
+		{
+			if (!folder.contains('.'))
+				libraryArray.push(folder);
+		}
+		trace(libraryArray);
+		#end
+
+		return libraryArray;
 	}
 
 	public static function getAnimsFromTxt(path:String):Array<Array<String>>

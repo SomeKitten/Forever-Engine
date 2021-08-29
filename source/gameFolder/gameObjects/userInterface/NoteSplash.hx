@@ -44,7 +44,8 @@ class NoteSplash extends FlxSprite
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0)
 	{
 		// make sure the animation is visible
-		visible = true;
+		if (!Init.trueSettings.get('Disable Note Splashes'))
+			visible = true;
 		// play the animation
 		animation.play(AnimName, Force, Reversed, Frame);
 		updateHitbox();

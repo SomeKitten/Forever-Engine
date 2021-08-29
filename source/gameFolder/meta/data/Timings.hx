@@ -1,6 +1,7 @@
 package gameFolder.meta.data;
 
 import gameFolder.gameObjects.Note;
+import gameFolder.meta.state.PlayState;
 
 /**
 	Here's a class that calculates timings and ratings for the songs and such
@@ -18,14 +19,22 @@ class Timings
 	public static var ratingFinal:String = "f";
 	public static var notesHit:Int = 0;
 
+	public static var comboDisplay:String = '';
+	public static var notesHitNoSus:Int = 0;
+
 	public static function callAccuracy()
 	{
 		// reset the accuracy to 0%
 		accuracy = 0.001;
 		trueAccuracy = 0;
 		judgementRates = new Array<Float>();
+
 		notesHit = 0;
+		notesHitNoSus = 0;
+
 		ratingFinal = "f";
+
+		comboDisplay = '';
 	}
 
 	/*
@@ -40,30 +49,53 @@ class Timings
 		{
 			if (realNotes[i].mustPress)
 				totalNotes++;
-			//
 		}
 
 		// here we calculate how much judgements will be worth
 
 		// from left to right
-		// chance, score from it, id and percentage
+		// chance, score from it and percentage
 		daRatings = [
-			"sick" => [null, 350, 0, 100],
-			"good" => [0.2, 200, 1, 60],
-			"bad" => [0.5, 100, 2, 15],
-			"shit" => [0.7, 50, 3, 0],
+			"sick" => [null, 350, 100],
+			"good" => [0.2, 200, 60],
+			"bad" => [0.4, 100, 15],
+			"shit" => [0.7, 50, 0],
 		];
 
 		// set the score ratings for later use
 		scoreRating = ["s" => 90, "a" => 80, "b" => 70, "c" => 50, "d" => 40, "e" => 20, "f" => 0,];
 	}
 
-	public static function updateAccuracy(judgement:Int)
+	public static function updateAccuracy(judgement:Int, isSustain:Bool = false)
 	{
 		notesHit++;
+		if (!isSustain)
+			notesHitNoSus++;
 		accuracy += judgement;
 		trueAccuracy = (accuracy / notesHit);
+
+		updateFCDisplay();
+
 		updateScoreRating();
+	}
+
+	public static function updateFCDisplay()
+	{
+		// update combo display
+		// if you dont understand this look up ternary operators, they're REALLY useful for condensing code and
+		// I would totally encourage you check them out and learn a little more
+		comboDisplay = ((PlayState.combo >= notesHitNoSus) ? ((trueAccuracy >= 100) ? ' [PERFECT]' : ' [FC]') : '');
+
+		// to break it down further
+		/*
+			if (PlayState.combo >= notesHitNoSus) {
+				if (trueAccuracy >= 100)
+					comboDisplay = ' [PERFECT]';
+				else
+					comboDisplay = ' [FC]';
+			} else
+				comboDisplay = '';
+		 */
 	}
 
 	public static function getAccuracy()

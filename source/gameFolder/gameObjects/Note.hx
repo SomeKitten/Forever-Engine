@@ -9,14 +9,11 @@ import flixel.util.FlxColor;
 import gameFolder.gameObjects.userInterface.UIStaticArrow;
 import gameFolder.meta.*;
 import gameFolder.meta.data.*;
+import gameFolder.meta.data.Section.SwagSection;
 import gameFolder.meta.data.dependency.FNFSprite;
 import gameFolder.meta.state.PlayState;
 
 using StringTools;
-
-#if polymod
-import polymod.format.ParseRules.TargetSignatureElement;
-#end
 
 class Note extends FNFSprite
 {
@@ -40,24 +37,12 @@ class Note extends FNFSprite
 	public var chartSustain:FlxSprite = null;
 	public var rawNoteData:Int;
 
-	public static var swagWidth:Float = 160 * 0.7;
+	// not set initially
+	public var noteQuant:Int = -1;
+	public var noteVisualOffset:Float = 0;
+	public var noteSpeed:Float = 0;
 
-	// people really gon go 'oh she uses a lot of maps' of course I do lmao I like loading info like this so I only have to set it up once
-	public var foreverMods:Map<String, Array<Dynamic>> = [
-		/*  here we'll be setting some strings and stuff yknow cus I like that a lot honestly???
-			the idea behind this is you'll be able to easily add stuff here and the chart editor will work with it
-			and then you can set what the stuff here does when the notes are actually hit
-			which will be a function
-		 */
-		'type' => [0],
-		'zoom' => [false, 0],
-		'camZoom' => [false, 0],
-		'angle' => [false, 0],
-		'camAngle' => [false, 0],
-		// which one (of 8, 0...7), to what x, to what y, angle of the arrow
-		'moveStrumarrow' => [false, 0, 0, 0, 0],
-		'string' => ['']
-	];
+	public static var swagWidth:Float = 160 * 0.7;
 
 	public function new(strumTime:Float, noteData:Int, noteAlt:Float, ?prevNote:Note, ?sustainNote:Bool = false)
 	{
@@ -69,13 +54,12 @@ class Note extends FNFSprite
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
 
-		x += 50;
+		// oh okay I know why this exists now
 		y -= 2000;
+
 		this.strumTime = strumTime;
 		this.noteData = noteData;
 		this.noteAlt = noteAlt;
-
-		decideNote();
 	}
 
 	override function update(elapsed:Float)
@@ -101,132 +85,193 @@ class Note extends FNFSprite
 			if (alpha > 0.3)
 				alpha -= 0.05;
 		}
-
-		if (foreverMods.get('type')[0] != noteType)
-		{
-			noteType = foreverMods.get('type')[0];
-			decideNote();
-		}
 	}
 
-	private function decideNote()
+	/**
+		Note creation scripts
+
+		these are for all your custom note needs
+	**/
+	public static function returnDefaultNote(assetModifier, strumTime, noteData, noteType, noteAlt, ?isSustainNote:Bool = false, ?prevNote:Note = null):Note
 	{
+		var newNote:Note = new Note(strumTime, noteData, noteAlt, prevNote, isSustainNote);
+
 		// frames originally go here
-		switch (noteType)
+		switch (assetModifier)
 		{
-			case 1: // pixel arrows
-				loadGraphic(Paths.image('UI/pixel/notes/arrows-pixels'), true, 17, 17);
-
-				animation.add('greenScroll', [6]);
-				animation.add('redScroll', [7]);
-				animation.add('blueScroll', [5]);
-				animation.add('purpleScroll', [4]);
-
+			case 'pixel': // pixel arrows default
 				if (isSustainNote)
 				{
-					loadGraphic(Paths.image('UI/pixel/notes/arrowEnds'), true, 7, 6);
-
-					animation.add('purpleholdend', [4]);
-					animation.add('greenholdend', [6]);
-					animation.add('redholdend', [7]);
-					animation.add('blueholdend', [5]);
-
-					animation.add('purplehold', [0]);
-					animation.add('greenhold', [2]);
-					animation.add('redhold', [3]);
-					animation.add('bluehold', [1]);
+					newNote.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('arrowEnds', assetModifier, Init.trueSettings.get("Note Skin"),
+						'noteskins/notes')), true, 7,
+						6);
+					newNote.animation.add('purpleholdend', [4]);
+					newNote.animation.add('greenholdend', [6]);
+					newNote.animation.add('redholdend', [7]);
+					newNote.animation.add('blueholdend', [5]);
+					newNote.animation.add('purplehold', [0]);
+					newNote.animation.add('greenhold', [2]);
+					newNote.animation.add('redhold', [3]);
+					newNote.animation.add('bluehold', [1]);
 				}
-
-				antialiasing = false;
-				setGraphicSize(Std.int(width * PlayState.daPixelZoom));
-				updateHitbox();
-
+				else
+				{
+					newNote.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('arrows-pixels', assetModifier, Init.trueSettings.get("Note Skin"),
+						'noteskins/notes')),
+						true, 17, 17);
+					newNote.animation.add('greenScroll', [6]);
+					newNote.animation.add('redScroll', [7]);
+					newNote.animation.add('blueScroll', [5]);
+					newNote.animation.add('purpleScroll', [4]);
+				}
+				newNote.antialiasing = false;
+				newNote.setGraphicSize(Std.int(newNote.width * PlayState.daPixelZoom));
+				newNote.updateHitbox();
 			default: // base game arrows for no reason whatsoever
-				frames = Paths.getSparrowAtlas('UI/base/notes/NOTE_assets');
-
-				animation.addByPrefix('greenScroll', 'green0');
-				animation.addByPrefix('redScroll', 'red0');
-				animation.addByPrefix('blueScroll', 'blue0');
-				animation.addByPrefix('purpleScroll', 'purple0');
-
-				animation.addByPrefix('purpleholdend', 'pruple end hold');
-				animation.addByPrefix('greenholdend', 'green hold end');
-				animation.addByPrefix('redholdend', 'red hold end');
-				animation.addByPrefix('blueholdend', 'blue hold end');
-
-				animation.addByPrefix('purplehold', 'purple hold piece');
-				animation.addByPrefix('greenhold', 'green hold piece');
-				animation.addByPrefix('redhold', 'red hold piece');
-				animation.addByPrefix('bluehold', 'blue hold piece');
-
-				setGraphicSize(Std.int(width * 0.7));
-				updateHitbox();
-				antialiasing = true;
+				newNote.frames = Paths.getSparrowAtlas(ForeverTools.returnSkinAsset('NOTE_assets', assetModifier, Init.trueSettings.get("Note Skin"),
+					'noteskins/notes'));
+				newNote.animation.addByPrefix('greenScroll', 'green0');
+				newNote.animation.addByPrefix('redScroll', 'red0');
+				newNote.animation.addByPrefix('blueScroll', 'blue0');
+				newNote.animation.addByPrefix('purpleScroll', 'purple0');
+				newNote.animation.addByPrefix('purpleholdend', 'pruple end hold');
+				newNote.animation.addByPrefix('greenholdend', 'green hold end');
+				newNote.animation.addByPrefix('redholdend', 'red hold end');
+				newNote.animation.addByPrefix('blueholdend', 'blue hold end');
+				newNote.animation.addByPrefix('purplehold', 'purple hold piece');
+				newNote.animation.addByPrefix('greenhold', 'green hold piece');
+				newNote.animation.addByPrefix('redhold', 'red hold piece');
+				newNote.animation.addByPrefix('bluehold', 'blue hold piece');
+				newNote.setGraphicSize(Std.int(newNote.width * 0.7));
+				newNote.updateHitbox();
+				newNote.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
 		}
-
 		//
-		animation.play(UIStaticArrow.getColorFromNumber(noteData) + 'Scroll');
-
+		if (!isSustainNote)
+			newNote.animation.play(UIStaticArrow.getColorFromNumber(noteData) + 'Scroll');
 		// trace(prevNote);
-
 		if (isSustainNote && prevNote != null)
 		{
-			alpha = 0.6;
-
-			animation.play(UIStaticArrow.getColorFromNumber(noteData) + 'holdend');
-
-			updateHitbox();
-
+			newNote.noteSpeed = prevNote.noteSpeed;
+			newNote.alpha = (Init.trueSettings.get('Opaque Holds')) ? 1 : 0.6;
+			newNote.animation.play(UIStaticArrow.getColorFromNumber(noteData) + 'holdend');
+			newNote.updateHitbox();
 			if (prevNote.isSustainNote)
 			{
 				prevNote.animation.play(UIStaticArrow.getColorFromNumber(prevNote.noteData) + 'hold');
-
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
 		}
+		return newNote;
 	}
 
-	public function callMods()
+	public static function returnQuantNote(assetModifier, strumTime, noteData, noteType, noteAlt, ?isSustainNote:Bool = false, ?prevNote:Note = null):Note
 	{
-		// call upon the note end functions
-		trace('call upon mods');
-		for (mods in foreverMods.keys())
+		var newNote:Note = new Note(strumTime, noteData, noteAlt, prevNote, isSustainNote);
+
+		// actually determine the quant of the note
+		if (newNote.noteQuant == -1)
 		{
-			if (foreverMods.get(mods)[0])
+			/*
+				I have to credit like 3 different people for these LOL they were a hassle
+				but its gede pixl and scarlett, thank you SO MUCH for baring with me
+			 */
+			final quantArray:Array<Int> = [4, 8, 12, 16, 20, 24, 32, 48, 64, 192]; // different quants
+
+			final beatTimeSeconds:Float = (60 / Conductor.bpm); // beat in seconds
+			final beatTime:Float = beatTimeSeconds * 1000; // beat in milliseconds
+			// assumed 4 beats per measure?
+			final measureTime:Float = beatTime * 4;
+
+			final smallestDeviation:Float = measureTime / quantArray[quantArray.length - 1];
+
+			for (quant in 0...quantArray.length)
 			{
-				switch (mods)
+				// please generate this ahead of time and put into array :)
+				// I dont think I will im scared of those
+				final quantTime = (measureTime / quantArray[quant]);
+				if ((strumTime + smallestDeviation) % quantTime < smallestDeviation * 2)
 				{
-					case 'zoom':
-						var amount = foreverMods.get(mods)[1];
-						if (amount != 0)
-							PlayState.forceZoom[0] += amount;
-					case 'camZoom':
-						var amount = foreverMods.get(mods)[1];
-						if (amount != 0)
-							PlayState.forceZoom[1] += amount;
-					case 'angle':
-						var amount = foreverMods.get(mods)[1];
-						if (amount != 0)
-							PlayState.forceZoom[2] += amount;
-					case 'camAngle':
-						var amount = foreverMods.get(mods)[1];
-						if (amount != 0)
-							PlayState.forceZoom[3] += amount;
-
-					// these get real repetitive so heres a divider
-					case 'moveStrumarrow':
-						PlayState.strumLineNotes.members[foreverMods.get(mods)[1]].xTo += foreverMods.get(mods)[2];
-						PlayState.strumLineNotes.members[foreverMods.get(mods)[1]].yTo += foreverMods.get(mods)[3];
-						PlayState.strumLineNotes.members[foreverMods.get(mods)[1]].angleTo += foreverMods.get(mods)[4];
+					// here it is, the quant, finally!
+					newNote.noteQuant = quant;
+					break;
 				}
-				//
-
-				// trace('$mods $amount');
 			}
 		}
 
-		// finish actions!
+		// note quants
+		switch (assetModifier)
+		{
+			default:
+				// inherit last quant if hold note
+				if (isSustainNote && prevNote != null)
+					newNote.noteQuant = prevNote.noteQuant;
+				// base quant notes
+				if (!isSustainNote)
+				{
+					// in case you're unfamiliar with these, they're ternary operators, I just dont wanna check for pixel notes using a separate statement
+					var newNoteSize:Int = (assetModifier == 'pixel') ? 17 : 157;
+					newNote.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('NOTE_quants', assetModifier, Init.trueSettings.get("Note Skin"),
+						'noteskins/notes', 'quant')),
+						true, newNoteSize, newNoteSize);
+
+					newNote.animation.add('leftScroll', [0 + (newNote.noteQuant * 4)]);
+					// LOL downscroll thats so funny to me
+					newNote.animation.add('downScroll', [1 + (newNote.noteQuant * 4)]);
+					newNote.animation.add('upScroll', [2 + (newNote.noteQuant * 4)]);
+					newNote.animation.add('rightScroll', [3 + (newNote.noteQuant * 4)]);
+				}
+				else
+				{
+					// quant holds
+					newNote.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('HOLD_quants', assetModifier, Init.trueSettings.get("Note Skin"),
+						'noteskins/notes', 'quant')),
+						true, (assetModifier == 'pixel') ? 17 : 109, (assetModifier == 'pixel') ? 6 : 52);
+					newNote.animation.add('hold', [0 + (newNote.noteQuant * 4)]);
+					newNote.animation.add('holdend', [1 + (newNote.noteQuant * 4)]);
+					newNote.animation.add('rollhold', [2 + (newNote.noteQuant * 4)]);
+					newNote.animation.add('rollend', [3 + (newNote.noteQuant * 4)]);
+				}
+
+				if (assetModifier == 'pixel')
+				{
+					newNote.antialiasing = false;
+					newNote.setGraphicSize(Std.int(newNote.width * PlayState.daPixelZoom));
+					newNote.updateHitbox();
+				}
+				else
+				{
+					newNote.setGraphicSize(Std.int(newNote.width * 0.7));
+					newNote.updateHitbox();
+					newNote.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				}
+		}
+
+		//
+		if (!isSustainNote)
+			newNote.animation.play(UIStaticArrow.getArrowFromNumber(noteData) + 'Scroll');
+
+		// trace(prevNote);
+
+		if (isSustainNote && prevNote != null)
+		{
+			newNote.noteSpeed = prevNote.noteSpeed;
+			newNote.alpha = (Init.trueSettings.get('Opaque Holds')) ? 1 : 0.6;
+			newNote.animation.play('holdend');
+			newNote.updateHitbox();
+
+			if (prevNote.isSustainNote)
+			{
+				prevNote.animation.play('hold');
+
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * (43 / 52) * 1.5 * prevNote.noteSpeed;
+				prevNote.updateHitbox();
+				// prevNote.setGraphicSize();
+			}
+		}
+
+		return newNote;
 	}
 }

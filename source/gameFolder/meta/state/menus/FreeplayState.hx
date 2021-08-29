@@ -14,8 +14,10 @@ import flixel.util.FlxColor;
 import gameFolder.gameObjects.userInterface.HealthIcon;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
+import gameFolder.meta.data.Song.SwagSong;
 import gameFolder.meta.data.font.Alphabet;
 import lime.utils.Assets;
+import sys.FileSystem;
 
 using StringTools;
 
@@ -42,22 +44,43 @@ class FreeplayState extends MusicBeatState
 	private var bg:FlxSprite;
 	private var scoreBG:FlxSprite;
 
+	private var existingSongs:Array<String> = [];
+	private var existingDifficulties:Array<Array<String>> = [];
+
 	override function create()
 	{
+		/**
+			Wanna add songs? They're in the Main state now, you can just find the week array and add a song there to a specific week.
+			Alternatively, you can make a folder in the Songs folder and put your songs there, however, this gives you less
+			control over what you can display about the song (color, icon, etc) since it will be pregenerated for you instead.
+		**/
+		// load in all songs that exist in folder
+		var folderSongs:Array<String> = CoolUtil.returnAssetsLibrary('songs', 'assets');
+
 		///*
-		addWeek(['Tutorial', 'Bopeebo', 'Fresh', 'Dadbattle'], 1, ['gf', 'dad', 'dad', 'dad'], [FlxColor.fromRGB(129, 100, 223)]);
+		for (i in 0...Main.gameWeeks.length)
+		{
+			addWeek(Main.gameWeeks[i][0], i, Main.gameWeeks[i][1], Main.gameWeeks[i][2]);
+			for (j in cast(Main.gameWeeks[i][0], Array<Dynamic>))
+				existingSongs.push(j.toLowerCase());
+		}
 
-		addWeek(['Spookeez', 'South', 'Monster'], 2, ['spooky', 'spooky', 'monster'], [FlxColor.fromRGB(30, 45, 60)]);
-
-		addWeek(['Pico', 'Philly-Nice', 'Blammed'], 3, ['pico'], [FlxColor.fromRGB(111, 19, 60)]);
-
-		addWeek(['Satin-Panties', 'High', 'Milf'], 4, ['mom'], [FlxColor.fromRGB(203, 113, 170)]);
-
-		addWeek(['Cocoa', 'Eggnog', 'Winter-Horrorland'], 5, ['parents-christmas', 'parents-christmas', 'monster-christmas'],
-			[FlxColor.fromRGB(141, 165, 206)]);
-
-		addWeek(['Senpai', 'Roses', 'Thorns'], 6, ['senpai', 'senpai', 'spirit'], [FlxColor.fromRGB(206, 106, 169)]);
 		// */
+
+		for (i in folderSongs)
+		{
+			if (!existingSongs.contains(i.toLowerCase()))
+			{
+				var icon:String = 'gf';
+				var chartExists:Bool = FileSystem.exists(Paths.songJson(i, i));
+				if (chartExists)
+				{
+					var castSong:SwagSong = Song.loadFromJson(i, i);
+					icon = (castSong != null) ? castSong.player2 : 'gf';
+					addSong(castSong.song, 1, icon, FlxColor.WHITE);
+				}
+			}
+		}
 
 		// LOAD MUSIC
 		if (FlxG.sound.music != null)
@@ -119,31 +142,23 @@ class FreeplayState extends MusicBeatState
 		selector.text = ">";
 		// add(selector);
 
-		var swag:Alphabet = new Alphabet(1, 0, "swag");
-
-		// JUST DOIN THIS SHIT FOR TESTING!!!
-		/* 
-			var md:String = Markdown.markdownToHtml(Assets.getText('CHANGELOG.md'));
-
-			var texFel:TextField = new TextField();
-			texFel.width = FlxG.width;
-			texFel.height = FlxG.height;
-			// texFel.
-			texFel.htmlText = md;
-
-			FlxG.stage.addChild(texFel);
-
-			// scoreText.textField.htmlText = md;
-
-			trace(md);
-		 */
-
 		super.create();
 	}
 
 	public function addSong(songName:String, weekNum:Int, songCharacter:String, songColor:FlxColor)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter, songColor));
+		///*
+		var coolDifficultyArray = [];
+		for (i in CoolUtil.difficultyArray)
+			if (FileSystem.exists(Paths.songJson(songName, songName + '-' + i))
+				|| (FileSystem.exists(Paths.songJson(songName, songName)) && i == "NORMAL"))
+				coolDifficultyArray.push(i);
+
+		if (coolDifficultyArray.length > 0)
+		{ //*/
+			songs.push(new SongMetadata(songName, weekNum, songCharacter, songColor));
+			existingDifficulties.push(coolDifficultyArray);
+		}
 	}
 
 	public function addWeek(songs:Array<String>, weekNum:Int, ?songCharacters:Array<String>, ?songColor:Array<FlxColor>)
@@ -206,12 +221,13 @@ class FreeplayState extends MusicBeatState
 
 		if (controls.BACK)
 		{
-			Main.switchState(new MainMenuState());
+			Main.switchState(this, new MainMenuState());
 		}
 
 		if (accepted)
 		{
-			var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
+			var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(),
+				CoolUtil.difficultyArray.indexOf(existingDifficulties[curSelected][curDifficulty]));
 
 			PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
 			PlayState.isStoryMode = false;
@@ -223,22 +239,28 @@ class FreeplayState extends MusicBeatState
 			if (FlxG.sound.music != null)
 				FlxG.sound.music.stop();
 
-			Main.switchState(new PlayState());
+			Main.switchState(this, new PlayState());
 		}
 	}
+
+	var lastDifficulty:String;
 
 	function changeDiff(change:Int = 0)
 	{
 		curDifficulty += change;
+		if (lastDifficulty != null && change != 0)
+			while (existingDifficulties[curSelected][curDifficulty] == lastDifficulty)
+				curDifficulty += change;
 
 		if (curDifficulty < 0)
-			curDifficulty = CoolUtil.difficultyLength - 1;
-		if (curDifficulty > CoolUtil.difficultyLength - 1)
+			curDifficulty = existingDifficulties[curSelected].length - 1;
+		if (curDifficulty > existingDifficulties[curSelected].length - 1)
 			curDifficulty = 0;
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 
-		diffText.text = '< ' + CoolUtil.difficultyFromNumber(curDifficulty) + ' >';
+		diffText.text = '< ' + existingDifficulties[curSelected][curDifficulty] + ' >';
+		lastDifficulty = existingDifficulties[curSelected][curDifficulty];
 	}
 
 	function changeSelection(change:Int = 0)
@@ -285,6 +307,8 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 		//
+
+		changeDiff();
 	}
 }
 

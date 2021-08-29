@@ -29,7 +29,7 @@ class PauseSubState extends MusicBeatSubState
 	{
 		super();
 		#if debug
-		trace('pause call');
+		// trace('pause call');
 		#end
 
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
@@ -39,7 +39,7 @@ class PauseSubState extends MusicBeatSubState
 		FlxG.sound.list.add(pauseMusic);
 
 		#if debug
-		trace('pause background');
+		// trace('pause background');
 		#end
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
@@ -55,7 +55,7 @@ class PauseSubState extends MusicBeatSubState
 		add(levelInfo);
 
 		#if debug
-		trace('pause info');
+		// trace('pause info');
 		#end
 
 		var levelDifficulty:FlxText = new FlxText(20, 15 + 32, 0, "", 32);
@@ -87,32 +87,32 @@ class PauseSubState extends MusicBeatSubState
 		}
 
 		#if debug
-		trace('change selection');
+		// trace('change selection');
 		#end
 
 		changeSelection();
 
 		#if debug
-		trace('cameras');
+		// trace('cameras');
 		#end
 
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
 		#if debug
-		trace('cameras done');
+		// trace('cameras done');
 		#end
 	}
 
 	override function update(elapsed:Float)
 	{
 		#if debug
-		trace('call event');
+		// trace('call event');
 		#end
 
 		super.update(elapsed);
 
 		#if debug
-		trace('updated event');
+		// trace('updated event');
 		#end
 
 		var upP = controls.UP_P;
@@ -142,9 +142,9 @@ class PauseSubState extends MusicBeatSubState
 					PlayState.resetMusic();
 
 					if (PlayState.isStoryMode)
-						Main.switchState(new StoryMenuState());
+						Main.switchState(this, new StoryMenuState());
 					else
-						Main.switchState(new FreeplayState());
+						Main.switchState(this, new FreeplayState());
 			}
 		}
 
@@ -155,7 +155,7 @@ class PauseSubState extends MusicBeatSubState
 		}
 
 		#if debug
-		trace('music volume increased');
+		// trace('music volume increased');
 		#end
 
 		if (pauseMusic.volume < 0.5)
@@ -181,7 +181,7 @@ class PauseSubState extends MusicBeatSubState
 		var bullShit:Int = 0;
 
 		#if debug
-		trace('mid selection');
+		// trace('mid selection');
 		#end
 
 		for (item in grpMenuShit.members)
@@ -200,7 +200,7 @@ class PauseSubState extends MusicBeatSubState
 		}
 
 		#if debug
-		trace('finished selection');
+		// trace('finished selection');
 		#end
 		//
 	}

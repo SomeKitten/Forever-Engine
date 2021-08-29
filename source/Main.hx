@@ -1,10 +1,14 @@
 package;
 
+import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxGame;
+import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.util.FlxColor;
 import gameFolder.meta.*;
 import gameFolder.meta.data.PlayerSettings;
+import gameFolder.meta.data.dependency.Discord;
 import openfl.Assets;
 import openfl.Lib;
 import openfl.display.FPS;
@@ -56,11 +60,62 @@ class Main extends Sprite
 	public static var mainClassState:Class<FlxState> = Init; // Determine the main class state of the game
 	public static var framerate:Int = 120; // How many frames per second the game should run at.
 
-	public static var gameVersion:String = '0.2.2.2';
+	public static var gameVersion:String = '0.2.3';
+
+	public static var loadedAssets:Array<FlxBasic> = [];
 
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var infoCounter:InfoHud; // initialize the heads up display that shows information before creating it.
+
+	// heres gameweeks set up!
+
+	/**
+		Small bit of documentation here, gameweeks are what control everything in my engine
+		this system will eventually be overhauled in favor of using actual week folders within the 
+		assets.
+		Enough of that, here's how it works
+		[ [songs to use], [characters in songs], [color of week], name of week ]
+	**/
+	public static var gameWeeks:Array<Dynamic> = [
+		[['Tutorial'], ['gf'], [FlxColor.fromRGB(129, 100, 223)], 'Funky Beginnings'],
+		[
+			['Bopeebo', 'Fresh', 'Dadbattle'],
+			['dad', 'dad', 'dad'],
+			[FlxColor.fromRGB(129, 100, 223)],
+			'vs. DADDY DEAREST'
+		],
+		[
+			['Spookeez', 'South', 'Monster'],
+			['spooky', 'spooky', 'monster'],
+			[FlxColor.fromRGB(30, 45, 60)],
+			'Spooky Month'
+		],
+		[
+			['Pico', 'Philly-Nice', 'Blammed'],
+			['pico'],
+			[FlxColor.fromRGB(111, 19, 60)],
+			'vs. Pico'
+		],
+		[
+			['Satin-Panties', 'High', 'Milf'],
+			['mom'],
+			[FlxColor.fromRGB(203, 113, 170)],
+			'MOMMY MUST MURDER'
+		],
+		[
+			['Cocoa', 'Eggnog', 'Winter-Horrorland'],
+			['parents-christmas', 'parents-christmas', 'monster-christmas'],
+			[FlxColor.fromRGB(141, 165, 206)],
+			'RED SNOW'
+		],
+		[
+			['Senpai', 'Roses', 'Thorns'],
+			['senpai', 'senpai', 'spirit'],
+			[FlxColor.fromRGB(206, 106, 169)],
+			"hating simulator ft. moawling"
+		],
+	];
 
 	// most of these variables are just from the base game!
 	// be sure to mess around with these if you'd like.
@@ -75,16 +130,6 @@ class Main extends Sprite
 	{
 		super();
 
-		setupGame(); // oh right yeah actually run the game lmfao what a fucking dumbass I am
-	}
-
-	public static function framerateAdjust(input:Float)
-	{
-		return input * (120 / framerate);
-	}
-
-	private function setupGame():Void
-	{
 		/**
 			ok so, haxe html5 CANNOT do 120 fps. it just cannot.
 			so here i just set the framerate to 60 if its complied in html5.
@@ -96,11 +141,12 @@ class Main extends Sprite
 		framerate = 60;
 		#end
 
-		var stageWidth:Int = Lib.current.stage.stageWidth;
-		var stageHeight:Int = Lib.current.stage.stageHeight;
 		// simply said, a state is like the 'surface' area of the window where everything is drawn.
 		// if you've used gamemaker you'll probably understand the term surface better
 		// this defines the surface bounds
+
+		var stageWidth:Int = Lib.current.stage.stageWidth;
+		var stageHeight:Int = Lib.current.stage.stageHeight;
 
 		if (zoom == -1)
 		{
@@ -121,6 +167,12 @@ class Main extends Sprite
 		// default game FPS settings, I'll probably comment over them later.
 		// addChild(new FPS(10, 3, 0xFFFFFF));
 
+		// begin the discord rich presence
+		#if !html5
+		Discord.initializeRPC();
+		Discord.changePresence('');
+		#end
+
 		// test initialising the player settings
 		PlayerSettings.init();
 
@@ -131,20 +183,51 @@ class Main extends Sprite
 		addChild(infoCounter);
 	}
 
+	public static function framerateAdjust(input:Float)
+	{
+		return input * (60 / FlxG.drawFramerate);
+	}
+
 	/*  This is used to switch "rooms," to put it basically. Imagine you are in the main menu, and press the freeplay button.
 		That would change the game's main class to freeplay, as it is the active class at the moment.
 	 */
-	public static function switchState(target:FlxState)
+	public static function switchState(curState:FlxState, target:FlxState)
 	{
 		// this is for a dumb feature that has no use except for cool extra info
-		mainClassState = Type.getClass(target);
 		// though I suppose this could be of use to people who want to load things between classes and such
-		// not that that would be of use to people who aren't already writing their own engines lmfao
 
-		// oh hey i'm using this now thank you past me for making this
-		// Paths.dumpCache();
+		// credit for the idea and a bit of the execution https://github.com/ninjamuffin99/Funkin/pull/1083
+		mainClassState = Type.getClass(target);
 
 		// load the state
 		FlxG.switchState(target);
+
+		// this dont work yet but maybe soon
+		dumpCache(curState);
+	}
+
+	public static function updateFramerate(newFramerate:Int)
+	{
+		// flixel will literally throw errors at me if I dont separate the orders
+		if (newFramerate > FlxG.updateFramerate)
+		{
+			FlxG.updateFramerate = newFramerate;
+			FlxG.drawFramerate = newFramerate;
+		}
+		else
+		{
+			FlxG.drawFramerate = newFramerate;
+			FlxG.updateFramerate = newFramerate;
+		}
+	}
+
+	public static function dumpCache(curState:FlxState)
+	{
+		/*
+			for (asset in loadedAssets)
+			{
+				curState.remove(asset);
+			}
+			// */
 	}
 }

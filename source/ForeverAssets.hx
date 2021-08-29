@@ -4,9 +4,14 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
+import gameFolder.gameObjects.Note;
 import gameFolder.gameObjects.userInterface.*;
 import gameFolder.gameObjects.userInterface.menu.*;
+import gameFolder.meta.data.Conductor;
+import gameFolder.meta.data.Section.SwagSection;
 import gameFolder.meta.state.PlayState;
+
+using StringTools;
 
 /**
 	Forever Assets is a class that manages the different asset types, basically a compilation of switch statements that are
@@ -15,13 +20,14 @@ import gameFolder.meta.state.PlayState;
 class ForeverAssets
 {
 	//
-	public static function generateCombo(asset:String, assetModifier:String = 'base', baseLibrary:String, negative:Bool, createdColor:FlxColor, scoreInt:Int,
-			recycleGroup:FlxTypedGroup<FlxSprite>):FlxSprite
+	public static function generateCombo(asset:String, assetModifier:String = 'base', changeableSkin:String = 'default', baseLibrary:String, negative:Bool,
+			createdColor:FlxColor, scoreInt:Int, recycleGroup:FlxTypedGroup<FlxSprite>):FlxSprite
 	{
-		var newSprite:FlxSprite = recycleGroup.recycle(FlxSprite).loadGraphic(Paths.image(ForeverTools.returnSkinAsset(asset, assetModifier, baseLibrary)));
+		var newSprite:FlxSprite = recycleGroup.recycle(FlxSprite)
+			.loadGraphic(Paths.image(ForeverTools.returnSkinAsset(asset, assetModifier, changeableSkin, baseLibrary)));
 		switch (assetModifier)
 		{
-			case 'basepixel' | 'foreverpixel':
+			case 'pixel':
 				newSprite.alpha = 1;
 				newSprite.screenCenter();
 				newSprite.x += (43 * scoreInt) + 20;
@@ -48,7 +54,7 @@ class ForeverAssets
 				if (negative)
 					newSprite.color = createdColor;
 
-				newSprite.antialiasing = true;
+				newSprite.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
 				newSprite.setGraphicSize(Std.int(newSprite.width * 0.5));
 				newSprite.updateHitbox();
 
@@ -60,9 +66,11 @@ class ForeverAssets
 		return newSprite;
 	}
 
-	public static function generateRating(asset:String, assetModifier:String = 'base', baseLibrary:String, recycleGroup:FlxTypedGroup<FlxSprite>):FlxSprite
+	public static function generateRating(asset:String, assetModifier:String = 'base', changeableSkin:String = 'default', baseLibrary:String,
+			recycleGroup:FlxTypedGroup<FlxSprite>):FlxSprite
 	{
-		var rating:FlxSprite = recycleGroup.recycle(FlxSprite).loadGraphic(Paths.image(ForeverTools.returnSkinAsset(asset, assetModifier, baseLibrary)));
+		var rating:FlxSprite = recycleGroup.recycle(FlxSprite)
+			.loadGraphic(Paths.image(ForeverTools.returnSkinAsset(asset, assetModifier, changeableSkin, baseLibrary)));
 		switch (assetModifier)
 		{
 			default:
@@ -84,8 +92,10 @@ class ForeverAssets
 		var tempSplash:NoteSplash = new NoteSplash(noteData);
 		switch (assetModifier)
 		{
-			case 'basepixel' | 'foreverpixel':
-				tempSplash.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('notes/splash-pixel', assetModifier, 'UI')), true, 34, 34);
+			case 'pixel':
+				tempSplash.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('splash-pixel', assetModifier, Init.trueSettings.get("Note Skin"),
+					'noteskins/notes')), true, 34,
+					34);
 				tempSplash.animation.add('anim1', [noteData, 4 + noteData, 8 + noteData, 12 + noteData], 24, false);
 				tempSplash.animation.add('anim2', [16 + noteData, 20 + noteData, 24 + noteData, 28 + noteData], 24, false);
 				tempSplash.animation.play('anim1');
@@ -95,7 +105,9 @@ class ForeverAssets
 
 			default:
 				// 'UI/$assetModifier/notes/noteSplashes'
-				tempSplash.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('notes/noteSplashes', assetModifier, 'UI')), true, 210, 210);
+				tempSplash.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('noteSplashes', assetModifier, Init.trueSettings.get("Note Skin"),
+					'noteskins/notes')), true,
+					210, 210);
 				tempSplash.animation.add('anim1', [
 					(noteData * 2 + 1),
 					8 + (noteData * 2 + 1),
@@ -129,57 +141,58 @@ class ForeverAssets
 		return tempSplash;
 	}
 
-	public static function generateUIArrows(x:Float, y:Float, ?babyArrowType:Int = 0, assetModifier:String):UIStaticArrow
+	public static function generateUIArrows(x:Float, y:Float, ?staticArrowType:Int = 0, assetModifier:String):UIStaticArrow
 	{
-		var newBabyArrow:UIStaticArrow = new UIStaticArrow(x, y, babyArrowType);
+		var newStaticArrow:UIStaticArrow = new UIStaticArrow(x, y, staticArrowType);
 		switch (assetModifier)
 		{
-			case 'basepixel' | 'foreverpixel':
+			case 'pixel':
 				// look man you know me I fucking hate repeating code
 				// not even just a cleanliness thing it's just so annoying to tweak if something goes wrong like
 				// genuinely more programmers should make their code more modular
-				newBabyArrow.loadGraphic(Paths.image('UI/$assetModifier/notes/arrows-pixels'), true, 17, 17);
-				newBabyArrow.animation.add('static', [babyArrowType]);
-				newBabyArrow.animation.add('pressed', [4 + babyArrowType, 8 + babyArrowType], 12, false);
-				newBabyArrow.animation.add('confirm', [12 + babyArrowType, 16 + babyArrowType], 24, false);
+				var framesArgument:String = "arrows-pixels";
+				newStaticArrow.loadGraphic(Paths.image(ForeverTools.returnSkinAsset('$framesArgument', assetModifier, Init.trueSettings.get("Note Skin"),
+					'noteskins/notes')), true,
+					17, 17);
+				newStaticArrow.animation.add('static', [staticArrowType]);
+				newStaticArrow.animation.add('pressed', [4 + staticArrowType, 8 + staticArrowType], 12, false);
+				newStaticArrow.animation.add('confirm', [12 + staticArrowType, 16 + staticArrowType], 24, false);
 
-				newBabyArrow.setGraphicSize(Std.int(newBabyArrow.width * PlayState.daPixelZoom));
-				newBabyArrow.updateHitbox();
-				newBabyArrow.antialiasing = false;
+				newStaticArrow.setGraphicSize(Std.int(newStaticArrow.width * PlayState.daPixelZoom));
+				newStaticArrow.updateHitbox();
+				newStaticArrow.antialiasing = false;
 
-				newBabyArrow.addOffset('static', -67, -75);
-				newBabyArrow.addOffset('pressed', -67, -75);
-				newBabyArrow.addOffset('confirm', -67, -75);
+				newStaticArrow.addOffset('static', -67, -75);
+				newStaticArrow.addOffset('pressed', -67, -75);
+				newStaticArrow.addOffset('confirm', -67, -75);
 
 			case 'chart editor':
-				// look man you know me I fucking hate repeating code
-				// not even just a cleanliness thing it's just so annoying to tweak if something goes wrong like
-				// genuinely more programmers should make their code more modular
-				newBabyArrow.loadGraphic(Paths.image('UI/forever/chart editor/note_array'), true, 157, 156);
-				newBabyArrow.animation.add('static', [babyArrowType]);
-				newBabyArrow.animation.add('pressed', [16 + babyArrowType], 12, false);
-				newBabyArrow.animation.add('confirm', [4 + babyArrowType, 8 + babyArrowType, 16 + babyArrowType], 24, false);
+				newStaticArrow.loadGraphic(Paths.image('UI/forever/base/chart editor/note_array'), true, 157, 156);
+				newStaticArrow.animation.add('static', [staticArrowType]);
+				newStaticArrow.animation.add('pressed', [16 + staticArrowType], 12, false);
+				newStaticArrow.animation.add('confirm', [4 + staticArrowType, 8 + staticArrowType, 16 + staticArrowType], 24, false);
 
-				newBabyArrow.addOffset('static');
-				newBabyArrow.addOffset('pressed');
-				newBabyArrow.addOffset('confirm');
+				newStaticArrow.addOffset('static');
+				newStaticArrow.addOffset('pressed');
+				newStaticArrow.addOffset('confirm');
 
 			default:
 				// probably gonna revise this and make it possible to add other arrow types but for now it's just pixel and normal
 				var stringSect:String = '';
 				// call arrow type I think
-				stringSect = UIStaticArrow.getArrowFromNumber(babyArrowType);
+				stringSect = UIStaticArrow.getArrowFromNumber(staticArrowType);
 
 				var framesArgument:String = "NOTE_assets";
 
-				newBabyArrow.frames = Paths.getSparrowAtlas(ForeverTools.returnSkinAsset('notes/$framesArgument', assetModifier, 'UI'));
+				newStaticArrow.frames = Paths.getSparrowAtlas(ForeverTools.returnSkinAsset('$framesArgument', assetModifier,
+					Init.trueSettings.get("Note Skin"), 'noteskins/notes'));
 
-				newBabyArrow.animation.addByPrefix('static', 'arrow' + stringSect.toUpperCase());
-				newBabyArrow.animation.addByPrefix('pressed', stringSect + ' press', 24, false);
-				newBabyArrow.animation.addByPrefix('confirm', stringSect + ' confirm', 24, false);
+				newStaticArrow.animation.addByPrefix('static', 'arrow' + stringSect.toUpperCase());
+				newStaticArrow.animation.addByPrefix('pressed', stringSect + ' press', 24, false);
+				newStaticArrow.animation.addByPrefix('confirm', stringSect + ' confirm', 24, false);
 
-				newBabyArrow.antialiasing = true;
-				newBabyArrow.setGraphicSize(Std.int(newBabyArrow.width * 0.7));
+				newStaticArrow.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				newStaticArrow.setGraphicSize(Std.int(newStaticArrow.width * 0.7));
 
 				// set little offsets per note!
 				// so these had a little problem honestly and they make me wanna off(set) myself so the middle notes basically
@@ -187,33 +200,62 @@ class ForeverAssets
 
 				var offsetMiddleX = 0;
 				var offsetMiddleY = 0;
-				if (babyArrowType > 0 && babyArrowType < 3)
+				if (staticArrowType > 0 && staticArrowType < 3)
 				{
 					offsetMiddleX = 2;
 					offsetMiddleY = 2;
-					if (babyArrowType == 1)
+					if (staticArrowType == 1)
 					{
 						offsetMiddleX -= 1;
 						offsetMiddleY += 2;
 					}
 				}
 
-				newBabyArrow.addOffset('static');
-				newBabyArrow.addOffset('pressed', -2, -2);
-				newBabyArrow.addOffset('confirm', 36 + offsetMiddleX, 36 + offsetMiddleY);
+				newStaticArrow.addOffset('static');
+				newStaticArrow.addOffset('pressed', -2, -2);
+				newStaticArrow.addOffset('confirm', 36 + offsetMiddleX, 36 + offsetMiddleY);
 		}
 
-		return newBabyArrow;
+		return newStaticArrow;
 	}
 
-	public static function generateCheckmark(x:Float, y:Float, asset:String, assetModifier:String = 'base', baseLibrary:String)
+	/**
+		Notes!
+	**/
+	public static function generateArrow(assetModifier, strumTime, noteData, noteType, noteAlt, ?isSustainNote:Bool = false, ?prevNote:Note = null):Note
+	{
+		var newNote:Note;
+		var changeableSkin:String = Init.trueSettings.get("Note Skin");
+		// gonna improve the system eventually
+		if (changeableSkin.startsWith('quant'))
+			newNote = Note.returnQuantNote(assetModifier, strumTime, noteData, noteType, noteAlt, isSustainNote, prevNote);
+		else
+			newNote = Note.returnDefaultNote(assetModifier, strumTime, noteData, noteType, noteAlt, isSustainNote, prevNote);
+
+		// hold note offset
+		if (isSustainNote && prevNote != null)
+		{
+			if (prevNote.isSustainNote)
+				newNote.noteVisualOffset = prevNote.noteVisualOffset;
+			else // calculate a new visual offset based on that note's width and newnote's width
+				newNote.noteVisualOffset = ((prevNote.width / 2) - (newNote.width / 2));
+		}
+
+		return newNote;
+	}
+
+	/**
+		Checkmarks!
+	**/
+	public static function generateCheckmark(x:Float, y:Float, asset:String, assetModifier:String = 'base', changeableSkin:String = 'default',
+			baseLibrary:String)
 	{
 		var newCheckmark:Checkmark = new Checkmark(x, y);
 		switch (assetModifier)
 		{
 			default:
-				newCheckmark.frames = Paths.getSparrowAtlas(ForeverTools.returnSkinAsset(asset, assetModifier, baseLibrary));
-				newCheckmark.antialiasing = true;
+				newCheckmark.frames = Paths.getSparrowAtlas(ForeverTools.returnSkinAsset(asset, assetModifier, changeableSkin, baseLibrary));
+				newCheckmark.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
 
 				newCheckmark.animation.addByPrefix('false finished', 'uncheckFinished');
 				newCheckmark.animation.addByPrefix('false', 'uncheck', 12, false);

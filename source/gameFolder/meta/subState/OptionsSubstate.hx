@@ -33,7 +33,7 @@ class OptionsSubstate extends MusicBeatSubState
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.color = 0xCE64DF;
-		bg.antialiasing = true;
+		bg.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
 		add(bg);
 
 		super.create();
@@ -316,7 +316,7 @@ class OptionsSubstate extends MusicBeatSubState
 
 	private function openSubmenu()
 	{
-		offsetTemp = Init.gameSettings['Offset'][1];
+		offsetTemp = Init.trueSettings['Offset'];
 
 		submenu.visible = true;
 		if (curSelection != keyOptions.length - 1)
@@ -386,7 +386,7 @@ class OptionsSubstate extends MusicBeatSubState
 		{
 			if (FlxG.keys.justPressed.ENTER)
 			{
-				Init.gameSettings['Offset'][1] = offsetTemp;
+				Init.trueSettings['Offset'] = offsetTemp;
 				closeSubmenu();
 			}
 			else if (FlxG.keys.justPressed.ESCAPE)

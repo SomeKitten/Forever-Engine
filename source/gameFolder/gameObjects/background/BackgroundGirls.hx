@@ -1,10 +1,10 @@
 package gameFolder.gameObjects.background;
 
-import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import gameFolder.meta.CoolUtil;
+import gameFolder.meta.data.dependency.FNFSprite;
 
-class BackgroundGirls extends FlxSprite
+class BackgroundGirls extends FNFSprite
 {
 	public function new(x:Float, y:Float)
 	{

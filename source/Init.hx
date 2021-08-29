@@ -1,12 +1,16 @@
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.input.keyboard.FlxKey;
+import gameFolder.meta.CoolUtil;
 import gameFolder.meta.InfoHud;
 import gameFolder.meta.data.Highscore;
+import gameFolder.meta.data.dependency.Discord;
 import gameFolder.meta.state.*;
 import gameFolder.meta.state.charting.*;
 import openfl.filters.BitmapFilter;
 import openfl.filters.ColorMatrixFilter;
+
+using StringTools;
 
 /**
 	This is the initialisation class. if you ever want to set anything before the game starts or call anything then this is probably your best bet.
@@ -15,58 +19,54 @@ import openfl.filters.ColorMatrixFilter;
 **/
 class Init extends FlxState
 {
-	// FOREVER ENGINE VALUES
-	/* While we have our own user interface for the main menus and such, I wanted to give an option for mod makers using the engine to be able to
-		toggle the menu easily, I want this to be snazzy but cozy if needed, and all of the abstraction should help point things in the right direction:
-
-			simply said, it won't be a hassle to work with the engine, as the extra features will be toggleable entirely!
-	 */
-	public static var forceDisableForeverMenu:Bool = false;
-
-	// GLOBAL VALUES (FOR SAVING)
 	/*
-		Couple notes! These are CASE SENSITIVE and if your pause menu crashes when going into preferences, it may be because its trying to load 
-		something that doesnt exist/does not have a value assigned to it. I'll get around to fixing this eventually, but it's also very useful depending
-		on how you look at it, so I might end up not fixing it.
+		Okay so here we'll set custom settings. As opposed to the previous options menu, everything will be handled in here with no hassle.
+		This will read what the second value of the key's array is, and then it will categorise it, telling the game which option to set it to.
+
+		0 - boolean, true or false checkmark
+		1 - choose string
+		2 - choose number (for fps so its low capped at 30)
+		3 - offsets, this is unused but it'd bug me if it were set to 0
+		might redo offset code since I didnt make it and it bugs me that it's hardcoded the the last part of the controls menu
 	 */
 	public static var gameSettings:Map<String, Dynamic> = [
-		'Downscroll' => [false, 0],
-		'Auto Pause' => [true, 1],
-		'FPS Counter' => [true, 2],
-		'Memory Counter' => [true, 3],
-		'Debug Info' => [false, 4],
-		'Reduced Movements' => [false, 5],
-		'Display Accuracy' => [true, 10],
-		"Deuteranopia" => [false, 6],
-		"Protanopia" => [false, 7],
-		"Tritanopia" => [false, 8],
-		'No Camera Note Movement' => [false, 9],
-		'Offset' => [false, 0],
-		'Use Forever Chart Editor' => [true, 11],
-		'Forever Engine Menus' => [!forceDisableForeverMenu, 12],
-		'Optimized Boyfriend' => [true, 13],
-		'Optimized Girlfriend' => [true, 14],
-		"use Forever Engine UI" => [true, 15],
-		// introduced a new system that checks for the settings version in case you/i wanna hard reset stuffs
-		'version' => '1',
+		'Downscroll' => [false, 0, 'Whether to have the strumline vertically flipped in gameplay.'],
+		'Centered Notefield' => [false, 0, 'Whether to center the strumline in gameplay.'],
+		'Auto Pause' => [true, 0, ''],
+		'FPS Counter' => [true, 0, 'Whether to display the FPS counter.'],
+		'Memory Counter' => [true, 0, 'Whether to display approximately how much memory is being used.'],
+		'Debug Info' => [false, 0, 'Whether to display information like your game state.'],
+		'Reduced Movements' => [
+			false,
+			0,
+			'Whether to reduce movements, like icons bouncing or beat zooms in gameplay.'
+		],
+		'Display Accuracy' => [true, 0, 'Whether to display your accuracy on screen.'],
+		'Disable Antialiasing' => [false, 0, 'Whether to disable Anti-aliasing. Helps improve performance in FPS.'],
+		'No Camera Note Movement' => [false, 0, 'When enabled, left and right notes no longer move the camera.'],
+		'Use Forever Chart Editor' => [true, 0, 'When enabled, uses the custom Forever Engine chart editor!'],
+		'Disable Note Splashes' => [
+			false,
+			0,
+			'Whether to disable note splashes in gameplay. Useful if you find them distracting.'
+		],
+		// custom ones lol
+		'Offset' => [0, 3],
+		'Filter' => [
+			'none',
+			1,
+			'Choose a filter for colorblindness.',
+			['none', 'Deuteranopia', 'Protanopia', 'Tritanopia']
+		],
+		"UI Skin" => ['default', 1, 'Choose a UI Skin for ratings, combo, etc.', ''],
+		"Note Skin" => ['default', 1, 'Choose a note skin.', ''],
+		"Framerate Cap" => [120, 1, 'Define your maximum FPS.', ['']],
+		"Opaque Arrows" => [false, 0, "Makes the arrows at the top of the screen opaque again."],
+		"Opaque Holds" => [false, 0, "Huh, why isnt the trail cut off?"],
 	];
 
-	public static var settingsDescriptions:Map<String, String> = [
-		'Downscroll' => 'Whether or not to display the strum line at the bottom of the screen instead of at the top',
-		'Auto Pause' => 'Whether or not the game automatically pauses on lost focus',
-		'FPS Counter' => 'Displays the framerate counter at the top left corner of the screen',
-		'Memory Counter' => 'Displays the native memory counter at the top left corner of the screen',
-		'Debug Info' => 'Displays debug information on the top left corner of the screen',
-		'Reduced Movements' => 'Disables things like camera zooming and icon bopping',
-		'Display Accuracy' => 'Enables the display of the accuracy counter, and by extension, your stage ranking',
-		"Deuteranopia" => 'Enables the colorblind filter for Deuteranopia', "Protanopia" => 'Enables the colorblind filter for Protanopia',
-		"Tritanopia" => 'Enables the colorblind filter for Tritanopia', 'No Camera Note Movement' => "Disables forever engine's note-based camera movement",
-		'Use Forever Chart Editor' => "Enables the usage of forever engine's custom chart editor (not recommended for now)",
-		'Forever Engine Menus' => "Enables the Forever Engine custom Menus (Applies when exiting the options menu)",
-		'Optimized Boyfriend' => "Whether to use Forever Engine's custom boyfriend sprites (Mostly an option for modding)",
-		'Optimized Girlfriend' => "Much like the last option, but for Girlfriend instead",
-		"use Forever Engine UI" => "Makes some changes to the UI, like ratings having colored outlines",
-	];
+	public static var trueSettings:Map<String, Dynamic> = [];
+	public static var settingsDescriptions:Map<String, String> = [];
 
 	public static var gameControls:Map<String, Dynamic> = [
 		'UP' => [[FlxKey.UP, W], 2],
@@ -111,36 +111,56 @@ class Init extends FlxState
 		}
 	];
 
-	///
-
 	override public function create():Void
 	{
-		FlxG.save.bind('funkin', 'forever');
+		FlxG.save.bind('forever', 'engine');
 		Highscore.load();
 
 		loadSettings();
 		loadControls();
 
-		if ((forceDisableForeverMenu) && (gameSettings.get('Forever Engine Menus')[0]))
-			gameSettings.get('Forever Engine Menus')[0] = false;
+		#if !html5
+		Main.updateFramerate(trueSettings.get("Framerate Cap"));
+		#end
 
 		// apply saved filters
 		FlxG.game.setFilters(filters);
 
-		Main.switchState(new TitleState());
+		Main.switchState(this, new TitleState());
 	}
 
 	public static function loadSettings():Void
 	{
-		if ((FlxG.save.data.gameSettings != null)
-			&& (FlxG.save.data.gameSettings.get('version') == gameSettings.get('version'))
-			&& (Lambda.count(gameSettings) == Lambda.count(FlxG.save.data.gameSettings)))
-			gameSettings = FlxG.save.data.gameSettings;
-		/* okay so the new system kinda just checks if the version number is the same. I hope it doesn't crash, because if it's null it shouldnt be the same
-			and then the save fill will be overriden. I should really just do a system that regenerates the settings file if they have any null settings honestly
-		 */
+		// set the true settings array
+		// only the first variable will be saved! the rest are for the menu stuffs
+
+		// IF YOU WANT TO SAVE MORE THAN ONE VALUE MAKE YOUR VALUE AN ARRAY INSTEAD
+		for (setting in gameSettings.keys())
+			trueSettings.set(setting, gameSettings.get(setting)[0]);
+
+		// NEW SYSTEM, INSTEAD OF REPLACING THE WHOLE THING I REPLACE EXISTING KEYS
+		// THAT WAY IT DOESNT HAVE TO BE DELETED IF THERE ARE SETTINGS CHANGES
+		if (FlxG.save.data.settings != null)
+		{
+			var settingsMap:Map<String, Dynamic> = FlxG.save.data.settings;
+			for (singularSetting in settingsMap.keys())
+				trueSettings.set(singularSetting, FlxG.save.data.settings.get(singularSetting));
+		}
+
+		// lemme fix that for you
+		if (!Std.isOfType(trueSettings.get("Framerate Cap"), Int) || trueSettings.get("Framerate Cap") < 30)
+			trueSettings.set("Framerate Cap", 30);
+
+		// 'hardcoded' ui skins
+		gameSettings.get("UI Skin")[3] = CoolUtil.returnAssetsLibrary('UI');
+		if (!gameSettings.get("UI Skin")[3].contains(trueSettings.get("UI Skin")))
+			trueSettings.set("UI Skin", 'default');
+		gameSettings.get("Note Skin")[3] = CoolUtil.returnAssetsLibrary('noteskins/notes');
+		if (!gameSettings.get("Note Skin")[3].contains(trueSettings.get("Note Skin")))
+			trueSettings.set("Note Skin", 'default');
 
 		saveSettings();
+
 		updateAll();
 	}
 
@@ -155,7 +175,7 @@ class Init extends FlxState
 	public static function saveSettings():Void
 	{
 		// ez save lol
-		FlxG.save.data.gameSettings = gameSettings;
+		FlxG.save.data.settings = trueSettings;
 		FlxG.save.flush();
 
 		updateAll();
@@ -169,17 +189,26 @@ class Init extends FlxState
 
 	public static function updateAll()
 	{
-		InfoHud.updateDisplayInfo(gameSettings.get('FPS Counter')[0], gameSettings.get('Debug Info')[0], gameSettings.get('Memory Counter')[0]);
+		InfoHud.updateDisplayInfo(trueSettings.get('FPS Counter'), trueSettings.get('Debug Info'), trueSettings.get('Memory Counter'));
 
+		#if !html5
+		Main.updateFramerate(trueSettings.get("Framerate Cap"));
+		#end
+
+		///*
 		filters = [];
 		FlxG.game.setFilters(filters);
 
-		for (string in gameFilters.keys())
+		var theFilter:String = trueSettings.get('Filter');
+		if (gameFilters.get(theFilter) != null)
 		{
-			if (gameSettings.get(string)[0])
-				filters.push(gameFilters.get(string).filter);
+			var realFilter = gameFilters.get(theFilter).filter;
+
+			if (realFilter != null)
+				filters.push(realFilter);
 		}
 
 		FlxG.game.setFilters(filters);
+		// */
 	}
 }

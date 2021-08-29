@@ -22,8 +22,16 @@ import gameFolder.meta.data.*;
 import gameFolder.meta.data.Section.SwagSection;
 import gameFolder.meta.data.Song.SwagSong;
 import gameFolder.meta.substate.charting.*;
+import haxe.io.Bytes;
+import lime.media.AudioBuffer;
+import openfl.geom.Rectangle;
+import openfl.media.Sound;
 
 using StringTools;
+
+#if !html5
+import sys.thread.Thread;
+#end
 
 /**
 	As the name implies, this is the class where all of the charting state stuff happens, so when you press 7 the game
@@ -60,10 +68,13 @@ class ChartingState extends MusicBeatState
 	var curSelectedNotes:Array<Array<Dynamic>>;
 
 	public static var songPosition:Float = 0;
+	public static var curSong:SwagSong;
 
 	private var sectionsMap:Map<Int, Dynamic>;
 
 	var _song:SwagSong;
+
+	var newWaveform:FlxSprite;
 
 	override public function create():Void
 	{
@@ -100,6 +111,12 @@ class ChartingState extends MusicBeatState
 
 		generateChart();
 
+		// render the waveforms here instead
+		/*
+			newWaveform = generateWaveform(Paths.inst(_song.song), 0, 0);
+			add(newWaveform);
+		 */
+
 		// uh heres the epic setup for these
 		add(sectionsAll);
 		add(curRenderedSections);
@@ -121,9 +138,9 @@ class ChartingState extends MusicBeatState
 		strumLine.add(strumHitbox);
 
 		// dont ask me why this is a sprite I just didnt wanna bother with flxshape tbh
-		var strumLineMarkerL:FlxSprite = new FlxSprite(-8, -12).loadGraphic(Paths.image('UI/forever/chart editor/marker'));
+		var strumLineMarkerL:FlxSprite = new FlxSprite(-8, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
 		strumLine.add(strumLineMarkerL);
-		var strumLineMarkerR:FlxSprite = new FlxSprite((FlxG.width / 2) - 8, -12).loadGraphic(Paths.image('UI/forever/chart editor/marker'));
+		var strumLineMarkerR:FlxSprite = new FlxSprite((FlxG.width / 2) - 8, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
 		strumLine.add(strumLineMarkerR);
 
 		// center the strumline
@@ -162,7 +179,7 @@ class ChartingState extends MusicBeatState
 			newArrow.setGraphicSize(gridSize, gridSize);
 			newArrow.updateHitbox();
 			newArrow.alpha = 0.9;
-			newArrow.antialiasing = true;
+			newArrow.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
 
 			// lol silly idiot
 			newArrow.playAnim('static');
@@ -223,13 +240,29 @@ class ChartingState extends MusicBeatState
 
 		if (FlxG.keys.pressed.BACKSPACE)
 		{
-			if (songMusic.playing)
-				songMusic.pause();
-			if (vocals.playing)
-				vocals.pause();
-
+			pauseMusic();
 			openSubState(new PreferenceSubstate(camHUD));
 		}
+	}
+
+	function pauseMusic()
+	{
+		songMusic.time = Math.max(songMusic.time, 0);
+		songMusic.time = Math.min(songMusic.time, songMusic.length);
+
+		resyncVocals();
+		songMusic.pause();
+		vocals.pause();
+	}
+
+	function resyncVocals():Void
+	{
+		vocals.pause();
+
+		songMusic.play();
+		Conductor.songPosition = songMusic.time;
+		vocals.time = Conductor.songPosition;
+		vocals.play();
 	}
 
 	function loadSong(daSong:String):Void
@@ -240,13 +273,22 @@ class ChartingState extends MusicBeatState
 		if (vocals != null)
 			vocals.stop();
 
-		songMusic = new FlxSound().loadEmbedded(Paths.inst(daSong));
-		vocals = new FlxSound().loadEmbedded(Paths.voices(daSong));
+		songMusic = new FlxSound().loadEmbedded(Sound.fromFile('./' + Paths.inst(daSong)), false, true);
+		if (_song.needsVoices)
+			vocals = new FlxSound().loadEmbedded(Sound.fromFile('./' + Paths.voices(daSong)), false, true);
+		else
+			vocals = new FlxSound();
 		FlxG.sound.list.add(songMusic);
 		FlxG.sound.list.add(vocals);
 
-		songMusic.pause();
-		vocals.pause();
+		songMusic.play();
+		vocals.play();
+
+		if (curSong == _song)
+			songMusic.time = songPosition;
+		curSong = _song;
+
+		pauseMusic();
 
 		songMusic.onComplete = function()
 		{
@@ -273,11 +315,7 @@ class ChartingState extends MusicBeatState
 		if (FlxG.keys.justPressed.SPACE)
 		{
 			if (songMusic.playing)
-			{
-				songMusic.pause();
-				vocals.pause();
-				// playButtonAnimation('pause');
-			}
+				pauseMusic();
 			else
 			{
 				vocals.play();
@@ -308,8 +346,7 @@ class ChartingState extends MusicBeatState
 
 		if (FlxG.mouse.wheel != 0)
 		{
-			songMusic.pause();
-			vocals.pause();
+			pauseMusic();
 
 			songMusic.time = Math.max(songMusic.time - (FlxG.mouse.wheel * Conductor.stepCrochet * scrollSpeed), 0);
 			songMusic.time = Math.min(songMusic.time, songMusic.length);
@@ -340,9 +377,15 @@ class ChartingState extends MusicBeatState
 			shiftThing = 4;
 
 		if (FlxG.keys.justPressed.RIGHT || FlxG.keys.justPressed.D)
+		{
 			songMusic.time = getStrumTime(sectionsMap.get(Std.int(Math.min(curSection + shiftThing, sectionsMax)))[2]);
+			pauseMusic();
+		}
 		else if (FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.A)
+		{
 			songMusic.time = getStrumTime(sectionsMap.get(Std.int(Math.max(curSection - shiftThing, 0)))[2]);
+			pauseMusic();
+		}
 
 		// mouse stuffs!
 
@@ -440,7 +483,7 @@ class ChartingState extends MusicBeatState
 
 			PlayState.SONG = _song;
 			ForeverTools.killMusic([songMusic, vocals]);
-			Main.switchState(new PlayState());
+			Main.switchState(this, new PlayState());
 		}
 
 		updateHUD();
@@ -515,8 +558,7 @@ class ChartingState extends MusicBeatState
 			{
 				// if a note map does already exist (the note was a sustain note before)
 				var constSize = Std.int(gridSize / 3);
-				noteSustains.get(note)[0].setGraphicSize(constSize,
-					Math.floor(FlxMath.remapToRange((newSus) - constSize, 0, Conductor.stepCrochet * verticalSize, 0, gridSize * verticalSize)));
+				noteSustains.get(note)[0].setGraphicSize(constSize, getNoteVerticalSize(newSus));
 				noteSustains.get(note)[0].updateHitbox();
 				//
 				noteSustains.get(note)[1].y = note.y + (noteSustains.get(note)[0].height) + (gridSize / 2);
@@ -530,6 +572,12 @@ class ChartingState extends MusicBeatState
 		// set the note sustain in the actual chart info
 		for (i in 0...curSelectedNotes.length)
 			curSelectedNotes[i][2] = Math.max(newSus, 0);
+	}
+
+	private function getNoteVerticalSize(newSus:Float)
+	{
+		var constSize = Std.int(gridSize / 3);
+		return Math.floor(FlxMath.remapToRange(newSus, 0, Conductor.stepCrochet * getChartSizeMax(), 0, gridSize * getChartSizeMax()) - constSize);
 	}
 
 	private function returnFromNote(note:Note)
@@ -576,7 +624,7 @@ class ChartingState extends MusicBeatState
 	private function generateBackground()
 	{
 		coolGrid = new FlxBackdrop(null, 1, 1, true, true, 1, 1);
-		coolGrid.loadGraphic(Paths.image('UI/forever/chart editor/grid'));
+		coolGrid.loadGraphic(Paths.image('UI/forever/base/chart editor/grid'));
 		coolGrid.alpha = (32 / 255);
 		add(coolGrid);
 
@@ -644,7 +692,7 @@ class ChartingState extends MusicBeatState
 	private function generateChartNote(daNoteInfo, daStrumTime, daSus, daNoteAlt, noteSection, curNoteMap:Map<Note, Dynamic>)
 	{
 		//
-		var note:Note = new Note(daStrumTime, daNoteInfo % 4, daNoteAlt);
+		var note:Note = ForeverAssets.generateArrow(PlayState.assetModifier, daStrumTime, daNoteInfo % 4, 0, daNoteAlt);
 		// I love how there's 3 different engines that use this exact same variable name lmao
 		note.rawNoteData = daNoteInfo;
 		note.sustainLength = daSus;
@@ -670,14 +718,16 @@ class ChartingState extends MusicBeatState
 			prevNote = note;
 			var constSize = Std.int(gridSize / 3);
 
-			var sustainVis:Note = new Note(daStrumTime + (Conductor.stepCrochet * daSus) + Conductor.stepCrochet, daNoteInfo % 4, daNoteAlt, prevNote, true);
-			sustainVis.setGraphicSize(constSize,
-				Math.floor(FlxMath.remapToRange((daSus / 2) - constSize, 0, Conductor.stepCrochet * verticalSize, 0, gridSize * verticalSize)));
+			var sustainVis:Note = ForeverAssets.generateArrow(PlayState.assetModifier, daStrumTime + (Conductor.stepCrochet * daSus) + Conductor.stepCrochet,
+				daNoteInfo % 4, 0, daNoteAlt, true, prevNote);
+
+			sustainVis.setGraphicSize(constSize, getNoteVerticalSize(daSus / 2));
 			sustainVis.updateHitbox();
 			sustainVis.x = note.x + constSize;
 			sustainVis.y = note.y + (gridSize / 2);
 
-			var sustainEnd:Note = new Note(daStrumTime + (Conductor.stepCrochet * daSus) + Conductor.stepCrochet, daNoteInfo % 4, daNoteAlt, sustainVis, true);
+			var sustainEnd:Note = ForeverAssets.generateArrow(PlayState.assetModifier, daStrumTime + (Conductor.stepCrochet * daSus) + Conductor.stepCrochet,
+				daNoteInfo % 4, 0, daNoteAlt, true, sustainVis);
 			sustainEnd.setGraphicSize(constSize, constSize);
 			sustainEnd.updateHitbox();
 			sustainEnd.x = sustainVis.x;
@@ -799,5 +849,92 @@ class ChartingState extends MusicBeatState
 	function adjustSide(noteData:Int, sectionTemp:Int)
 	{
 		return (_song.notes[sectionTemp].mustHitSection ? ((noteData + 4) % 8) : noteData);
+	}
+
+	function generateWaveform(loadedSong:String, x:Float = 0, y:Float = 0):FlxSprite
+	{
+		// generate the waveform based on gedehari's code
+		// https://github.com/gedehari/HaxeFlixel-Waveform-Rendering
+		// (yes he let me use this lol)
+
+		var audioBuffer:AudioBuffer = AudioBuffer.fromFile('./$loadedSong');
+		var tempSong = new FlxSound().loadEmbedded(Sound.fromAudioBuffer(audioBuffer), false, true);
+		// FlxG.sound.list.add(tempSong);
+
+		var generatedWaveform = new FlxSprite(x, y).makeGraphic(3000, 720, FlxColor.fromRGB(0, 0, 0, 1));
+		generatedWaveform.x = x - (generatedWaveform.width / 2);
+		generatedWaveform.y = y - (generatedWaveform.height / 2);
+
+		generatedWaveform.angle = 360 - 90;
+
+		var bytes:Bytes = audioBuffer.data.toBytes();
+
+		#if !html5
+		Thread.create(function()
+		{
+			var currentTime:Float = Sys.time();
+			var finishedTime:Float;
+
+			var index:Int = 0;
+			var drawIndex:Int = 0;
+			var samplesPerCollumn:Int = Std.int(tempSong.length / 600);
+
+			var min:Float = 0;
+			var max:Float = 0;
+
+			Sys.println("Iterating");
+
+			while ((index * 4) < (bytes.length - 1))
+			{
+				var byte:Int = bytes.getUInt16(index * 4);
+
+				if (byte > 65535 / 2)
+					byte -= 65535;
+
+				var sample:Float = (byte / 65535);
+
+				if (sample > 0)
+				{
+					if (sample > max)
+						max = sample;
+				}
+				else if (sample < 0)
+				{
+					if (sample < min)
+						min = sample;
+				}
+
+				if ((index % samplesPerCollumn) == 0)
+				{
+					// trace("min: " + min + ", max: " + max);
+
+					if (drawIndex > 1280)
+					{
+						drawIndex = 0;
+					}
+
+					var pixelsMin:Float = Math.abs(min * 300);
+					var pixelsMax:Float = max * 300;
+
+					generatedWaveform.pixels.fillRect(new Rectangle(drawIndex, 0, 1, 720), 0xFF000000);
+					generatedWaveform.pixels.fillRect(new Rectangle(drawIndex, (FlxG.height / 2) - pixelsMin, 1, pixelsMin + pixelsMax), FlxColor.WHITE);
+					drawIndex += 1;
+
+					min = 0;
+					max = 0;
+				}
+
+				index += 1;
+			}
+
+			finishedTime = Sys.time();
+
+			Sys.println("Took " + (finishedTime - currentTime) + " seconds.");
+		});
+		#end
+
+		// tempSong.stop();
+
+		return generatedWaveform;
 	}
 }
