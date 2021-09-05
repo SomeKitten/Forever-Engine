@@ -126,6 +126,12 @@ class Init extends FlxState
 		// apply saved filters
 		FlxG.game.setFilters(filters);
 
+		// Some additional changes to default HaxeFlixel settings, both for ease of debugging
+		// and usability.
+		FlxG.fixedTimestep = false; // This ensures that the game is not tied to the FPS
+		FlxG.mouse.useSystemCursor = true; // Use system cursor because it's prettier
+		FlxG.mouse.visible = false; // Hide mouse on start
+
 		Main.switchState(this, new TitleState());
 	}
 
