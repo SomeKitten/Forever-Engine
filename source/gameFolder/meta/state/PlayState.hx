@@ -335,6 +335,8 @@ class PlayState extends MusicBeatState
 
 		super.update(elapsed);
 
+		FlxG.camera.followLerp = elapsed * 2;
+
 		if (health > 2)
 			health = 2;
 
@@ -376,7 +378,7 @@ class PlayState extends MusicBeatState
 		{
 			if (startedCountdown)
 			{
-				Conductor.songPosition += FlxG.elapsed * 1000;
+				Conductor.songPosition += elapsed * 1000;
 				if (Conductor.songPosition >= 0)
 					startSong();
 			}
@@ -384,7 +386,7 @@ class PlayState extends MusicBeatState
 		else
 		{
 			// Conductor.songPosition = FlxG.sound.music.time;
-			Conductor.songPosition += FlxG.elapsed * 1000;
+			Conductor.songPosition += elapsed * 1000;
 
 			if (!paused)
 			{
