@@ -3,6 +3,7 @@ An open-source, modular, optimized, and HOPEFULLY easy to use [Friday Night Funk
 ----------------------------------------------
 
 ![image](https://media.discordapp.net/attachments/821758818135572491/884267252357156934/FELogo.png?width=1095&height=676)
+[DISCORD SERVER](https://discord.gg/QJt9dUmbk3)
 
 Forever Engine is an open source modification of the Friday Night Funkin' engine. Forever Engine is not to be confused with its original name, FUNKIN FOREVER, which is now no longer the name of the engine. The reason this is important will have to do with future plans of ours, so stay tuned if you'd like to hear more about those ;)
 ----------------------------------------------
