@@ -12,12 +12,15 @@ import openfl.utils.Assets;
 class ForeverTools
 {
 	// set up maps and stuffs
-	public static function resetMenuMusic()
+	public static function resetMenuMusic(resetVolume:Bool = false)
 	{
 		// make sure the music is playing
 		if (((FlxG.sound.music != null) && (!FlxG.sound.music.playing)) || (FlxG.sound.music == null))
 		{
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			var song = (Init.trueSettings.get("Custom Titlescreen") ? Paths.music('foreverMenu') : Paths.music('freakyMenu'));
+			FlxG.sound.playMusic(song, (resetVolume) ? 0 : 0.7);
+			if (resetVolume)
+				FlxG.sound.music.fadeIn(4, 0, 0.7);
 			// placeholder bpm
 			Conductor.changeBPM(102);
 		}

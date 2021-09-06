@@ -13,8 +13,20 @@ class Timings
 	public static var trueAccuracy:Float;
 	public static var judgementRates:Array<Float>;
 
-	public static var daRatings:Map<String, Array<Dynamic>>;
-	public static var scoreRating:Map<String, Int>;
+	// from left to right
+	// max milliseconds, score from it and percentage
+	public static var ratingsMap:Map<String, Array<Dynamic>> = [
+		"sick" => [50, 350, 100],
+		"good" => [90, 150, 50],
+		"bad" => [145, 0, -25],
+		"shit" => [180, -20, -50],
+		"miss" => [200, -50, -100],
+	];
+
+	public static var msThreshold:Float = 0;
+
+	// set the score ratings for later use
+	public static var scoreRating:Map<String, Int> = ["s" => 90, "a" => 80, "b" => 70, "c" => 50, "d" => 40, "e" => 20, "f" => 0,];
 
 	public static var ratingFinal:String = "f";
 	public static var notesHit:Int = 0;
@@ -28,6 +40,13 @@ class Timings
 		accuracy = 0.001;
 		trueAccuracy = 0;
 		judgementRates = new Array<Float>();
+
+		// reset ms threshold
+		var biggestThreshold:Float = 0;
+		for (i in ratingsMap.keys())
+			if (ratingsMap.get(i)[0] > biggestThreshold)
+				biggestThreshold = ratingsMap.get(i)[0];
+		msThreshold = biggestThreshold;
 
 		notesHit = 0;
 		notesHitNoSus = 0;
@@ -50,20 +69,6 @@ class Timings
 			if (realNotes[i].mustPress)
 				totalNotes++;
 		}
-
-		// here we calculate how much judgements will be worth
-
-		// from left to right
-		// chance, score from it and percentage
-		daRatings = [
-			"sick" => [null, 350, 100],
-			"good" => [0.2, 200, 60],
-			"bad" => [0.4, 100, 15],
-			"shit" => [0.7, 50, 0],
-		];
-
-		// set the score ratings for later use
-		scoreRating = ["s" => 90, "a" => 80, "b" => 70, "c" => 50, "d" => 40, "e" => 20, "f" => 0,];
 	}
 
 	public static function updateAccuracy(judgement:Int, isSustain:Bool = false)
@@ -71,11 +76,10 @@ class Timings
 		notesHit++;
 		if (!isSustain)
 			notesHitNoSus++;
-		accuracy += judgement;
+		accuracy += Math.max(0, judgement);
 		trueAccuracy = (accuracy / notesHit);
 
 		updateFCDisplay();
-
 		updateScoreRating();
 	}
 

@@ -46,16 +46,6 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		// call the initializations and stuffs
 		super();
 
-		// small info bar, kinda like the KE watermark
-		// based on scoretxt which I will set up as well
-		var infoDisplay:String = CoolUtil.dashToSpace(PlayState.SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(PlayState.storyDifficulty)
-			+ " - Forever BETA v" + Main.gameVersion;
-
-		infoBar = new FlxText(5, FlxG.height - 30, 0, infoDisplay, 20);
-		infoBar.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		infoBar.scrollFactor.set();
-		add(infoBar);
-
 		// fnf mods
 		var scoreDisplay:String = 'beep bop bo skdkdkdbebedeoop brrapadop';
 
@@ -88,6 +78,16 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		updateScoreText();
 		scoreBar.scrollFactor.set();
 		add(scoreBar);
+
+		// small info bar, kinda like the KE watermark
+		// based on scoretxt which I will set up as well
+		var infoDisplay:String = CoolUtil.dashToSpace(PlayState.SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(PlayState.storyDifficulty)
+			+ " - Forever BETA v" + Main.gameVersion;
+
+		infoBar = new FlxText(5, FlxG.height - 30, 0, infoDisplay, 20);
+		infoBar.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		infoBar.scrollFactor.set();
+		add(infoBar);
 	}
 
 	override public function update(elapsed:Float)

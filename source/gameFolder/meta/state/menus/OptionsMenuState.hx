@@ -53,7 +53,9 @@ class OptionsMenuState extends MusicBeatState
 					['Game Settings', null],
 					['', null],
 					['Downscroll', getFromOption],
-					// ['Auto Pause', getFromOption],
+					['Diagonalscroll', getFromOption],
+					['Centered Notefield', getFromOption],
+					['Ghost Tapping', getFromOption],
 					['Display Accuracy', getFromOption],
 					//
 					['', null],
@@ -66,7 +68,8 @@ class OptionsMenuState extends MusicBeatState
 					['', null],
 					['Forever Settings', null],
 					['', null],
-					['Use Forever Chart Editor', getFromOption]
+					['Use Forever Chart Editor', getFromOption],
+					['Custom Titlescreen', getFromOption]
 				]
 			],
 			'appearance' => [
@@ -340,16 +343,20 @@ class OptionsMenuState extends MusicBeatState
 
 		for (i in 0...categoryMap.get(groupName)[0].length)
 		{
-			var thisOption:Alphabet = new Alphabet(0, 0, categoryMap.get(groupName)[0][i][0], true, false);
-			thisOption.screenCenter();
-			thisOption.y += (90 * (i - Math.floor(categoryMap.get(groupName)[0].length / 2)));
-			thisOption.targetY = i;
-			thisOption.disableX = true;
-			// hardcoded main so it doesnt have scroll
-			if (groupName != 'main')
-				thisOption.isMenuItem = true;
-			thisOption.alpha = 0.6;
-			newGroup.add(thisOption);
+			if (Init.gameSettings.get(categoryMap.get(groupName)[0][i][0]) == null
+				|| Init.gameSettings.get(categoryMap.get(groupName)[0][i][0])[3] != Init.FORCED)
+			{
+				var thisOption:Alphabet = new Alphabet(0, 0, categoryMap.get(groupName)[0][i][0], true, false);
+				thisOption.screenCenter();
+				thisOption.y += (90 * (i - Math.floor(categoryMap.get(groupName)[0].length / 2)));
+				thisOption.targetY = i;
+				thisOption.disableX = true;
+				// hardcoded main so it doesnt have scroll
+				if (groupName != 'main')
+					thisOption.isMenuItem = true;
+				thisOption.alpha = 0.6;
+				newGroup.add(thisOption);
+			}
 		}
 
 		return newGroup;
@@ -372,7 +379,7 @@ class OptionsMenuState extends MusicBeatState
 						extrasMap.set(letter, checkmark);
 					case 1:
 						// selector
-						var selector:Selector = new Selector(10, letter.y, letter.text, Init.gameSettings.get(letter.text)[3],
+						var selector:Selector = new Selector(10, letter.y, letter.text, Init.gameSettings.get(letter.text)[4],
 							(letter.text == 'Framerate Cap') ? true : false);
 
 						extrasMap.set(letter, selector);
@@ -475,6 +482,9 @@ class OptionsMenuState extends MusicBeatState
 			var originalFPS = Init.trueSettings.get(activeSubgroup.members[curSelection].text);
 			var increase = 15 * updateBy;
 			if (originalFPS + increase < 30)
+				increase = 0;
+			// high fps cap
+			if (originalFPS + increase > 360)
 				increase = 0;
 
 			if (updateBy == -1)

@@ -84,10 +84,7 @@ class TitleState extends MusicBeatState
 			transOut = FlxTransitionableState.defaultTransOut;
 			// */
 
-			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
-
-			FlxG.sound.music.fadeIn(4, 0, 0.7);
-			Conductor.changeBPM(102);
+			ForeverTools.resetMenuMusic(true);
 		}
 
 		persistentUpdate = true;
@@ -167,14 +164,14 @@ class TitleState extends MusicBeatState
 
 	function getIntroTextShit():Array<Array<String>>
 	{
-		var fullText:String = Assets.getText(Paths.txt('introText'));
-
-		var firstArray:Array<String> = fullText.split('\n');
-		var swagGoodArray:Array<Array<String>> = [];
-
-		for (i in firstArray)
+		var swagGoodArray:Array<Array<String>> = [['no idea what psych engine is', 'vine boom sfx']];
+		if (Assets.exists(Paths.txt('introText')))
 		{
-			swagGoodArray.push(i.split('--'));
+			var fullText:String = Assets.getText(Paths.txt('introText'));
+			var firstArray:Array<String> = fullText.split('\n');
+
+			for (i in firstArray)
+				swagGoodArray.push(i.split('--'));
 		}
 
 		return swagGoodArray;
@@ -307,7 +304,7 @@ class TitleState extends MusicBeatState
 		switch (curBeat)
 		{
 			case 1:
-				createCoolText(['ninjamuffin99', 'phantomArcade', 'kawaisprite', 'evilsker ']);
+				createCoolText(['ninjamuffin', 'phantomArcade', 'kawaisprite', 'evilsker']);
 			// credTextShit.visible = true;
 			case 3:
 				addMoreText('present');
@@ -336,6 +333,8 @@ class TitleState extends MusicBeatState
 			// credTextShit.visible = true;
 			case 11:
 				addMoreText(curWacky[1]);
+				if (curWacky[1] == 'vine boom sfx')
+					FlxG.sound.play(Paths.sound('psych'));
 			// credTextShit.text += '\nlmao';
 			case 12:
 				deleteCoolText();

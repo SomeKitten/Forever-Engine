@@ -30,6 +30,7 @@ import gameFolder.meta.data.Song.SwagSong;
 import gameFolder.meta.state.charting.*;
 import gameFolder.meta.state.menus.*;
 import gameFolder.meta.subState.*;
+import openfl.events.KeyboardEvent;
 import openfl.media.Sound;
 import openfl.utils.Assets;
 
@@ -528,16 +529,6 @@ class PlayState extends MusicBeatState
 		noteCalls();
 	}
 
-	//----------------------------------------------------------------
-	//
-	//
-	//
-	//	this is just a divider, move long.
-	//
-	//
-	//
-	//----------------------------------------------------------------
-
 	private function mainControls(daNote:Note, char:Character, charStrum:FlxTypedGroup<UIStaticArrow>, autoplay:Bool, ?otherSide:Int = 0):Void
 	{
 		// call character type for later I'm so sorry this is painful
@@ -615,7 +606,7 @@ class PlayState extends MusicBeatState
 					notesPressedAutoplay.push(daNote);
 				}
 
-				goodNoteHit(daNote, daNote.strumTime, Conductor.songPosition, char, charStrum, canDisplayRating);
+				goodNoteHit(daNote, char, charStrum, canDisplayRating);
 			}
 			//
 		}
@@ -629,16 +620,6 @@ class PlayState extends MusicBeatState
 				strumCameraRoll(dadStrums, false);
 		}
 	}
-
-	//----------------------------------------------------------------
-	//
-	//
-	//
-	//	strum calls auto
-	//
-	//
-	//
-	//----------------------------------------------------------------
 
 	private function strumCallsAuto(cStrum:UIStaticArrow, ?callType:Int = 1, ?daNote:Note):Void
 	{
@@ -685,17 +666,6 @@ class PlayState extends MusicBeatState
 		//
 	}
 
-	//----------------------------------------------------------------
-	//
-	//
-	//
-	//
-	//	idk I just need these cus the code is killing me
-	//  I wanna see where the lines are for different functions
-	//
-	//
-	//
-	//----------------------------------------------------------------
 	// call a note array
 	public var notesPressedAutoplay:Array<Note> = [];
 
@@ -777,8 +747,8 @@ class PlayState extends MusicBeatState
 				if (Init.trueSettings.get('Downscroll'))
 					downscrollMultiplier = -1;
 
-				daNote.y = (strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
-					+ (downscrollMultiplier * -((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(daNote.noteSpeed, 2)))));
+				var psuedoY:Float = (downscrollMultiplier *
+					-((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(daNote.noteSpeed, 2))));
 				/*
 					heres the part where I talk about how shitty my downscroll code is
 					mostly because I don't actually understand downscroll and I don't play downscroll so its really more
@@ -795,21 +765,27 @@ class PlayState extends MusicBeatState
 					if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
 					{
 						if (Init.trueSettings.get('Downscroll'))
-							daNote.y += (daNote.prevNote.height);
+							psuedoY += (daNote.prevNote.height);
 						else
-							daNote.y -= ((daNote.prevNote.height / 2));
+							psuedoY -= ((daNote.prevNote.height / 2));
 					}
 					else
-						daNote.y -= ((daNote.height / 2) * downscrollMultiplier);
+						psuedoY -= ((daNote.height / 2) * downscrollMultiplier);
 					if (Init.trueSettings.get('Downscroll'))
 						daNote.flipY = true;
 				}
 
-				daNote.x = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].x + 25 + daNote.noteVisualOffset;
+				var psuedoX = 25 + daNote.noteVisualOffset;
+
+				daNote.y = strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
+					+ (Math.cos(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoY)
+					+ (Math.sin(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoX);
+				daNote.x = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].x
+					+ (Math.cos(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoX)
+					+ (Math.sin(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoY);
 
 				// also set note rotation
-				if (daNote.isSustainNote == false)
-					daNote.angle = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].angle;
+				daNote.angle = -daNote.noteDirection;
 
 				// hell breaks loose here, we're using nested scripts!
 				// get the note lane and run the corresponding script
@@ -838,12 +814,8 @@ class PlayState extends MusicBeatState
 				{
 					if ((daNote.tooLate || !daNote.wasGoodHit) && (daNote.mustPress))
 					{
-						healthCall(false);
 						vocals.volume = 0;
-
-						// I'll ask pixl if this is wrong and if he says yes I'll remove it
-						decreaseCombo();
-
+						missNoteCheck((Init.trueSettings.get('Ghost Tapping')) ? true : false, daNote.noteData, boyfriend);
 						// ambiguous name
 						Timings.updateAccuracy(0);
 					}
@@ -908,8 +880,7 @@ class PlayState extends MusicBeatState
 
 								if (eligable)
 								{
-									goodNoteHit(coolNote, coolNote.strumTime, Conductor.songPosition, character, characterStrums,
-										firstNote); // then hit the note
+									goodNoteHit(coolNote, character, characterStrums, firstNote); // then hit the note
 									pressedNotes.push(coolNote);
 								}
 							}
@@ -917,12 +888,11 @@ class PlayState extends MusicBeatState
 						}
 						//
 					}
-					else
-						missNoteCheck(i, pressControls, character); // else just call bad notes
+					else // else just call bad notes
+						if (!Init.trueSettings.get('Ghost Tapping') && pressControls[i])
+							missNoteCheck(true, i, character);
 					//
 				}
-
-				//
 			}
 
 			// check if anything is held
@@ -932,7 +902,7 @@ class PlayState extends MusicBeatState
 				notes.forEachAlive(function(coolNote:Note)
 				{
 					if (coolNote.canBeHit && coolNote.mustPress && coolNote.isSustainNote && holdControls[coolNote.noteData])
-						goodNoteHit(coolNote, coolNote.strumTime, Conductor.songPosition, character, characterStrums);
+						goodNoteHit(coolNote, character, characterStrums);
 				});
 			}
 
@@ -959,7 +929,7 @@ class PlayState extends MusicBeatState
 
 	private var ratingTiming:String = "";
 
-	function popUpScore(daRatings:Map<String, Array<Dynamic>>, baseRating:String, coolNote:Note)
+	function popUpScore(baseRating:String, coolNote:Note)
 	{
 		// set up the rating
 		var score:Int = 50;
@@ -972,8 +942,8 @@ class PlayState extends MusicBeatState
 				allSicks = false;
 
 		displayRating(baseRating);
-		Timings.updateAccuracy(daRatings.get(baseRating)[2]);
-		score = Std.int(daRatings.get(baseRating)[1]);
+		Timings.updateAccuracy(Timings.ratingsMap.get(baseRating)[2]);
+		score = Std.int(Timings.ratingsMap.get(baseRating)[1]);
 
 		songScore += score;
 
@@ -1010,7 +980,7 @@ class PlayState extends MusicBeatState
 	//
 	//
 
-	function decreaseCombo()
+	function decreaseCombo(?ghostMiss:Bool = false)
 	{
 		// painful if statement
 		if (((combo > 5) || (combo < 0)) && (gf.animOffsets.exists('sad')))
@@ -1027,19 +997,31 @@ class PlayState extends MusicBeatState
 
 		// display negative combo
 		popUpCombo();
-		displayRating("miss");
+		if (ghostMiss)
+		{
+			displayRating("miss");
+			healthCall(Timings.ratingsMap.get("miss")[2]);
+		}
+
+		// gotta do it manually here lol
+		Timings.updateFCDisplay();
 	}
 
-	function increaseCombo()
+	function increaseCombo(?baseRating:String, ?direction = 0, ?character:Character)
 	{
-		if (combo < 0)
-			combo = 0;
-		combo += 1;
+		// trolled this can actually decrease your combo if you get a bad/shit/miss
+		if (baseRating != null)
+		{
+			if (Timings.ratingsMap.get(baseRating)[2] > 0)
+			{
+				if (combo < 0)
+					combo = 0;
+				combo += 1;
+			}
+			else
+				missNoteCheck(true, direction, character);
+		}
 	}
-
-	//
-	//
-	//
 
 	public function createSplash(coolNote:Note)
 	{
@@ -1140,60 +1122,56 @@ class PlayState extends MusicBeatState
 		// */
 	}
 
-	function goodNoteHit(coolNote:Note, noteStrum:Float, curSongPos:Float, character:Character, characterStrums:FlxTypedGroup<UIStaticArrow>,
-			?canDisplayRating:Bool = true)
+	function goodNoteHit(coolNote:Note, character:Character, characterStrums:FlxTypedGroup<UIStaticArrow>, ?canDisplayRating:Bool = true)
 	{
 		if (!coolNote.wasGoodHit)
 		{
 			coolNote.wasGoodHit = true;
 			vocals.volume = 1;
 
+			characterPlayAnimation(coolNote, character);
+			characterStrums.members[coolNote.noteData].playAnim('confirm', true);
+
 			if (canDisplayRating)
 			{
-				// we'll need to call the rating here as it will also be used to determine health
-				var noteDiff:Float = Math.abs(noteStrum - curSongPos);
-				// also thanks sammu :mariocool:
+				// special thanks to sam, they gave me the original system which kinda inspired my idea for this new one
 
-				// call the ratings over from the timing class
-				var daRatings = Timings.daRatings;
+				// get the note ms timing
+				var noteDiff:Float = Math.abs(coolNote.strumTime - Conductor.songPosition);
+				trace(noteDiff);
+				// get the timing
+				if (coolNote.strumTime < Conductor.songPosition)
+					ratingTiming = "late";
+				else
+					ratingTiming = "early";
 
-				var foundRating = false;
 				// loop through all avaliable ratings
-				var baseRating:String = "sick";
-				for (myRating in daRatings.keys())
+				var foundRating:String = 'miss';
+				var lowestThreshold:Float = Math.POSITIVE_INFINITY;
+				for (myRating in Timings.ratingsMap.keys())
 				{
-					if ((daRatings.get(myRating)[0] != null)
-						&& (((noteDiff > Conductor.safeZoneOffset * daRatings.get(myRating)[0])) && (!foundRating)))
+					var myThreshold:Float = Timings.ratingsMap.get(myRating)[0];
+					if (noteDiff <= myThreshold && (myThreshold < lowestThreshold))
 					{
-						// get the timing
-						if (noteStrum < curSongPos)
-							ratingTiming = "late";
-						else
-							ratingTiming = "early";
-
-						// call the rating itself
-						baseRating = myRating;
-						foundRating = true;
+						foundRating = myRating;
+						lowestThreshold = myThreshold;
 					}
 				}
 
 				if (!coolNote.isSustainNote)
 				{
-					increaseCombo();
-					popUpScore(daRatings, baseRating, coolNote);
-					// health += 0.023;
+					increaseCombo(foundRating, coolNote.noteData, character);
+					popUpScore(foundRating, coolNote);
+					healthCall(Timings.ratingsMap.get(foundRating)[2]);
 				}
 				else if (coolNote.isSustainNote)
 				{
-					// health += 0.004;
 					// call updated accuracy stuffs
 					Timings.updateAccuracy(100, true);
+					if (coolNote.animation.name.endsWith('holdend'))
+						healthCall(100);
 				}
-				healthCall(true, coolNote, daRatings.get(baseRating)[2]);
 			}
-
-			characterPlayAnimation(coolNote, character);
-			characterStrums.members[coolNote.noteData].playAnim('confirm', true);
 
 			if (!coolNote.isSustainNote)
 			{
@@ -1206,41 +1184,25 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function healthCall(increase:Bool, ?coolNote:Note, ?ratingMultiplier:Float = 0)
+	function healthCall(?ratingMultiplier:Float = 0)
 	{
 		// health += 0.012;
 		var healthBase:Float = 0.024 * 2.5;
-
-		// self explanatory checks
-		if (increase)
-		{
-			//
-			var trueHealth = healthBase * 0.75;
-			if ((coolNote.isSustainNote) && (coolNote.animation.name.endsWith('holdend')))
-				health += trueHealth;
-			else if (!coolNote.isSustainNote)
-				health += trueHealth * (ratingMultiplier / 100);
-		}
-		else
-			health -= healthBase;
+		health += (healthBase * (ratingMultiplier / 100));
 	}
 
-	function missNoteCheck(direction:Int = 0, pressControls:Array<Bool>, character:Character)
+	function missNoteCheck(?includeAnimation:Bool = false, direction:Int = 0, character:Character)
 	{
-		if (pressControls[direction])
+		if (includeAnimation)
 		{
-			healthCall(false);
 			var stringDirection:String = UIStaticArrow.getArrowFromNumber(direction);
 
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 			character.playAnim('sing' + stringDirection.toUpperCase() + 'miss');
-
-			decreaseCombo();
-
-			// gotta do it manually here lol
-			Timings.updateFCDisplay();
-			//
 		}
+		decreaseCombo(true);
+
+		//
 	}
 
 	function characterPlayAnimation(coolNote:Note, character:Character)
@@ -1271,12 +1233,6 @@ class PlayState extends MusicBeatState
 		character.playAnim(stringArrow, true);
 		character.holdTimer = 0;
 	}
-
-	//
-	//
-	//	please spare me
-	//
-	//
 
 	function startSong():Void
 	{
@@ -1384,7 +1340,7 @@ class PlayState extends MusicBeatState
 			// generate note splashes
 			if (player == 1)
 			{
-				var noteSplash:NoteSplash = ForeverAssets.generateNoteSplashes('noteSplashes', PlayState.assetModifier, 'UI', i);
+				var noteSplash:NoteSplash = ForeverAssets.generateNoteSplashes('noteSplashes', assetModifier, 'UI', i);
 				noteSplash.x += Note.swagWidth * i;
 				noteSplash.x += ((FlxG.width / 2) * player);
 				splashNotes.add(noteSplash);
@@ -1545,7 +1501,7 @@ class PlayState extends MusicBeatState
 			if ((storyPlaylist.length <= 0) && (!endSongEvent))
 			{
 				// play menu music
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				ForeverTools.resetMenuMusic();
 
 				// set up transitions
 				transIn = FlxTransitionableState.defaultTransIn;
@@ -1644,7 +1600,7 @@ class PlayState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('ANGRY'));
 			// schoolIntro(doof);
 			default:
-				if (Assets.exists(Paths.txt(SONG.song.toLowerCase() + '/' + SONG.song.toLowerCase() + 'Dialogue')))
+				if (sys.FileSystem.exists(Paths.txt(SONG.song.toLowerCase() + '/' + SONG.song.toLowerCase() + 'Dialogue')))
 				{
 					var dialogueBox:DialogueBox;
 					dialogueBox = DialogueBox.createDialogue(CoolUtil.coolTextFile(Paths.txt(SONG.song.toLowerCase() + '/' + SONG.song.toLowerCase()

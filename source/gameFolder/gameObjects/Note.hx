@@ -41,6 +41,7 @@ class Note extends FNFSprite
 	public var noteQuant:Int = -1;
 	public var noteVisualOffset:Float = 0;
 	public var noteSpeed:Float = 0;
+	public var noteDirection:Float = 0;
 
 	public static var swagWidth:Float = 160 * 0.7;
 
@@ -68,23 +69,20 @@ class Note extends FNFSprite
 
 		if (mustPress)
 		{
-			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset)
-				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset))
+			if (strumTime > Conductor.songPosition - (Timings.msThreshold) && strumTime < Conductor.songPosition + (Timings.msThreshold))
 				canBeHit = true;
 			else
 				canBeHit = false;
 
-			if (strumTime < Conductor.songPosition - (Conductor.safeZoneOffset * 1.5) && !wasGoodHit)
+			if (strumTime < Conductor.songPosition - (Timings.msThreshold) && !wasGoodHit)
 				tooLate = true;
 		}
 		else // make sure the note can't be hit if it's the dad's I guess
 			canBeHit = false;
 
 		if (tooLate)
-		{
 			if (alpha > 0.3)
 				alpha -= 0.05;
-		}
 	}
 
 	/**
@@ -159,7 +157,7 @@ class Note extends FNFSprite
 			if (prevNote.isSustainNote)
 			{
 				prevNote.animation.play(UIStaticArrow.getColorFromNumber(prevNote.noteData) + 'hold');
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * prevNote.noteSpeed;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}

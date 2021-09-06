@@ -83,12 +83,8 @@ class FreeplayState extends MusicBeatState
 		}
 
 		// LOAD MUSIC
-		if (FlxG.sound.music != null)
-		{
-			// kinda freaky tho
-			if (!FlxG.sound.music.playing)
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
-		}
+		ForeverTools.resetMenuMusic();
+
 		// LOAD CHARACTERS
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menus/base/menuDesat'));

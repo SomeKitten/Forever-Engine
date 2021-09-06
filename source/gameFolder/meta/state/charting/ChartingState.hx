@@ -63,7 +63,6 @@ class ChartingState extends MusicBeatState
 
 	private var iconL:HealthIcon;
 	private var iconR:HealthIcon;
-	private var strumHitbox:FlxSprite;
 
 	var curSelectedNotes:Array<Array<Dynamic>>;
 
@@ -128,19 +127,13 @@ class ChartingState extends MusicBeatState
 		// epic strum line
 		strumLine = new FlxSpriteGroup(0, 0);
 
-		var strumLineBase:FlxSprite = new FlxSprite(0, 0).makeGraphic(Std.int(FlxG.width / 2), 2);
+		var strumLineBase:FlxSprite = new FlxSprite(gridSize, 0).makeGraphic(gridSize * (horizontalSize + 1), 2);
 		strumLine.add(strumLineBase);
 
-		// apparently adding icons fucks the hitbox up
-		// so I made this to circumvent that, not the best solution but oh well
-		strumHitbox = new FlxSprite(0, 0).makeGraphic(Std.int(FlxG.width / 2), Std.int(gridSize / 2));
-		strumHitbox.alpha = 0;
-		strumLine.add(strumHitbox);
-
 		// dont ask me why this is a sprite I just didnt wanna bother with flxshape tbh
-		var strumLineMarkerL:FlxSprite = new FlxSprite(-8, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
+		var strumLineMarkerL:FlxSprite = new FlxSprite(24, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
 		strumLine.add(strumLineMarkerL);
-		var strumLineMarkerR:FlxSprite = new FlxSprite((FlxG.width / 2) - 8, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
+		var strumLineMarkerR:FlxSprite = new FlxSprite(strumLineBase.width - 64, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
 		strumLine.add(strumLineMarkerR);
 
 		// center the strumline
@@ -152,8 +145,8 @@ class ChartingState extends MusicBeatState
 		iconL.setGraphicSize(Std.int(iconL.width / 2));
 		iconR.setGraphicSize(Std.int(iconR.width / 2));
 
-		iconL.setPosition(-64, -128);
-		iconR.setPosition(strumLineBase.width - 80, -128);
+		iconL.setPosition(-24, -128);
+		iconR.setPosition(strumLineBase.width - 16, -128);
 
 		strumLine.add(iconL);
 		strumLine.add(iconR);
@@ -330,13 +323,7 @@ class ChartingState extends MusicBeatState
 
 		// originally only for note ticks but
 		// repurposed for arrow presses
-		if (songMusic.playing)
-		{
-			if (strumHitbox.overlaps(curRenderedNotes))
-				playNoteStrum(curRenderedNotes);
-			else if (strumHitbox.overlaps(curRenderedSustains))
-				playNoteStrum(curRenderedSustains);
-		}
+		if (songMusic.playing) {}
 
 		arrowGroup.forEach(function(arrow:UIStaticArrow)
 		{
@@ -599,16 +586,6 @@ class ChartingState extends MusicBeatState
 
 	var coolGrid:FlxBackdrop;
 	var coolGradient:FlxSprite;
-
-	private function playNoteStrum(group:FlxTypedGroup<Note>)
-	{
-		group.forEachAlive(function(note:Note)
-		{
-			// do ya cool stuffs
-			if (strumHitbox.overlaps(note))
-				arrowGroup.members[adjustSide(note.rawNoteData, getSectionfromY(note.y))].playAnim('confirm');
-		});
-	}
 
 	private function checkExists(group:FlxTypedGroup<Dynamic>)
 	{
