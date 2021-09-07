@@ -38,6 +38,11 @@ class MusicBeatState extends FNFUIState
 			trace('reg ' + transIn.region);
 
 		super.create();
+
+		// For debugging
+		FlxG.watch.add(Conductor, "songPosition");
+		FlxG.watch.add(this, "curBeat");
+		FlxG.watch.add(this, "curStep");
 	}
 
 	// class 'step' event

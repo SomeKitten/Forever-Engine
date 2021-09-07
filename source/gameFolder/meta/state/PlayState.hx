@@ -248,7 +248,7 @@ class PlayState extends MusicBeatState
 		boyfriend.dance();
 
 		// set song position before beginning
-		Conductor.songPosition = -5000;
+		Conductor.songPosition = -(Conductor.crochet * 4);
 
 		// create strums and ui elements
 		strumLine = new FlxTypedGroup<FlxSprite>();
@@ -1642,6 +1642,7 @@ class PlayState extends MusicBeatState
 			{
 				case 0:
 					FlxG.sound.play(Paths.sound('intro3-' + assetModifier), 0.6);
+					Conductor.songPosition = -(Conductor.crochet * 4);
 				case 1:
 					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
 					ready.scrollFactor.set();
@@ -1660,6 +1661,8 @@ class PlayState extends MusicBeatState
 						}
 					});
 					FlxG.sound.play(Paths.sound('intro2-' + assetModifier), 0.6);
+
+					Conductor.songPosition = -(Conductor.crochet * 3);
 				case 2:
 					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
 					set.scrollFactor.set();
@@ -1677,6 +1680,8 @@ class PlayState extends MusicBeatState
 						}
 					});
 					FlxG.sound.play(Paths.sound('intro1-' + assetModifier), 0.6);
+
+					Conductor.songPosition = -(Conductor.crochet * 2);
 				case 3:
 					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
 					go.scrollFactor.set();
@@ -1696,7 +1701,8 @@ class PlayState extends MusicBeatState
 						}
 					});
 					FlxG.sound.play(Paths.sound('introGo-' + assetModifier), 0.6);
-				case 4:
+
+					Conductor.songPosition = -(Conductor.crochet * 1);
 			}
 
 			swagCounter += 1;
