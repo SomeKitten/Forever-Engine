@@ -113,16 +113,16 @@ class FreeplayState extends MusicBeatState
 		}
 
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
-		// scoreText.autoSize = false;
 		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
-		// scoreText.alignment = RIGHT;
 
-		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(Std.int(FlxG.width * 0.35), 66, 0xFF000000);
+		scoreBG = new FlxSprite(scoreText.x - scoreText.width, 0).makeGraphic(Std.int(FlxG.width * 0.35), 66, 0xFF000000);
 		scoreBG.alpha = 0.6;
 		add(scoreBG);
 
 		diffText = new FlxText(scoreText.x, scoreText.y + 36, 0, "", 24);
+		diffText.alignment = CENTER;
 		diffText.font = scoreText.font;
+		diffText.x = scoreBG.getGraphicMidpoint().x;
 		add(diffText);
 
 		add(scoreText);
@@ -191,16 +191,6 @@ class FreeplayState extends MusicBeatState
 		if (Math.abs(lerpScore - intendedScore) <= 10)
 			lerpScore = intendedScore;
 
-		scoreText.text = "PERSONAL BEST:" + lerpScore;
-
-		// score bg handling
-		scoreBG.width = ((scoreText.size * scoreText.text.length) + 8);
-		scoreBG.updateHitbox();
-		scoreBG.x = (FlxG.width - scoreBG.width);
-
-		scoreText.x = (scoreBG.x + 4);
-		//
-
 		var upP = controls.UP_P;
 		var downP = controls.DOWN_P;
 		var accepted = controls.ACCEPT;
@@ -237,6 +227,13 @@ class FreeplayState extends MusicBeatState
 
 			Main.switchState(this, new PlayState());
 		}
+
+		// Adhere the position of all the things (I'm sorry it was just so ugly before I had to fix it Shubs)
+		scoreText.text = "PERSONAL BEST:" + lerpScore;
+		scoreText.x = FlxG.width - scoreText.width - 5;
+		scoreBG.width = scoreText.width;
+		scoreBG.x = scoreText.x;
+		diffText.x = scoreBG.x + (scoreBG.width / 2) - (diffText.width / 2);
 	}
 
 	var lastDifficulty:String;

@@ -18,6 +18,10 @@ using StringTools;
 
 class Character extends FNFSprite
 {
+	// By default, this option set to FALSE will make it so that the character only dances twice per major beat hit
+	// If set to on, they will dance every beat, such as Skid and Pump
+	public var quickDancer:Bool = false;
+
 	public var debugMode:Bool = false;
 
 	public var isPlayer:Bool = false;
@@ -131,6 +135,8 @@ class Character extends FNFSprite
 				animation.addByIndices('danceLeft', 'spooky dance idle', [0, 2, 6], "", 12, false);
 				animation.addByIndices('danceRight', 'spooky dance idle', [8, 10, 12, 14], "", 12, false);
 
+				quickDancer = true;
+
 				playAnim('danceRight');
 			case 'mom':
 				tex = Paths.getSparrowAtlas('characters/Mom_Assets');
@@ -154,6 +160,7 @@ class Character extends FNFSprite
 				frames = tex;
 
 				animation.addByPrefix('idle', "Mom Idle", 24, false);
+				animation.addByIndices('idlePost', 'Mom Idle', [10, 11, 12, 13], "", 24, true);
 				animation.addByPrefix('singUP', "Mom Up Pose", 24, false);
 				animation.addByPrefix('singDOWN', "MOM DOWN POSE", 24, false);
 				animation.addByPrefix('singLEFT', 'Mom Left Pose', 24, false);
@@ -311,6 +318,7 @@ class Character extends FNFSprite
 				var tex = Paths.getSparrowAtlas('characters/bfCar');
 				frames = tex;
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
+				animation.addByIndices('idlePost', 'BF idle dance', [8, 9, 10, 11, 12, 13, 14], "", 24, true);
 				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
 				animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
 				animation.addByPrefix('singRIGHT', 'BF NOTE RIGHT0', 24, false);
@@ -548,6 +556,15 @@ class Character extends FNFSprite
 					playAnim('danceLeft');
 		}
 
+		// Post idle animation (think Week 4 and how the player and mom's hair continues to sway after their idle animations are done!)
+		if (animation.curAnim.finished && animation.curAnim.name == 'idle')
+		{
+			// We look for an animation called 'idlePost' to switch to
+			if (animation.getByName('idlePost') != null)
+				// (( WE DON'T USE 'PLAYANIM' BECAUSE WE WANT TO FEED OFF OF THE IDLE OFFSETS! ))
+				animation.play('idlePost', true, false, 0);
+		}
+
 		super.update(elapsed);
 	}
 
@@ -556,7 +573,7 @@ class Character extends FNFSprite
 	/**
 	 * FOR GF DANCING SHIT
 	 */
-	public function dance()
+	public function dance(?forced:Bool = false)
 	{
 		if (!debugMode)
 		{
@@ -569,20 +586,17 @@ class Character extends FNFSprite
 						danced = !danced;
 
 						if (danced)
-							playAnim('danceRight');
+							playAnim('danceRight', forced);
 						else
-							playAnim('danceLeft');
+							playAnim('danceLeft', forced);
 					}
-
-				case 'spooky':
-					danced = !danced;
-
-					if (danced)
-						playAnim('danceRight');
-					else
-						playAnim('danceLeft');
 				default:
-					playAnim('idle');
+					// Left/right dancing, think Skid & Pump
+					if (animation.getByName('danceLeft') != null && animation.getByName('danceRight') != null)
+						playAnim((animation.curAnim.name == 'danceRight') ? 'danceLeft' : 'danceRight', forced);
+					// Play normal idle animations for all other characters
+					else
+						playAnim('idle', forced);
 			}
 		}
 	}
