@@ -14,7 +14,6 @@ class Paths
 {
 	// Here we set up the paths class. This will be used to
 	// Return the paths of assets and call on those assets as well.
-	// set the current song extension to either OGG or MP3 depending on the client
 	inline public static var SOUND_EXT = "ogg";
 
 	// level we're loading

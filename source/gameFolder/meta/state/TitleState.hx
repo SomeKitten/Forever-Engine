@@ -161,7 +161,7 @@ class TitleState extends MusicBeatState
 
 	function getIntroTextShit():Array<Array<String>>
 	{
-		var swagGoodArray:Array<Array<String>> = [['no idea what psych engine is', 'vine boom sfx']];
+		var swagGoodArray:Array<Array<String>> = [];
 		if (Assets.exists(Paths.txt('introText')))
 		{
 			var fullText:String = Assets.getText(Paths.txt('introText'));
@@ -181,11 +181,6 @@ class TitleState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
 		// FlxG.watch.addQuick('amp', FlxG.sound.music.amplitude);
-
-		if (FlxG.keys.justPressed.F)
-		{
-			FlxG.fullscreen = !FlxG.fullscreen;
-		}
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
 
@@ -302,6 +297,7 @@ class TitleState extends MusicBeatState
 		{
 			case 1:
 				createCoolText(['ninjamuffin', 'phantomArcade', 'kawaisprite', 'evilsker']);
+
 			// credTextShit.visible = true;
 			case 3:
 				addMoreText('present');
@@ -318,6 +314,7 @@ class TitleState extends MusicBeatState
 				addMoreText('newgrounds');
 				ngSpr.visible = true;
 			// credTextShit.text += '\nNewgrounds';
+
 			case 8:
 				deleteCoolText();
 				ngSpr.visible = false;
@@ -330,8 +327,6 @@ class TitleState extends MusicBeatState
 			// credTextShit.visible = true;
 			case 11:
 				addMoreText(curWacky[1]);
-				if (curWacky[1] == 'vine boom sfx')
-					FlxG.sound.play(Paths.sound('psych'));
 			// credTextShit.text += '\nlmao';
 			case 12:
 				deleteCoolText();

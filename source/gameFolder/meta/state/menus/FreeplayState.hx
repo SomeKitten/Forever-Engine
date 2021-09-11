@@ -231,8 +231,8 @@ class FreeplayState extends MusicBeatState
 		// Adhere the position of all the things (I'm sorry it was just so ugly before I had to fix it Shubs)
 		scoreText.text = "PERSONAL BEST:" + lerpScore;
 		scoreText.x = FlxG.width - scoreText.width - 5;
-		scoreBG.width = scoreText.width;
-		scoreBG.x = scoreText.x;
+		scoreBG.width = scoreText.width + 8;
+		scoreBG.x = FlxG.width - scoreBG.width;
 		diffText.x = scoreBG.x + (scoreBG.width / 2) - (diffText.width / 2);
 	}
 

@@ -99,14 +99,14 @@ class Init extends FlxState
 			"Enables Ghost Tapping, allowing you to press inputs without missing.",
 			NOT_FORCED
 		],
-		'Diagonalscroll' => [false, 0, 'kill me'],
 		'Centered Notefield' => [false, 0, "Center the notes, disables the enemy's notes."],
 		"Custom Titlescreen" => [
-			true,
+			false,
 			0,
 			"Enables the custom Forever Engine titlescreen! (only effective with a restart)",
 			FORCED
-		]
+		],
+		'Camera-fixed Judgements' => [false, 0, ""],
 	];
 
 	public static var trueSettings:Map<String, Dynamic> = [];
@@ -157,7 +157,7 @@ class Init extends FlxState
 
 	override public function create():Void
 	{
-		FlxG.save.bind('forever', 'engine');
+		FlxG.save.bind('foreverengine-options');
 		Highscore.load();
 
 		loadSettings();
@@ -176,7 +176,15 @@ class Init extends FlxState
 		FlxG.mouse.useSystemCursor = true; // Use system cursor because it's prettier
 		FlxG.mouse.visible = false; // Hide mouse on start
 
-		Main.switchState(this, new TitleState());
+		gotoTitleScreen();
+	}
+
+	private function gotoTitleScreen()
+	{
+		if (trueSettings.get("Custom Titlescreen"))
+			Main.switchState(this, new CustomTitlescreen());
+		else
+			Main.switchState(this, new TitleState());
 	}
 
 	public static function loadSettings():Void
@@ -194,12 +202,14 @@ class Init extends FlxState
 		{
 			var settingsMap:Map<String, Dynamic> = FlxG.save.data.settings;
 			for (singularSetting in settingsMap.keys())
-				if (gameSettings.get(singularSetting)[3] != FORCED)
+				if (gameSettings.get(singularSetting) != null && gameSettings.get(singularSetting)[3] != FORCED)
 					trueSettings.set(singularSetting, FlxG.save.data.settings.get(singularSetting));
 		}
 
 		// lemme fix that for you
-		if (!Std.isOfType(trueSettings.get("Framerate Cap"), Int) || trueSettings.get("Framerate Cap") < 30)
+		if (!Std.isOfType(trueSettings.get("Framerate Cap"), Int)
+			|| trueSettings.get("Framerate Cap") < 30
+			|| trueSettings.get("Framerate Cap") > 360)
 			trueSettings.set("Framerate Cap", 30);
 
 		// 'hardcoded' ui skins

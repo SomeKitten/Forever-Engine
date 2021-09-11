@@ -8,11 +8,16 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.display.shapes.FlxShapeBox;
+import flixel.addons.ui.FlxUI;
+import flixel.addons.ui.FlxUICheckBox;
+import flixel.addons.ui.FlxUINumericStepper;
+import flixel.addons.ui.FlxUITabMenu;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
+import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import gameFolder.gameObjects.*;
@@ -92,6 +97,9 @@ class ChartingState extends MusicBeatState
 			// vocals.stop();
 		}
 
+		FlxG.mouse.useSystemCursor = false; // Use system cursor because it's prettier
+		FlxG.mouse.visible = true; // Hide mouse on start
+
 		strumLineCam = new FlxObject(0, 0);
 		strumLineCam.screenCenter(X);
 
@@ -127,13 +135,13 @@ class ChartingState extends MusicBeatState
 		// epic strum line
 		strumLine = new FlxSpriteGroup(0, 0);
 
-		var strumLineBase:FlxSprite = new FlxSprite(gridSize, 0).makeGraphic(gridSize * (horizontalSize + 1), 2);
+		var strumLineBase:FlxSprite = new FlxSprite(0, 0).makeGraphic(Std.int(FlxG.width / 2), 2);
 		strumLine.add(strumLineBase);
 
 		// dont ask me why this is a sprite I just didnt wanna bother with flxshape tbh
-		var strumLineMarkerL:FlxSprite = new FlxSprite(24, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
+		var strumLineMarkerL:FlxSprite = new FlxSprite(-8, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
 		strumLine.add(strumLineMarkerL);
-		var strumLineMarkerR:FlxSprite = new FlxSprite(strumLineBase.width - 64, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
+		var strumLineMarkerR:FlxSprite = new FlxSprite((FlxG.width / 2) - 8, -12).loadGraphic(Paths.image('UI/forever/base/chart editor/marker'));
 		strumLine.add(strumLineMarkerR);
 
 		// center the strumline
@@ -145,8 +153,8 @@ class ChartingState extends MusicBeatState
 		iconL.setGraphicSize(Std.int(iconL.width / 2));
 		iconR.setGraphicSize(Std.int(iconR.width / 2));
 
-		iconL.setPosition(-24, -128);
-		iconR.setPosition(strumLineBase.width - 16, -128);
+		iconL.setPosition(-64, -128);
+		iconR.setPosition(strumLineBase.width - 80, -128);
 
 		strumLine.add(iconL);
 		strumLine.add(iconR);
@@ -208,18 +216,98 @@ class ChartingState extends MusicBeatState
 
 	private function generateHUD()
 	{
-		//
+		// interactible hud
 		var sidebar = new FlxShapeBox(916, 160, 326, 480, {thickness: 24, color: FlxColor.WHITE}, FlxColor.WHITE);
 		sidebar.alpha = (26 / 255);
-		add(sidebar);
-		sidebar.cameras = [camHUD];
 
+		addSectionUI();
+
+		//
 		var constTextSize:Int = 24;
 		informationBar = new FlxText(5, FlxG.height - (constTextSize * 4) - 5, 0, 'BEAT:', constTextSize);
 		informationBar.setFormat(Paths.font("vcr.ttf"), constTextSize);
 		informationBar.cameras = [camHUD];
 
 		add(informationBar);
+	}
+
+	var UI_box:FlxUITabMenu;
+
+	var stepperLength:FlxUINumericStepper;
+	var check_mustHitSection:FlxUICheckBox;
+	var check_changeBPM:FlxUICheckBox;
+	var stepperSectionBPM:FlxUINumericStepper;
+	var check_altAnim:FlxUICheckBox;
+
+	function addSectionUI():Void
+	{
+		var tabs = [
+			{name: "Song", label: 'Song'},
+			{name: "Section", label: 'Section'},
+			{name: "Note", label: 'Note'}
+		];
+
+		UI_box = new FlxUITabMenu(null, tabs, true);
+
+		UI_box.resize(300, 400);
+		UI_box.x = 916;
+		UI_box.y = 160;
+		add(UI_box);
+
+		var tab_group_section = new FlxUI(null, UI_box);
+		tab_group_section.name = 'Section';
+
+		stepperLength = new FlxUINumericStepper(10, 10, 4, 0, 0, 999, 0);
+		stepperLength.value = _song.notes[curSection].lengthInSteps;
+		stepperLength.name = "section_length";
+
+		stepperSectionBPM = new FlxUINumericStepper(10, 80, 1, Conductor.bpm, 0, 999, 0);
+		stepperSectionBPM.value = Conductor.bpm;
+		stepperSectionBPM.name = 'section_bpm';
+
+		var stepperCopy:FlxUINumericStepper = new FlxUINumericStepper(110, 130, 1, 1, -999, 999, 0);
+
+		var copyButton:FlxButton = new FlxButton(10, 130, "Copy last section", function()
+		{
+			// copySection(Std.int(stepperCopy.value));
+		});
+
+		var clearSectionButton:FlxButton = new FlxButton(10, 150, "Clear", function() {});
+
+		var swapSection:FlxButton = new FlxButton(10, 170, "Swap section", function()
+		{
+			for (i in 0..._song.notes[curSection].sectionNotes.length)
+			{
+				var note = _song.notes[curSection].sectionNotes[i];
+				note[1] = (note[1] + 4) % 8;
+				_song.notes[curSection].sectionNotes[i] = note;
+				// updateGrid();
+			}
+		});
+
+		check_mustHitSection = new FlxUICheckBox(10, 30, null, null, "Must hit section", 100);
+		check_mustHitSection.name = 'check_mustHit';
+		check_mustHitSection.checked = true;
+		// _song.needsVoices = check_mustHit.checked;
+
+		check_altAnim = new FlxUICheckBox(10, 400, null, null, "Alt Animation", 100);
+		check_altAnim.name = 'check_altAnim';
+
+		check_changeBPM = new FlxUICheckBox(10, 60, null, null, 'Change BPM', 100);
+		check_changeBPM.name = 'check_changeBPM';
+
+		tab_group_section.add(stepperLength);
+		tab_group_section.add(stepperSectionBPM);
+		tab_group_section.add(stepperCopy);
+		tab_group_section.add(check_mustHitSection);
+		tab_group_section.add(check_altAnim);
+		tab_group_section.add(check_changeBPM);
+		tab_group_section.add(copyButton);
+		tab_group_section.add(clearSectionButton);
+		tab_group_section.add(swapSection);
+
+		UI_box.addGroup(tab_group_section);
+		UI_box.cameras = [camHUD];
 	}
 
 	private function updateHUD()
@@ -467,6 +555,8 @@ class ChartingState extends MusicBeatState
 		if (FlxG.keys.justPressed.ENTER)
 		{
 			songPosition = songMusic.time;
+			FlxG.mouse.useSystemCursor = true;
+			FlxG.mouse.visible = false; // Hide mouse
 
 			PlayState.SONG = _song;
 			ForeverTools.killMusic([songMusic, vocals]);

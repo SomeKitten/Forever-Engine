@@ -759,22 +759,6 @@ class PlayState extends MusicBeatState
 					UPDATE: I MIGHT HAVE FIXED IT!!!!
 				 */
 
-				if (daNote.isSustainNote)
-				{
-					// note alignments (thanks pixl for pointing out what made old downscroll weird)
-					if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
-					{
-						if (Init.trueSettings.get('Downscroll'))
-							psuedoY += (daNote.prevNote.height);
-						else
-							psuedoY -= ((daNote.prevNote.height / 2));
-					}
-					else
-						psuedoY -= ((daNote.height / 2) * downscrollMultiplier);
-					if (Init.trueSettings.get('Downscroll'))
-						daNote.flipY = true;
-				}
-
 				var psuedoX = 25 + daNote.noteVisualOffset;
 
 				daNote.y = strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
@@ -783,6 +767,22 @@ class PlayState extends MusicBeatState
 				daNote.x = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].x
 					+ (Math.cos(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoX)
 					+ (Math.sin(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoY);
+
+				if (daNote.isSustainNote)
+				{
+					// note alignments (thanks pixl for pointing out what made old downscroll weird)
+					if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
+					{
+						if (Init.trueSettings.get('Downscroll'))
+							daNote.y += (daNote.prevNote.height);
+						else
+							daNote.y -= ((daNote.prevNote.height / 2));
+					}
+					else
+						daNote.y -= ((daNote.height / 2) * downscrollMultiplier);
+					if (Init.trueSettings.get('Downscroll'))
+						daNote.flipY = true;
+				}
 
 				// also set note rotation
 				daNote.angle = -daNote.noteDirection;
@@ -1187,7 +1187,7 @@ class PlayState extends MusicBeatState
 	function healthCall(?ratingMultiplier:Float = 0)
 	{
 		// health += 0.012;
-		var healthBase:Float = 0.024 * 2.5;
+		var healthBase:Float = 0.06;
 		health += (healthBase * (ratingMultiplier / 100));
 	}
 
