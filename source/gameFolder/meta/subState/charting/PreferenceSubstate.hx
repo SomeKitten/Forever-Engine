@@ -1,4 +1,4 @@
-package gameFolder.meta.substate.charting;
+package gameFolder.meta.subState.charting;
 
 import flixel.FlxCamera;
 import flixel.FlxG;
