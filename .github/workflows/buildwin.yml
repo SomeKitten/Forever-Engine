@@ -52,4 +52,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: windowsBuild
-          path: export/release/windows/bin
+          path: export/windows/bin
