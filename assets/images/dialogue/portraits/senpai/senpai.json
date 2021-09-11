@@ -1,0 +1,10 @@
+{
+    "name": "senpai",
+    "expressions": {
+        "normal": "Senpai Portrait Enter"
+    },
+    "position": [420, 370],
+    "scale": 5.4,
+    "flipX": true,
+    "antialiasing": false
+}

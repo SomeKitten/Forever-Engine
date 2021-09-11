@@ -17,7 +17,10 @@ using StringTools;
  */
 class Alphabet extends FlxSpriteGroup
 {
-	public var delay:Float = 0.05;
+	public var textSpeed:Float = 0.05;
+
+	private var textSize:Float;
+
 	public var paused:Bool = false;
 
 	// for menu shit
@@ -51,12 +54,13 @@ class Alphabet extends FlxSpriteGroup
 
 	var isBold:Bool = false;
 
-	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false)
+	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false, ?textSize:Float = 1)
 	{
 		super(x, y);
 
 		this.text = text;
 		isBold = bold;
+		this.textSize = textSize;
 
 		restartText(text, typed);
 	}
@@ -91,10 +95,6 @@ class Alphabet extends FlxSpriteGroup
 		var xPos:Float = 0;
 		for (character in splitWords)
 		{
-			// if (character.fastCodeAt() == " ")
-			// {
-			// }
-
 			if (character == " " || character == "-")
 				lastWasSpace = true;
 
@@ -102,7 +102,6 @@ class Alphabet extends FlxSpriteGroup
 			var isSymbol:Bool = AlphaCharacter.symbols.contains(character);
 
 			if ((AlphaCharacter.alphabet.indexOf(character.toLowerCase()) != -1) || (AlphaCharacter.numbers.contains(character)))
-				// if (AlphaCharacter.alphabet.contains(character.toLowerCase()))
 			{
 				if (xPosResetted)
 				{
@@ -121,8 +120,7 @@ class Alphabet extends FlxSpriteGroup
 					lastWasSpace = false;
 				}
 
-				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
-				var letter:AlphaCharacter = new AlphaCharacter(xPos, 0);
+				var letter:AlphaCharacter = new AlphaCharacter(xPos, 0, textSize);
 
 				if (isBold)
 					letter.createBold(character);
@@ -141,17 +139,11 @@ class Alphabet extends FlxSpriteGroup
 
 				lastSprite = letter;
 			}
-
-			// loopNum += 1;
 		}
-
-		// add(displayedLetters);
 	}
 
 	function doSplitWords():Void
-	{
 		splitWords = _finalText.split("");
-	}
 
 	public var personTalking:String = 'gf';
 
@@ -160,16 +152,13 @@ class Alphabet extends FlxSpriteGroup
 		_finalText = text;
 		doSplitWords();
 
-		// trace(arrayShit);
-
 		var loopNum:Int = 0;
 
 		var xPos:Float = 0;
 		var curRow:Int = 0;
 
-		new FlxTimer().start(0.05, function(tmr:FlxTimer)
+		new FlxTimer().start(textSpeed, function(tmr:FlxTimer)
 		{
-			// trace(_finalText.fastCodeAt(loopNum) + " " + _finalText.charAt(loopNum));
 			if (_finalText.fastCodeAt(loopNum) == "\n".code)
 			{
 				yMulti += 1;
@@ -191,15 +180,11 @@ class Alphabet extends FlxSpriteGroup
 			#end
 
 			if (AlphaCharacter.alphabet.indexOf(splitWords[loopNum].toLowerCase()) != -1 || isNumber || isSymbol)
-				// if (AlphaCharacter.alphabet.contains(splitWords[loopNum].toLowerCase()) || isNumber || isSymbol)
-
 			{
 				if (lastSprite != null && !xPosResetted)
 				{
 					lastSprite.updateHitbox();
 					xPos += lastSprite.width + 3;
-					// if (isBold)
-					// xPos -= 80;
 				}
 				else
 				{
@@ -212,10 +197,7 @@ class Alphabet extends FlxSpriteGroup
 					xPos += 20;
 					lastWasSpace = false;
 				}
-				// trace(_finalText.fastCodeAt(loopNum) + " " + _finalText.charAt(loopNum));
-
-				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
-				var letter:AlphaCharacter = new AlphaCharacter(xPos, 55 * yMulti);
+				var letter:AlphaCharacter = new AlphaCharacter(xPos, 55 * yMulti, textSize);
 				letter.row = curRow;
 				if (isBold)
 				{
@@ -288,9 +270,12 @@ class AlphaCharacter extends FlxSprite
 
 	public var row:Int = 0;
 
-	public function new(x:Float, y:Float)
+	private var textSize:Float = 1;
+
+	public function new(x:Float, y:Float, ?textSize:Float = 1)
 	{
 		super(x, y);
+		this.textSize = textSize;
 		var tex = Paths.getSparrowAtlas('UI/default/base/alphabet');
 		frames = tex;
 
@@ -304,6 +289,7 @@ class AlphaCharacter extends FlxSprite
 			// or just load regular text
 			animation.addByPrefix(letter, letter.toUpperCase() + " bold", 24);
 			animation.play(letter);
+			scale.set(textSize, textSize);
 			updateHitbox();
 		}
 	}
@@ -318,6 +304,7 @@ class AlphaCharacter extends FlxSprite
 
 		animation.addByPrefix(letter, letter + " " + letterCase, 24);
 		animation.play(letter);
+		scale.set(textSize, textSize);
 		updateHitbox();
 
 		FlxG.log.add('the row' + row);

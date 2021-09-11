@@ -1,0 +1,53 @@
+{
+    "box": "speech_bubble_talking",
+    "boxState": "normal",
+    "dialogue": [
+        {
+            "events": [
+                ["sound", "path/to/sound"],
+                ["changeBg", "path/to/bg"],
+                ["delay", 1.0]
+            ],
+            "portrait": "bf",
+            "expression": "normal",
+            "text": "hey"
+        },
+        {
+            "portrait": "bf",
+            "expression": "normal",
+            "text": "do you know sawcon"
+        },
+        {
+            "portrait": "bf2",
+            "expression": "normal",
+            "text": "whats sawcon lmao"
+        },
+        {
+            "portrait": "bf",
+            "expression": "smug",
+            "text": "sawcon deez nuts"
+        },
+        {
+            "portrait": "bf",
+            "expression": "smug",
+            "text": "idiot"
+        },
+        {
+            "portrait": "bf2",
+            "expression": "mad",
+            "text": "I fucking hate you."
+        },
+        {
+            "portrait": "bf-pixel",
+            "expression": "normal",
+            "text": "I am going to kick your ass.",
+            "boxState": "yell"
+        },
+        {
+            "portrait": "bf2",
+            "expression": "mad",
+            "text": "Bet.",
+            "boxState": "normal"
+        }
+    ]
+}

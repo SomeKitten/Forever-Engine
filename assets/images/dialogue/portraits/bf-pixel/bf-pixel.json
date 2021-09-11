@@ -1,0 +1,9 @@
+{
+    "name": "bf-pixel",
+    "expressions": {
+        "normal": "Boyfriend portrait enter instance 1"
+    },
+    "position": [680, 370],
+    "scale": 5.4,
+    "antialiasing": false
+}

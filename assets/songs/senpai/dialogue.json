@@ -1,0 +1,46 @@
+{
+    "box": "dialogueBox-pixel",
+    "boxState": "normal",
+    "dialogue": [
+        {
+            "portrait": "bf-pixel",
+            "expression": "normal",
+            "text": "hey"
+        },
+        {
+            "portrait": "bf-pixel",
+            "expression": "normal",
+            "text": "do you know sawcon"
+        },
+        {
+            "portrait": "senpai",
+            "expression": "normal",
+            "text": "whats sawcon lmao"
+        },
+        {
+            "portrait": "bf-pixel",
+            "expression": "normal",
+            "text": "sawcon deez nuts"
+        },
+        {
+            "portrait": "bf-pixel",
+            "expression": "normal",
+            "text": "idiot"
+        },
+        {
+            "portrait": "senpai",
+            "expression": "normal",
+            "text": "I fucking hate you."
+        },
+        {
+            "portrait": "bf-pixel",
+            "expression": "normal",
+            "text": "I am going to kick your ass."
+        },
+        {
+            "portrait": "senpai",
+            "expression": "normal",
+            "text": "Bet."
+        }
+    ]
+}

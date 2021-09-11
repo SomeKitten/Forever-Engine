@@ -1,0 +1,14 @@
+{
+    "position": [515, 370],
+    "textPos": [200, 480],
+    "scale": 5.4,
+    "antialiasing": false,
+    "singleFrame": true,
+    "doFlip": false,
+    "states": {
+        "normal": {
+            "open": ["Text Box Appear instance 1"],
+            "default": ["Text Box Appear instance 1"]
+        }
+    }
+}

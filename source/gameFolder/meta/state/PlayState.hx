@@ -322,7 +322,8 @@ class PlayState extends MusicBeatState
 		//
 
 		// call the funny intro cutscene depending on the song
-		if (isStoryMode)
+		var freeplayOverride = true;
+		if (isStoryMode || freeplayOverride)
 			songIntroCutscene();
 		else
 			startCountdown();
@@ -721,7 +722,7 @@ class PlayState extends MusicBeatState
 		}
 
 		// if the song is generated
-		if (generatedMusic)
+		if (generatedMusic && startedCountdown)
 		{
 			// nested script #1
 			controlPlayer(boyfriend, boyfriendAutoplay, boyfriendStrums, holdControls, pressControls, releaseControls);
@@ -1600,12 +1601,18 @@ class PlayState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('ANGRY'));
 			// schoolIntro(doof);
 			default:
-				if (sys.FileSystem.exists(Paths.txt(SONG.song.toLowerCase() + '/' + SONG.song.toLowerCase() + 'Dialogue')))
+				var dialogPath = Paths.json(SONG.song.toLowerCase() + '/dialogue');
+
+				if (sys.FileSystem.exists(dialogPath))
 				{
+					startedCountdown = false;
+
 					var dialogueBox:DialogueBox;
-					dialogueBox = DialogueBox.createDialogue(CoolUtil.coolTextFile(Paths.txt(SONG.song.toLowerCase() + '/' + SONG.song.toLowerCase()
-						+ 'Dialogue')));
+					dialogueBox = DialogueBox.createDialogue(sys.io.File.getContent(dialogPath));
 					dialogueBox.cameras = [camHUD];
+					dialogueBox.whenDaFinish = startCountdown;
+
+					add(dialogueBox);
 				}
 				else
 					startCountdown();
@@ -1622,6 +1629,8 @@ class PlayState extends MusicBeatState
 
 		startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
 		{
+			startedCountdown = true;
+
 			charactersDance(curBeat);
 
 			var introAssets:Map<String, Array<String>> = new Map<String, Array<String>>();

@@ -1,0 +1,8 @@
+{
+    "name": "bf",
+    "expressions": {
+        "normal": "Normal Talk",
+        "mad": "Angry Talk"
+    },
+    "position": "left"
+}

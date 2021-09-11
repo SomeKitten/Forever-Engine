@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="bf2.png">
+	<!-- Created with Adobe Animate version 20.0.0.17400 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Angry Talk0000" x="0" y="0" width="410" height="424" pivotX="206.15" pivotY="217.35"/>
+	<SubTexture name="Angry Talk0001" x="430" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0002" x="860" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0003" x="860" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0004" x="1290" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0005" x="1290" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0006" x="0" y="444" width="410" height="424"/>
+	<SubTexture name="Angry Talk0007" x="0" y="444" width="410" height="424"/>
+	<SubTexture name="Normal Talk0000" x="430" y="444" width="410" height="423" pivotX="206.25" pivotY="216.15"/>
+	<SubTexture name="Normal Talk0001" x="860" y="444" width="410" height="423"/>
+	<SubTexture name="Normal Talk0002" x="1290" y="444" width="410" height="423"/>
+	<SubTexture name="Normal Talk0003" x="1290" y="444" width="410" height="423"/>
+	<SubTexture name="Normal Talk0004" x="0" y="888" width="410" height="423"/>
+	<SubTexture name="Normal Talk0005" x="0" y="888" width="410" height="423"/>
+	<SubTexture name="Normal Talk0006" x="430" y="888" width="410" height="423"/>
+	<SubTexture name="Normal Talk0007" x="430" y="888" width="410" height="423"/>
+</TextureAtlas>
