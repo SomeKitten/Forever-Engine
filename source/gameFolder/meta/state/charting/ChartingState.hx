@@ -21,7 +21,7 @@ import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Section.SwagSection;
 import gameFolder.meta.data.Song.SwagSong;
-import gameFolder.meta.substate.charting.*;
+import gameFolder.meta.subState.charting.*;
 import haxe.io.Bytes;
 import lime.media.AudioBuffer;
 import openfl.geom.Rectangle;
