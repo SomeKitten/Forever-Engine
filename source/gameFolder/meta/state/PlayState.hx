@@ -1380,11 +1380,11 @@ class PlayState extends MusicBeatState
 		if ((curBeat % gfSpeed == 0) && (!gf.animation.curAnim.name.startsWith("sing")))
 			gf.dance();
 
-		if (!boyfriend.animation.curAnim.name.startsWith("sing"))
+		if (!boyfriend.animation.curAnim.name.startsWith("sing") && (curBeat % 2 == 0 || boyfriend.quickDancer))
 			boyfriend.dance();
 
 		// added this for opponent cus it wasn't here before and skater would just freeze
-		if (!dadOpponent.animation.curAnim.name.startsWith("sing"))
+		if (!dadOpponent.animation.curAnim.name.startsWith("sing") && (curBeat % 2 == 0 || dadOpponent.quickDancer))
 			dadOpponent.dance();
 	}
 

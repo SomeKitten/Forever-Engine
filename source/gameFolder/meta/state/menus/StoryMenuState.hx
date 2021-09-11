@@ -264,7 +264,7 @@ class StoryMenuState extends MusicBeatState
 				stopspamming = true;
 			}
 
-			PlayState.storyPlaylist = Main.gameWeeks[curWeek][0];
+			PlayState.storyPlaylist = Main.gameWeeks[curWeek][0].copy();
 			PlayState.isStoryMode = true;
 			selectedWeek = true;
 

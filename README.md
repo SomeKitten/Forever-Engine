@@ -54,6 +54,7 @@ I don't care how big this section gets over time, I will actually keep expanding
 [ImCodist](https://github.com/ImCodist) - helped with a couple of pull requests and issue fixes, but, I'm not gonna give him any credit at all, because he stole my obsidian soul in minecraft and I will never forgive him for that!!!!
 
 [HelloSammu](https://github.com/hellosammu) - weird catgirl programmer, they scare me
+CREDITED MAINTENANCE AND SOME MISC FIXES
 
 [ninjamuffin99](https://ninjamuffin99.newgrounds.com/) - HE MADE THE BASE GAME SO LIKE WITHOUT HIM THIS WOULD NOT BE POSSIBLE GO CHECK HIM OUT RIGHT NOW
 
