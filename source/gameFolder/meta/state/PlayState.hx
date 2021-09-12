@@ -314,7 +314,11 @@ class PlayState extends MusicBeatState
 		startedCountdown = true;
 
 		for (i in 0...2)
-			generateStaticArrows(i);
+			if (i != 0 || !Init.trueSettings.get('Centered Notefield'))
+				generateStaticArrows(i);
+
+		if (Init.trueSettings.get('Centered Notefield'))
+			staticDisplace = 4;
 
 		uiHUD = new ClassHUD();
 		add(uiHUD);
@@ -330,6 +334,8 @@ class PlayState extends MusicBeatState
 
 		super.create();
 	}
+
+	var staticDisplace:Int = 0;
 
 	override public function update(elapsed:Float)
 	{
@@ -517,7 +523,10 @@ class PlayState extends MusicBeatState
 			if ((unspawnNotes[0].strumTime - Conductor.songPosition) < 3500)
 			{
 				var dunceNote:Note = unspawnNotes[0];
-				notes.add(dunceNote);
+				if (!dunceNote.mustPress && Init.trueSettings.get('Centered Notefield'))
+					animationsPlay.push(dunceNote);
+				else
+					notes.add(dunceNote);
 
 				unspawnNotes.splice(unspawnNotes.indexOf(dunceNote), 1);
 
@@ -526,9 +535,17 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		if (animationsPlay[0] != null && (animationsPlay[0].strumTime - Conductor.songPosition) <= 0)
+		{
+			characterPlayAnimation(animationsPlay[0], dadOpponent);
+			animationsPlay.splice(animationsPlay.indexOf(animationsPlay[0]), 1);
+		}
+
 		// handle all of the note calls
 		noteCalls();
 	}
+
+	var animationsPlay:Array<Note> = [];
 
 	private function mainControls(daNote:Note, char:Character, charStrum:FlxTypedGroup<UIStaticArrow>, autoplay:Bool, ?otherSide:Int = 0):Void
 	{
@@ -697,13 +714,14 @@ class PlayState extends MusicBeatState
 
 		// handle strumline stuffs
 		for (i in 0...strumLine.length)
-			strumLine.members[i].y = strumLineNotes.members[i].y + 25;
+			if (strumLineNotes.members[i] != null)
+				strumLine.members[i].y = strumLineNotes.members[i].y + 25;
 
 		for (i in 0...splashNotes.length)
 		{
 			// splash note positions
-			splashNotes.members[i].x = strumLineNotes.members[i + 4].x - 48;
-			splashNotes.members[i].y = strumLineNotes.members[i + 4].y - 56;
+			splashNotes.members[i].x = strumLineNotes.members[i + 4 - staticDisplace].x - 48;
+			splashNotes.members[i].y = strumLineNotes.members[i + 4 - staticDisplace].y - 56;
 		}
 
 		// reset strums
@@ -760,30 +778,31 @@ class PlayState extends MusicBeatState
 					UPDATE: I MIGHT HAVE FIXED IT!!!!
 				 */
 
+				var psuedoX = 25 + daNote.noteVisualOffset;
+
+				daNote.y = strumLine.members[Math.floor(daNote.noteData + (otherSide * 4 - staticDisplace))].y
+					+ (Math.cos(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoY)
+					+ (Math.sin(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoX);
+				// painful math equation
+				daNote.x = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4 - staticDisplace))].x
+					+ (Math.cos(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoX)
+					+ (Math.sin(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoY);
+
 				if (daNote.isSustainNote)
 				{
 					// note alignments (thanks pixl for pointing out what made old downscroll weird)
 					if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
 					{
 						if (Init.trueSettings.get('Downscroll'))
-							psuedoY += (daNote.prevNote.height);
+							daNote.y += (daNote.prevNote.height);
 						else
-							psuedoY -= ((daNote.prevNote.height / 2));
+							daNote.y -= ((daNote.prevNote.height / 2));
 					}
 					else
-						psuedoY -= ((daNote.height / 2) * downscrollMultiplier);
+						daNote.y -= ((daNote.height / 2) * downscrollMultiplier);
 					if (Init.trueSettings.get('Downscroll'))
 						daNote.flipY = true;
 				}
-
-				var psuedoX = 25 + daNote.noteVisualOffset;
-
-				daNote.y = strumLine.members[Math.floor(daNote.noteData + (otherSide * 4))].y
-					+ (Math.cos(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoY)
-					+ (Math.sin(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoX);
-				daNote.x = strumLineNotes.members[Math.floor(daNote.noteData + (otherSide * 4))].x
-					+ (Math.cos(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoX)
-					+ (Math.sin(flixel.math.FlxAngle.asRadians(daNote.noteDirection)) * psuedoY);
 
 				// also set note rotation
 				daNote.angle = -daNote.noteDirection;
@@ -1188,7 +1207,7 @@ class PlayState extends MusicBeatState
 	function healthCall(?ratingMultiplier:Float = 0)
 	{
 		// health += 0.012;
-		var healthBase:Float = 0.024 * 2.5;
+		var healthBase:Float = 0.06;
 		health += (healthBase * (ratingMultiplier / 100));
 	}
 
@@ -1319,9 +1338,19 @@ class PlayState extends MusicBeatState
 					dadStrums.add(babyArrow);
 			}
 
-			babyArrow.x += 75;
-			babyArrow.x += Note.swagWidth * i;
-			babyArrow.x += ((FlxG.width / 2) * player);
+			if (!Init.trueSettings.get('Centered Notefield'))
+			{
+				babyArrow.x += 75;
+				babyArrow.x += Note.swagWidth * i;
+				babyArrow.x += ((FlxG.width / 2) * player);
+			}
+			else
+			{
+				babyArrow.screenCenter(X);
+				babyArrow.x -= Note.swagWidth;
+				babyArrow.x -= 54;
+				babyArrow.x += Note.swagWidth * i;
+			}
 
 			babyArrow.initialX = Math.floor(babyArrow.x);
 			babyArrow.initialY = Math.floor(babyArrow.y);
