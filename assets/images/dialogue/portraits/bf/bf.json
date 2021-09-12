@@ -5,5 +5,7 @@
         "mad": "Angry Talk",
         "smug": "Smug Talk"
     },
-    "position": "right"
+    "position": "right",
+
+    "sounds": ["BF_1", "BF_2", "BF_3"]
 }

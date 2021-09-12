@@ -21,6 +21,11 @@ typedef PortraitDataDef =
 	var scale:Null<Int>;
 	var antialiasing:Null<Bool>;
 	var flipX:Null<Bool>;
+	var loop:Null<Bool>;
+
+	var sounds:Null<Array<String>>;
+	var soundChance:Null<Int>;
+	var soundPath:Null<String>;
 }
 
 typedef DialogueDataDef =
@@ -40,6 +45,8 @@ typedef BoxDataDef =
 	var antialiasing:Null<Bool>;
 	var singleFrame:Null<Bool>;
 	var doFlip:Null<Bool>;
+	var bgColor:Null<Array<Int>>;
+
 	var states:Null<Dynamic>;
 }
 
@@ -74,6 +81,8 @@ class DialogueBox extends FlxSpriteGroup
 
 	public var whenDaFinish:Void->Void;
 
+	var textStarted:Bool = false;
+
 	public static function createDialogue(thisDialogue:String):DialogueBox
 	{
 		//
@@ -104,7 +113,7 @@ class DialogueBox extends FlxSpriteGroup
 		// cur portrait
 		portrait = new FNFSprite(800, 160);
 
-		alphabetText = new Alphabet(100, 320, "cool", true, true, 0.7);
+		alphabetText = new Alphabet(100, 425, "cool", false, true, 0.7);
 
 		// text
 		text = new FlxText(100, 480, 1000, "", 35);
@@ -119,6 +128,17 @@ class DialogueBox extends FlxSpriteGroup
 		add(text);
 
 		add(alphabetText);
+
+		// skip text
+		var skipText = new FlxText(100, 670, 1000, "PRESS SHIFT TO SKIP", 20);
+		skipText.alignment = FlxTextAlign.CENTER;
+
+		skipText.borderStyle = FlxTextBorderStyle.OUTLINE;
+		skipText.borderColor = FlxColor.BLACK;
+		skipText.borderSize = 3;
+
+		skipText.screenCenter(X);
+		add(skipText);
 	}
 
 	function updateDialog(force:Bool = false)
@@ -127,14 +147,32 @@ class DialogueBox extends FlxSpriteGroup
 		updateTextBox(force);
 		updatePortrait(force);
 
-		// text update
-		var curPageData = dialogueData.dialogue[curPage];
+		var startText:Void->Void = function()
+		{
+			// Text update
+			var textToDisplay = "lol u need text for dialog";
 
-		if (curPageData.text == null)
-			curPageData.text = "lol u need text for dialog";
+			if (dialogueData.dialogue[curPage].text != null)
+				textToDisplay = dialogueData.dialogue[curPage].text;
 
-		text.text = curPageData.text;
-		alphabetText.restartText(curPageData.text, true);
+			alphabetText.startText(textToDisplay, true);
+		}
+
+		// If no text has shown up yet, we need to wait a moment
+		if (textStarted == false)
+		{
+			// Set the text to nothing for now
+			alphabetText.startText('', true);
+			// To prevent awkward text not against a dialogue background, a quick fix is to delay the initial text
+			new FlxTimer().start(0.375, function(tmr:FlxTimer)
+			{
+				textStarted = true;
+				startText();
+			});
+		}
+		// If the text has started, build the text
+		else
+			startText();
 	}
 
 	function updateTextBox(force:Bool = false)
@@ -183,6 +221,17 @@ class DialogueBox extends FlxSpriteGroup
 			// do flip
 			if (boxData.doFlip == null)
 				boxData.doFlip = true;
+
+			if (boxData.bgColor != null)
+			{
+				var colorArray = boxData.bgColor;
+				var newColor = FlxColor.fromRGB(colorArray[0], colorArray[1], colorArray[2]);
+
+				bgFade = new FlxSprite(-200, -200).makeGraphic(Std.int(FlxG.width * 1.3), Std.int(FlxG.height * 1.3), newColor);
+				bgFade.scrollFactor.set();
+				bgFade.alpha = 0;
+				add(bgFade);
+			}
 
 			// add the animations
 			box.animation.addByPrefix('normal', defaultAnim[0], 24, true);
@@ -238,13 +287,18 @@ class DialogueBox extends FlxSpriteGroup
 				portrait.frames = Paths.getSparrowAtlas('dialogue/portraits/$curCharacter/$curCharacter');
 			}
 
+			// check if the animation loops for the talking anim lol
+			var loop = true;
+			if (portraitData.loop != null)
+				loop = portraitData.loop;
+
 			// loop through the expressions and add the to the list of expressions
 			for (n in Reflect.fields(portraitData.expressions))
 			{
 				var curAnim = Reflect.field(portraitData.expressions, n);
 				var animName = n;
 
-				portrait.animation.addByPrefix(animName, curAnim, 24, false);
+				portrait.animation.addByPrefix(animName, curAnim, 24, loop);
 			}
 
 			// check for null values
@@ -279,6 +333,9 @@ class DialogueBox extends FlxSpriteGroup
 			}
 			else if (Std.is(portraitData.position, Array))
 			{
+				if (portraitData.flipX)
+					enterX = -enterX;
+
 				newX = portraitData.position[0];
 				newY = portraitData.position[1];
 			}
@@ -291,6 +348,20 @@ class DialogueBox extends FlxSpriteGroup
 				newFlip = portraitData.flipX;
 
 			portrait.flipX = newFlip;
+
+			// update bloops
+			if (portraitData.sounds != null)
+			{
+				if (portraitData.soundPath != null)
+					alphabetText.beginPath = "assets/" + portraitData.soundPath;
+				else
+					alphabetText.beginPath = 'assets/images/dialogue/portraits/$curCharacter/';
+
+				alphabetText.soundChoices = portraitData.sounds;
+
+				if (portraitData.soundChance != null)
+					alphabetText.soundChance = portraitData.soundChance;
+			}
 
 			// flip check
 			if (boxData.doFlip == true)
@@ -336,11 +407,18 @@ class DialogueBox extends FlxSpriteGroup
 			text.visible = true;
 		}
 
+		portrait.animation.paused = alphabetText.finishedLine;
+		if (portrait.animation.paused)
+			portrait.animation.finish();
+
 		bgFade.alpha += 0.02;
 		if (bgFade.alpha > 0.6)
 			bgFade.alpha = 0.6;
 
-		if (FlxG.keys.justPressed.ENTER)
+		if (FlxG.keys.justPressed.SHIFT)
+			closeDialog();
+
+		if (FlxG.keys.justPressed.ENTER && textStarted)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 

@@ -4,5 +4,8 @@
         "normal": "Normal Talk",
         "mad": "Angry Talk"
     },
-    "position": "left"
+    "position": "left",
+
+    "sounds": ["psych"],
+    "soundPath": "sounds/"
 }

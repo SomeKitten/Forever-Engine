@@ -3,44 +3,16 @@
     "boxState": "normal",
     "dialogue": [
         {
-            "portrait": "bf-pixel",
-            "expression": "normal",
-            "text": "hey"
-        },
-        {
-            "portrait": "bf-pixel",
-            "expression": "normal",
-            "text": "do you know sawcon"
-        },
-        {
             "portrait": "senpai",
             "expression": "normal",
-            "text": "whats sawcon lmao"
+            "text": "Ah, a new fair maiden has come in search of true love!"
+        },
+        {
+            "text": "A serenade between gentlemen shall decide where her beautiful heart shall reside."
         },
         {
             "portrait": "bf-pixel",
-            "expression": "normal",
-            "text": "sawcon deez nuts"
-        },
-        {
-            "portrait": "bf-pixel",
-            "expression": "normal",
-            "text": "idiot"
-        },
-        {
-            "portrait": "senpai",
-            "expression": "normal",
-            "text": "I fucking hate you."
-        },
-        {
-            "portrait": "bf-pixel",
-            "expression": "normal",
-            "text": "I am going to kick your ass."
-        },
-        {
-            "portrait": "senpai",
-            "expression": "normal",
-            "text": "Bet."
+            "text": "Beep bo bop"
         }
     ]
 }

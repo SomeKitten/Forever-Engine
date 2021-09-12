@@ -15,9 +15,11 @@ using StringTools;
 /**
  * Loosley based on FlxTypeText lolol
  */
+// using this for dialog is hell
 class Alphabet extends FlxSpriteGroup
 {
 	public var textSpeed:Float = 0.05;
+	public var randomSpeed:Bool = false; // When enabled, it'll change the speed of the text speed randomly between 80% and 180%
 
 	private var textSize:Float;
 
@@ -42,6 +44,8 @@ class Alphabet extends FlxSpriteGroup
 
 	public var widthOfWords:Float = FlxG.width;
 
+	public var finishedLine:Bool = false;
+
 	var yMulti:Float = 1;
 
 	// custom shit
@@ -54,6 +58,10 @@ class Alphabet extends FlxSpriteGroup
 
 	var isBold:Bool = false;
 
+	public var soundChoices:Array<String> = ["GF_1", "GF_2", "GF_3", "GF_4",];
+	public var beginPath:String = "assets/sounds/";
+	public var soundChance:Int = 40;
+
 	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false, ?textSize:Float = 1)
 	{
 		super(x, y);
@@ -62,15 +70,16 @@ class Alphabet extends FlxSpriteGroup
 		isBold = bold;
 		this.textSize = textSize;
 
-		restartText(text, typed);
+		startText(text, typed);
 	}
 
-	public function restartText(text, typed)
+	public function startText(newText, typed)
 	{
 		xPosResetted = true;
 
-		_finalText = text;
-		textInit = text;
+		_finalText = newText;
+		textInit = newText;
+		this.text = newText;
 
 		if (text != "")
 		{
@@ -83,6 +92,22 @@ class Alphabet extends FlxSpriteGroup
 				addText();
 			}
 		}
+		else
+		{
+			if (swagTypingTimer != null)
+			{
+				destroyText();
+				swagTypingTimer.cancel();
+				swagTypingTimer.destroy();
+			}
+		}
+	}
+
+	function destroyText():Void
+	{
+		for (_sprite in _sprites.copy())
+			_sprite.destroy();
+		clear();
 	}
 
 	public var arrayLetters:Array<AlphaCharacter>;
@@ -147,17 +172,29 @@ class Alphabet extends FlxSpriteGroup
 
 	public var personTalking:String = 'gf';
 
+	public var swagTypingTimer:FlxTimer;
+
 	public function startTypedText():Void
 	{
 		_finalText = text;
 		doSplitWords();
+
+		// Remove all the old garbage
+		destroyText();
 
 		var loopNum:Int = 0;
 
 		var xPos:Float = 0;
 		var curRow:Int = 0;
 
-		new FlxTimer().start(textSpeed, function(tmr:FlxTimer)
+		// Forget any potential old timers
+		if (swagTypingTimer != null)
+			swagTypingTimer.destroy();
+
+		finishedLine = false;
+
+		// Create a new timer
+		swagTypingTimer = new FlxTimer().start(textSpeed, function(tmr:FlxTimer)
 		{
 			if (_finalText.fastCodeAt(loopNum) == "\n".code)
 			{
@@ -215,10 +252,12 @@ class Alphabet extends FlxSpriteGroup
 					letter.x += 90;
 				}
 
-				if (FlxG.random.bool(40))
+				if (FlxG.random.bool(soundChance))
 				{
-					var daSound:String = "GF_";
-					FlxG.sound.play(Paths.soundRandom(daSound, 1, 4));
+					var cur = FlxG.random.int(0, soundChoices.length - 1);
+					var daSound:String = beginPath + soundChoices[cur] + "." + Paths.SOUND_EXT;
+
+					FlxG.sound.play(daSound);
 				}
 
 				add(letter);
@@ -228,8 +267,17 @@ class Alphabet extends FlxSpriteGroup
 
 			loopNum += 1;
 
-			tmr.time = FlxG.random.float(0.04, 0.09);
-		}, splitWords.length);
+			if (randomSpeed)
+				tmr.time = FlxG.random.float(0.8 * textSpeed, 1.8 * textSpeed);
+
+			// I'm sorry for this implementation being a bit janky but the FlxTimer loops were not reliable for this
+			// Hope you forgive me <3 <3 xoxo Sammu
+			if (loopNum >= splitWords.length)
+			{
+				finishedLine = true;
+				tmr.destroy();
+			}
+		}, 0);
 	}
 
 	override function update(elapsed:Float)
@@ -253,7 +301,7 @@ class Alphabet extends FlxSpriteGroup
 					arrayLetters[i].destroy();
 			//
 			lastSprite = null;
-			restartText(text, false);
+			startText(text, false);
 		}
 
 		super.update(elapsed);

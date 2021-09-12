@@ -5,6 +5,7 @@
     "antialiasing": false,
     "singleFrame": true,
     "doFlip": false,
+    "bgColor": [255, 255, 255],
     "states": {
         "normal": {
             "open": ["Text Box Appear instance 1"],
