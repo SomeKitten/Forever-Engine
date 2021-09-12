@@ -31,6 +31,7 @@
 	<set name="BUILD_DIR" value="export" />
 	<source path="source" />
 	<assets path="assets" />
+	<assets path="FE-CrashDialog.exe" type="template" if="windows release" />
 	<!--<assets path="mods" />-->
 
 	<!-- _______________________________ Libraries ______________________________ -->
@@ -46,6 +47,9 @@
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
+	<set name="BUILD_DIR" value="export/debug" if="debug" />
+	<set name="BUILD_DIR" value="export/release" unless="debug" />
+	
 	<!--Enable the Flixel core recording system-->
 	<!--<haxedef name="FLX_RECORD" />-->
 
@@ -75,6 +79,10 @@
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+
+	<!-- Akways enable Null Object Reference check for crash dialog -->
+	<haxedef name="HXCPP_CHECK_POINTER" if="release" />
+	<haxedef name="HXCPP_STACK_LINE" if="release" />
 
 	<!-- _________________________________ Custom _______________________________ -->
 

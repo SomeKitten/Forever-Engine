@@ -9,11 +9,19 @@ import flixel.util.FlxColor;
 import gameFolder.meta.*;
 import gameFolder.meta.data.PlayerSettings;
 import gameFolder.meta.data.dependency.Discord;
+import haxe.CallStack.StackItem;
+import haxe.CallStack;
+import haxe.io.Path;
+import lime.app.Application;
 import openfl.Assets;
 import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
+import openfl.events.UncaughtErrorEvent;
+import sys.FileSystem;
+import sys.io.File;
+import sys.io.Process;
 
 // Here we actually import the states and metadata, and just the metadata.
 // It's nice to have modularity so that we don't have ALL elements loaded at the same time.
@@ -137,6 +145,8 @@ class Main extends Sprite
 			note studders and shit its weird.
 		**/
 
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+
 		#if html5
 		framerate = 60;
 		#end
@@ -229,5 +239,62 @@ class Main extends Sprite
 				curState.remove(asset);
 			}
 			// */
+	}
+
+	function onCrash(e:UncaughtErrorEvent):Void
+	{
+		var errMsg:String = "";
+		var path:String;
+		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
+		var dateNow:String = Date.now().toString();
+
+		dateNow = StringTools.replace(dateNow, " ", "_");
+		dateNow = StringTools.replace(dateNow, ":", "'");
+
+		path = "./crash/" + "FE_" + dateNow + ".txt";
+
+		for (stackItem in callStack)
+		{
+			switch (stackItem)
+			{
+				case FilePos(s, file, line, column):
+					errMsg += file + " (line " + line + ")\n";
+				default:
+					Sys.println(stackItem);
+			}
+		}
+
+		errMsg += "\nUncaught Error: " + e.error + "\nPlease report this error to the GitHub page: https://github.com/Yoshubs/Forever-Engine";
+
+		if (!FileSystem.exists("./crash/"))
+			FileSystem.createDirectory("./crash/");
+
+		File.saveContent(path, errMsg + "\n");
+
+		Sys.println(errMsg);
+		Sys.println("Crash dump saved in " + Path.normalize(path));
+
+		var crashDialoguePath:String = "FE-CrashDialog";
+
+		#if windows
+		crashDialoguePath += ".exe";
+		#end
+
+		if (FileSystem.exists("./" + crashDialoguePath))
+		{
+			Sys.println("Found crash dialog: " + crashDialoguePath);
+
+			#if linux
+			crashDialoguePath = "./" + crashDialoguePath;
+			#end
+			new Process(crashDialoguePath, [path]);
+		}
+		else
+		{
+			Sys.println("No crash dialog found! Making a simple alert instead...");
+			Application.current.window.alert(errMsg, "Error!");
+		}
+
+		Sys.exit(1);
 	}
 }
