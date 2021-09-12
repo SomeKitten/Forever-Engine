@@ -53,5 +53,5 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: linuxBuild
-          path: export/linux/bin
+          path: export/release/linux/bin
 
