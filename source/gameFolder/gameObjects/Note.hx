@@ -190,7 +190,7 @@ class Note extends FNFSprite
 				// please generate this ahead of time and put into array :)
 				// I dont think I will im scared of those
 				final quantTime = (measureTime / quantArray[quant]);
-				if ((strumTime + smallestDeviation) % quantTime < smallestDeviation * 2)
+				if ((strumTime + Init.trueSettings['Offset'] + smallestDeviation) % quantTime < smallestDeviation * 2)
 				{
 					// here it is, the quant, finally!
 					newNote.noteQuant = quant;
