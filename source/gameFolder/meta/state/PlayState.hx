@@ -835,7 +835,7 @@ class PlayState extends MusicBeatState
 					if ((daNote.tooLate || !daNote.wasGoodHit) && (daNote.mustPress))
 					{
 						vocals.volume = 0;
-						missNoteCheck((Init.trueSettings.get('Ghost Tapping')) ? true : false, daNote.noteData, boyfriend);
+						missNoteCheck((Init.trueSettings.get('Ghost Tapping')) ? true : false, daNote.noteData, boyfriend, true);
 						// ambiguous name
 						Timings.updateAccuracy(0);
 					}
@@ -910,7 +910,7 @@ class PlayState extends MusicBeatState
 					}
 					else // else just call bad notes
 						if (!Init.trueSettings.get('Ghost Tapping') && pressControls[i])
-							missNoteCheck(true, i, character);
+							missNoteCheck(true, i, character, true);
 					//
 				}
 			}
@@ -940,7 +940,8 @@ class PlayState extends MusicBeatState
 		}
 
 		// reset bf's animation
-		if (character.holdTimer > Conductor.stepCrochet * (4 / 1000) && (!holdControls.contains(true) || autoplay))
+		if ((character != null && character.animation != null)
+			&& (character.holdTimer > Conductor.stepCrochet * (4 / 1000) && (!holdControls.contains(true) || autoplay)))
 		{
 			if (character.animation.curAnim.name.startsWith('sing') && !character.animation.curAnim.name.endsWith('miss'))
 				character.dance();
@@ -1000,7 +1001,7 @@ class PlayState extends MusicBeatState
 	//
 	//
 
-	function decreaseCombo(?ghostMiss:Bool = false)
+	function decreaseCombo(?popMiss:Bool = false)
 	{
 		// painful if statement
 		if (((combo > 5) || (combo < 0)) && (gf.animOffsets.exists('sad')))
@@ -1017,7 +1018,7 @@ class PlayState extends MusicBeatState
 
 		// display negative combo
 		popUpCombo();
-		if (ghostMiss)
+		if (popMiss)
 		{
 			displayRating("miss");
 			healthCall(Timings.ratingsMap.get("miss")[2]);
@@ -1039,7 +1040,7 @@ class PlayState extends MusicBeatState
 				combo += 1;
 			}
 			else
-				missNoteCheck(true, direction, character);
+				missNoteCheck(true, direction, character, false);
 		}
 	}
 
@@ -1211,7 +1212,7 @@ class PlayState extends MusicBeatState
 		health += (healthBase * (ratingMultiplier / 100));
 	}
 
-	function missNoteCheck(?includeAnimation:Bool = false, direction:Int = 0, character:Character)
+	function missNoteCheck(?includeAnimation:Bool = false, direction:Int = 0, character:Character, popMiss:Bool = false)
 	{
 		if (includeAnimation)
 		{
@@ -1220,7 +1221,7 @@ class PlayState extends MusicBeatState
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 			character.playAnim('sing' + stringDirection.toUpperCase() + 'miss');
 		}
-		decreaseCombo(true);
+		decreaseCombo(popMiss);
 
 		//
 	}

@@ -8,8 +8,11 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.display.shapes.FlxShapeBox;
+import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUI;
 import flixel.addons.ui.FlxUICheckBox;
+import flixel.addons.ui.FlxUIDropDownMenu;
+import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUITabMenu;
 import flixel.group.FlxGroup;
@@ -27,10 +30,15 @@ import gameFolder.meta.data.*;
 import gameFolder.meta.data.Section.SwagSection;
 import gameFolder.meta.data.Song.SwagSong;
 import gameFolder.meta.subState.charting.*;
+import haxe.Json;
 import haxe.io.Bytes;
 import lime.media.AudioBuffer;
+import openfl.events.Event;
+import openfl.events.IOErrorEvent;
 import openfl.geom.Rectangle;
 import openfl.media.Sound;
+import openfl.net.FileReference;
+import openfl.utils.ByteArray;
 
 using StringTools;
 
@@ -49,6 +57,7 @@ class ChartingState extends MusicBeatState
 	private var chartType:String;
 
 	var strumLine:FlxSpriteGroup;
+	var typingShit:FlxInputText;
 
 	var camHUD:FlxCamera;
 	var camGame:FlxCamera;
@@ -56,7 +65,6 @@ class ChartingState extends MusicBeatState
 
 	var songMusic:FlxSound;
 	var vocals:FlxSound;
-
 	private var keysTotal = 8;
 
 	private var dummyArrow:FlxSprite;
@@ -221,6 +229,8 @@ class ChartingState extends MusicBeatState
 		sidebar.alpha = (26 / 255);
 
 		addSectionUI();
+		addSongUI();
+		addNoteUI();
 
 		//
 		var constTextSize:Int = 24;
@@ -232,6 +242,7 @@ class ChartingState extends MusicBeatState
 	}
 
 	var UI_box:FlxUITabMenu;
+	var _file:FileReference;
 
 	var stepperLength:FlxUINumericStepper;
 	var check_mustHitSection:FlxUICheckBox;
@@ -310,6 +321,95 @@ class ChartingState extends MusicBeatState
 		UI_box.cameras = [camHUD];
 	}
 
+	function addSongUI():Void
+	{
+		var UI_songTitle = new FlxUIInputText(10, 10, 70, _song.song, 8);
+		typingShit = UI_songTitle;
+
+		var check_voices = new FlxUICheckBox(10, 25, null, null, "Has voice track", 100);
+		check_voices.checked = _song.needsVoices;
+		// _song.needsVoices = check_voices.checked;
+		check_voices.callback = function()
+		{
+			_song.needsVoices = check_voices.checked;
+			trace('CHECKED!');
+		};
+
+		var check_mute_inst = new FlxUICheckBox(10, 200, null, null, "Mute Instrumental (in editor)", 100);
+		check_mute_inst.checked = false;
+		check_mute_inst.callback = function()
+		{
+			var vol:Float = 1;
+
+			if (check_mute_inst.checked)
+				vol = 0;
+
+			FlxG.sound.music.volume = vol;
+		};
+
+		var saveButton:FlxButton = new FlxButton(110, 8, "Save", function()
+		{
+			saveLevel();
+		});
+
+		var reloadSong:FlxButton = new FlxButton(saveButton.x + saveButton.width + 10, saveButton.y, "Reload Audio", function()
+		{
+			loadSong(_song.song);
+		});
+
+		var reloadSongJson:FlxButton = new FlxButton(reloadSong.x, saveButton.y + 30, "Reload JSON", function()
+		{
+			loadJson(_song.song.toLowerCase());
+		});
+
+		var loadAutosaveBtn:FlxButton = new FlxButton(reloadSongJson.x, reloadSongJson.y + 30, 'load autosave', loadAutosave);
+
+		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, 80, 0.1, 1, 0.1, 10, 1);
+		stepperSpeed.value = _song.speed;
+		stepperSpeed.name = 'song_speed';
+
+		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 65, 1, 1, 1, 339, 0);
+		stepperBPM.value = Conductor.bpm;
+		stepperBPM.name = 'song_bpm';
+
+		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
+
+		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
+		{
+			_song.player1 = characters[Std.parseInt(character)];
+			updateHeads();
+		});
+		player1DropDown.selectedLabel = _song.player1;
+
+		var player2DropDown = new FlxUIDropDownMenu(140, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
+		{
+			_song.player2 = characters[Std.parseInt(character)];
+			updateHeads();
+		});
+
+		player2DropDown.selectedLabel = _song.player2;
+
+		var tab_group_song = new FlxUI(null, UI_box);
+		tab_group_song.name = "Song";
+		tab_group_song.add(UI_songTitle);
+
+		tab_group_song.add(check_voices);
+		tab_group_song.add(check_mute_inst);
+		tab_group_song.add(saveButton);
+		tab_group_song.add(reloadSong);
+		tab_group_song.add(reloadSongJson);
+		tab_group_song.add(loadAutosaveBtn);
+		tab_group_song.add(stepperBPM);
+		tab_group_song.add(stepperSpeed);
+		tab_group_song.add(player1DropDown);
+		tab_group_song.add(player2DropDown);
+
+		UI_box.addGroup(tab_group_song);
+		UI_box.scrollFactor.set();
+
+		FlxG.camera.follow(strumLine);
+	}
+
 	private function updateHUD()
 	{
 		//
@@ -344,6 +444,35 @@ class ChartingState extends MusicBeatState
 		Conductor.songPosition = songMusic.time;
 		vocals.time = Conductor.songPosition;
 		vocals.play();
+	}
+
+	var stepperSusLength:FlxUINumericStepper;
+	var stepperType:FlxUINumericStepper;
+
+	function addNoteUI():Void
+	{
+		var tab_group_note = new FlxUI(null, UI_box);
+		tab_group_note.name = 'Note';
+
+		stepperSusLength = new FlxUINumericStepper(10, 10, Conductor.stepCrochet / 2, 0, 0, Conductor.stepCrochet * 16);
+		stepperSusLength.value = 0;
+		stepperSusLength.name = 'note_susLength';
+
+		var applyLength:FlxButton = new FlxButton(100, 10, 'Apply');
+
+		tab_group_note.add(stepperSusLength);
+		tab_group_note.add(applyLength);
+
+		// note types
+		stepperType = new FlxUINumericStepper(10, 30, Conductor.stepCrochet / 125, 0, 0, (Conductor.stepCrochet / 125) + 10); // 10 is placeholder
+		// I have no idea what i'm doing lmfao
+		stepperType.value = 0;
+		stepperType.name = 'note_type';
+
+		tab_group_note.add(stepperType);
+
+		UI_box.addGroup(tab_group_note);
+		// I'm genuinely tempted to go around and remove every instance of the word "sus" it is genuinely killing me inside
 	}
 
 	function loadSong(daSong:String):Void
@@ -620,6 +749,20 @@ class ChartingState extends MusicBeatState
 				curRenderedSustains.remove(chosenNoteMap.get(note)[i]);
 				chosenNoteMap.get(note)[i].destroy();
 			}
+		}
+	}
+
+	function updateHeads():Void
+	{
+		if (check_mustHitSection.checked)
+		{
+			iconL.animation.play(_song.player1);
+			iconR.animation.play(_song.player2);
+		}
+		else
+		{
+			iconL.animation.play(_song.player2);
+			iconR.animation.play(_song.player1);
 		}
 	}
 
@@ -916,6 +1059,95 @@ class ChartingState extends MusicBeatState
 	function adjustSide(noteData:Int, sectionTemp:Int)
 	{
 		return (_song.notes[sectionTemp].mustHitSection ? ((noteData + 4) % 8) : noteData);
+	}
+
+	private var daSpacing:Float = 0.3;
+
+	function loadLevel():Void
+	{
+		trace(_song.notes);
+	}
+
+	function getNotes():Array<Dynamic>
+	{
+		var noteData:Array<Dynamic> = [];
+
+		for (i in _song.notes)
+		{
+			noteData.push(i.sectionNotes);
+		}
+
+		return noteData;
+	}
+
+	function loadJson(song:String):Void
+	{
+		PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+		FlxG.resetState();
+	}
+
+	function loadAutosave():Void
+	{
+		PlayState.SONG = Song.parseJSONshit(FlxG.save.data.autosave);
+		FlxG.resetState();
+	}
+
+	private function saveLevel()
+	{
+		var json = {
+			"song": _song
+		};
+
+		var data:String = Json.stringify(json);
+
+		if ((data != null) && (data.length > 0))
+		{
+			_file = new FileReference();
+			_file.addEventListener(Event.COMPLETE, onSaveComplete);
+			_file.addEventListener(Event.CANCEL, onSaveCancel);
+			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+			_file.save(data.trim(), _song.song.toLowerCase() + ".json");
+		}
+	}
+
+	function autosaveSong():Void
+	{
+		FlxG.save.data.autosave = Json.stringify({
+			"song": _song
+		});
+		FlxG.save.flush();
+	}
+
+	function onSaveComplete(_):Void
+	{
+		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
+		_file.removeEventListener(Event.CANCEL, onSaveCancel);
+		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		_file = null;
+		FlxG.log.notice("Successfully saved LEVEL DATA.");
+	}
+
+	/**
+	 * Called when the save file dialog is cancelled.
+	 */
+	function onSaveCancel(_):Void
+	{
+		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
+		_file.removeEventListener(Event.CANCEL, onSaveCancel);
+		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		_file = null;
+	}
+
+	/**
+	 * Called if there is an error while saving the gameplay recording.
+	 */
+	function onSaveError(_):Void
+	{
+		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
+		_file.removeEventListener(Event.CANCEL, onSaveCancel);
+		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		_file = null;
+		FlxG.log.error("Problem saving Level data");
 	}
 
 	function generateWaveform(loadedSong:String, x:Float = 0, y:Float = 0):FlxSprite

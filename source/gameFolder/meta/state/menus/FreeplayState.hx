@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -17,6 +18,7 @@ import gameFolder.meta.data.*;
 import gameFolder.meta.data.Song.SwagSong;
 import gameFolder.meta.data.font.Alphabet;
 import lime.utils.Assets;
+import openfl.media.Sound;
 import sys.FileSystem;
 
 using StringTools;
@@ -182,9 +184,6 @@ class FreeplayState extends MusicBeatState
 
 		FlxTween.color(bg, 0.35, bg.color, mainColor);
 
-		if (FlxG.sound.music.volume < 0.7)
-			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
-
 		var lerpVal = Main.framerateAdjust(0.1);
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, lerpVal));
 
@@ -274,7 +273,7 @@ class FreeplayState extends MusicBeatState
 		// set up color stuffs
 		mainColor = songs[curSelected].songColor;
 
-		// FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
+		// song switching stuffs
 
 		var bullShit:Int = 0;
 
@@ -303,6 +302,9 @@ class FreeplayState extends MusicBeatState
 
 		changeDiff();
 	}
+
+	var playingSongs:Array<FlxSound> = [];
+	var songPlayThread:sys.thread.Thread;
 }
 
 class SongMetadata
