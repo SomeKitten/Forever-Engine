@@ -16,6 +16,7 @@ import gameFolder.gameObjects.userInterface.HealthIcon;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Song.SwagSong;
+import gameFolder.meta.data.dependency.Discord;
 import gameFolder.meta.data.font.Alphabet;
 import lime.utils.Assets;
 import openfl.media.Sound;
@@ -86,6 +87,10 @@ class FreeplayState extends MusicBeatState
 
 		// LOAD MUSIC
 		ForeverTools.resetMenuMusic();
+
+		#if !html5
+		Discord.changePresence('FREEPLAY MENU', 'Main Menu');
+		#end
 
 		// LOAD CHARACTERS
 

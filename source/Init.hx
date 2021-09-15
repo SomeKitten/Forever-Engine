@@ -107,6 +107,7 @@ class Init extends FlxState
 			FORCED
 		],
 		'Camera-fixed Judgements' => [false, 0, ""],
+		'Display Miss Count' => [false, 0, "When enabled, displays the amount of misses you have in a song."],
 	];
 
 	public static var trueSettings:Map<String, Dynamic> = [];
