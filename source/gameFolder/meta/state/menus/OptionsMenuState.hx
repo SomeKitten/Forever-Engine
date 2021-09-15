@@ -11,6 +11,7 @@ import flixel.util.FlxTimer;
 import gameFolder.gameObjects.userInterface.menu.Checkmark;
 import gameFolder.gameObjects.userInterface.menu.Selector;
 import gameFolder.meta.MusicBeat.MusicBeatState;
+import gameFolder.meta.data.dependency.Discord;
 import gameFolder.meta.data.dependency.FNFSprite;
 import gameFolder.meta.data.font.Alphabet;
 import gameFolder.meta.subState.OptionsSubstate;
@@ -39,6 +40,11 @@ class OptionsMenuState extends MusicBeatState
 			These arrays are within other arrays for information storing purposes, don't worry about that too much.
 			If you plug in a value, the script will run when the option is hovered over.
 		 */
+
+		#if !html5
+		Discord.changePresence('OPTIONS MENU', 'Main Menu');
+		#end
+
 		categoryMap = [
 			'main' => [
 				[
@@ -56,6 +62,7 @@ class OptionsMenuState extends MusicBeatState
 					['Centered Notefield', getFromOption],
 					['Ghost Tapping', getFromOption],
 					['Display Accuracy', getFromOption],
+					['Display Miss Count', getFromOption],
 					//
 					['', null],
 					['Meta Settings', null],
