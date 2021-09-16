@@ -56,6 +56,7 @@ class OptionsMenuState extends MusicBeatState
 					['Centered Notefield', getFromOption],
 					['Ghost Tapping', getFromOption],
 					['Display Accuracy', getFromOption],
+					['Skip Cutscenes', getFromOption],
 					//
 					['', null],
 					['Meta Settings', null],

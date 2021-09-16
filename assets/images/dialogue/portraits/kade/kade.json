@@ -1,0 +1,10 @@
+{
+    "name": "kade",
+    "expressions": {
+        "normal": "Kade Bitchass Motherfucker"
+    },
+    "position": "right",
+    "offset": [0, 100],
+
+    "sounds": ["KADE_1", "KADE_2", "KADE_3", "KADE_4"]
+}

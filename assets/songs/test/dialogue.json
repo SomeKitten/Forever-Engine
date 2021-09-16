@@ -4,15 +4,17 @@
     "dialogue": [
         {
             "events": [
-                ["sound", "path/to/sound"],
-                ["changeBg", "path/to/bg"],
-                ["delay", 1.0]
+                ["image", "images/lol/doggo", 400, 200, 2, 2],
+                ["sound", "images/lol/bork"]
             ],
             "portrait": "bf",
             "expression": "normal",
             "text": "hey"
         },
         {
+            "events": [
+                ["image", ["characters/BOYFRIEND", "BF idle dance", true], 400, 200, -1, 1]
+            ],
             "portrait": "bf",
             "expression": "normal",
             "text": "do you know sawcon"
@@ -41,13 +43,33 @@
             "portrait": "bf-pixel",
             "expression": "normal",
             "text": "I am going to kick your ass.",
-            "boxState": "yell"
+            "boxState": "yell",
+            "scale": 1.4
         },
         {
             "portrait": "bf2",
             "expression": "mad",
             "text": "Bet.",
-            "boxState": "normal"
+            "boxState": "normal",
+            "scale": 0.8
+        },
+        {
+            "portrait": "bf",
+            "expression": "smug",
+            "text": "'lololololololol' .'`?!\nline break test.`?!\ncool",
+            "speed": 10
+        },
+        {
+            "portrait": "bf2",
+            "expression": "mad",
+            "text": "Shut the fuck up...\nShut the fuck up...... !!'? .''?!",
+            "boxState": "yell",
+            "speed": 0.5
+        },
+        {
+            "portrait": "bf2",
+            "expression": "mad",
+            "text": "Seriously!\nI cant believe I hate you!"
         }
     ]
 }

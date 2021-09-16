@@ -1159,7 +1159,6 @@ class PlayState extends MusicBeatState
 
 				// get the note ms timing
 				var noteDiff:Float = Math.abs(coolNote.strumTime - Conductor.songPosition);
-				trace(noteDiff);
 				// get the timing
 				if (coolNote.strumTime < Conductor.songPosition)
 					ratingTiming = "late";
@@ -1633,7 +1632,7 @@ class PlayState extends MusicBeatState
 			default:
 				var dialogPath = Paths.json(SONG.song.toLowerCase() + '/dialogue');
 
-				if (sys.FileSystem.exists(dialogPath))
+				if (!Init.trueSettings.get('Skip Cutscenes') && sys.FileSystem.exists(dialogPath))
 				{
 					startedCountdown = false;
 

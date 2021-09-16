@@ -18,6 +18,7 @@ typedef PortraitDataDef =
 	var name:String;
 	var expressions:Array<String>;
 	var position:Null<Dynamic>;
+	var offset:Null<Array<Int>>;
 	var scale:Null<Int>;
 	var antialiasing:Null<Bool>;
 	var flipX:Null<Bool>;
@@ -30,11 +31,14 @@ typedef PortraitDataDef =
 
 typedef DialogueDataDef =
 {
-	var events:Array<Array<String>>;
+	var events:Array<Array<Dynamic>>;
 	var portrait:String;
 	var expression:String;
 	var text:Null<String>;
 	var boxState:Null<String>;
+
+	var speed:Null<Int>;
+	var scale:Null<Int>;
 }
 
 typedef BoxDataDef =
@@ -77,7 +81,10 @@ class DialogueBox extends FlxSpriteGroup
 
 	var curPage:Int = 0;
 	var curCharacter:String;
+	var curExpression:String;
 	var curBoxState:String;
+
+	var eventImage:Null<FlxSprite>;
 
 	public var whenDaFinish:Void->Void;
 
@@ -88,6 +95,18 @@ class DialogueBox extends FlxSpriteGroup
 		//
 		var newDialogue = new DialogueBox(false, thisDialogue);
 		return newDialogue;
+	}
+
+	function dialoguePath(file:String):String
+	{
+		var dialoguePath = Paths.file('assets/images/dialogue/portraits/$curCharacter/$file');
+		var truePath = Paths.file(file);
+
+		// load the json file
+		if (sys.FileSystem.exists(dialoguePath))
+			return dialoguePath;
+		else
+			return truePath;
 	}
 
 	public function new(?talkingRight:Bool = false, ?daDialogue:String)
@@ -113,6 +132,8 @@ class DialogueBox extends FlxSpriteGroup
 		// cur portrait
 		portrait = new FNFSprite(800, 160);
 
+		// thank u sammu for fixing alphabet.hx
+		// i dont wanna touch it ever
 		alphabetText = new Alphabet(100, 425, "cool", false, true, 0.7);
 
 		// text
@@ -146,17 +167,32 @@ class DialogueBox extends FlxSpriteGroup
 		// set current portrait
 		updateTextBox(force);
 		updatePortrait(force);
+		updateEvents(force);
+
+		var pageData = dialogueData.dialogue[curPage];
 
 		var startText:Void->Void = function()
 		{
 			// Text update
 			var textToDisplay = "lol u need text for dialog";
 
-			if (dialogueData.dialogue[curPage].text != null)
-				textToDisplay = dialogueData.dialogue[curPage].text;
+			if (pageData.text != null)
+				textToDisplay = pageData.text;
 
 			alphabetText.startText(textToDisplay, true);
 		}
+
+		// change speed
+		if (pageData.speed != null)
+			alphabetText.textSpeed = 0.06 / pageData.speed;
+		else
+			alphabetText.textSpeed = 0.06;
+
+		// change size
+		if (pageData.scale != null)
+			alphabetText.textSize = 0.7 * pageData.scale;
+		else
+			alphabetText.textSize = 0.7;
 
 		// If no text has shown up yet, we need to wait a moment
 		if (textStarted == false)
@@ -271,116 +307,190 @@ class DialogueBox extends FlxSpriteGroup
 	{
 		var newChar = dialogueData.dialogue[curPage].portrait;
 
-		if (newChar == null)
-			return;
-
 		if (curCharacter != newChar || force)
 		{
-			// made the curCharacter the new character
-			curCharacter = newChar;
-			var portraitJson = Paths.file('images/dialogue/portraits/$curCharacter/$curCharacter.json');
-
-			// load the json file
-			if (sys.FileSystem.exists(portraitJson))
+			if (newChar != null)
 			{
-				portraitData = haxe.Json.parse(sys.io.File.getContent(portraitJson));
-				portrait.frames = Paths.getSparrowAtlas('dialogue/portraits/$curCharacter/$curCharacter');
-			}
+				// made the curCharacter the new character
+				curCharacter = newChar;
+				var portraitJson = Paths.file('images/dialogue/portraits/$curCharacter/$curCharacter.json');
 
-			// check if the animation loops for the talking anim lol
-			var loop = true;
-			if (portraitData.loop != null)
-				loop = portraitData.loop;
-
-			// loop through the expressions and add the to the list of expressions
-			for (n in Reflect.fields(portraitData.expressions))
-			{
-				var curAnim = Reflect.field(portraitData.expressions, n);
-				var animName = n;
-
-				portrait.animation.addByPrefix(animName, curAnim, 24, loop);
-			}
-
-			// check for null values
-			if (portraitData.scale == null)
-				portraitData.scale = 1;
-
-			if (portraitData.antialiasing == null)
-				portraitData.antialiasing = true;
-
-			// change some smaller values
-			portrait.scale = new FlxPoint(portraitData.scale, portraitData.scale);
-			portrait.antialiasing = portraitData.antialiasing;
-
-			// position and flip stuff
-			// honestly
-			var newX = 850;
-			var newY = 160;
-			var enterX = -20;
-			var newFlip = false;
-
-			if (Std.is(portraitData.position, String))
-			{
-				switch (portraitData.position)
+				// load the json file
+				if (sys.FileSystem.exists(portraitJson))
 				{
-					case "left":
-						newX = 10;
-						enterX = -enterX;
-						newFlip = true;
-					case "middle":
-						newX = 400;
+					portraitData = haxe.Json.parse(sys.io.File.getContent(portraitJson));
+					portrait.frames = Paths.getSparrowAtlas('dialogue/portraits/$curCharacter/$curCharacter');
 				}
-			}
-			else if (Std.is(portraitData.position, Array))
-			{
-				if (portraitData.flipX)
-					enterX = -enterX;
 
-				newX = portraitData.position[0];
-				newY = portraitData.position[1];
-			}
+				// check if the animation loops for the talking anim lol
+				var loop = true;
+				if (portraitData.loop != null)
+					loop = portraitData.loop;
 
-			portrait.x = newX - enterX;
-			portrait.y = newY;
+				// loop through the expressions and add the to the list of expressions
+				for (n in Reflect.fields(portraitData.expressions))
+				{
+					var curAnim = Reflect.field(portraitData.expressions, n);
+					var animName = n;
 
-			// flip
-			if (portraitData.flipX != null)
-				newFlip = portraitData.flipX;
+					portrait.animation.addByPrefix(animName, curAnim, 24, loop);
+				}
 
-			portrait.flipX = newFlip;
+				// check for null values
+				if (portraitData.scale == null)
+					portraitData.scale = 1;
 
-			// update bloops
-			if (portraitData.sounds != null)
-			{
-				if (portraitData.soundPath != null)
-					alphabetText.beginPath = "assets/" + portraitData.soundPath;
+				if (portraitData.antialiasing == null)
+					portraitData.antialiasing = true;
+
+				// change some smaller values
+				portrait.scale.set(portraitData.scale, portraitData.scale);
+				portrait.antialiasing = portraitData.antialiasing;
+
+				// position and flip stuff
+				// honestly
+				var newX = 850;
+				var newY = 160;
+				var enterX = -20;
+				var newFlip = false;
+
+				if (Std.is(portraitData.position, String))
+				{
+					switch (portraitData.position)
+					{
+						case "left":
+							newX = 10;
+							enterX = -enterX;
+							newFlip = true;
+						case "middle":
+							newX = 400;
+					}
+				}
+				else if (Std.is(portraitData.position, Array))
+				{
+					if (portraitData.flipX)
+						enterX = -enterX;
+
+					newX = portraitData.position[0];
+					newY = portraitData.position[1];
+				}
+
+				if (portraitData.offset == null)
+					portraitData.offset = [0, 0];
+
+				newX -= portraitData.offset[0];
+				newY -= portraitData.offset[1];
+
+				portrait.x = newX - enterX;
+				portrait.y = newY;
+
+				// flip
+				if (portraitData.flipX != null)
+					newFlip = portraitData.flipX;
+
+				portrait.flipX = newFlip;
+
+				// update bloops
+				if (portraitData.sounds != null)
+				{
+					if (portraitData.soundPath != null)
+						alphabetText.beginPath = "assets/" + portraitData.soundPath;
+					else
+						alphabetText.beginPath = 'assets/images/dialogue/portraits/$curCharacter/';
+
+					alphabetText.soundChoices = portraitData.sounds;
+
+					if (portraitData.soundChance != null)
+						alphabetText.soundChance = portraitData.soundChance;
+					else
+						alphabetText.soundChance = 40;
+				}
 				else
-					alphabetText.beginPath = 'assets/images/dialogue/portraits/$curCharacter/';
+					alphabetText.soundChance = 0;
 
-				alphabetText.soundChoices = portraitData.sounds;
+				// flip check
+				if (boxData.doFlip == true)
+					box.flipX = newFlip;
 
-				if (portraitData.soundChance != null)
-					alphabetText.soundChance = portraitData.soundChance;
+				// this causes problems, and i know exactly what the problem is... i just cant fix it
+				// basically i need to get rid of the last tween before doing a new one, or else the portraits slide around all over the place
+				// ngl its kinda funny
+				FlxTween.tween(portrait, {x: newX + enterX}, 0.2, {ease: FlxEase.quadInOut});
 			}
-
-			// flip check
-			if (boxData.doFlip == true)
-				box.flipX = newFlip;
-
-			// this causes problems, and i know exactly what the problem is... i just cant fix it
-			// basically i need to get rid of the last tween before doing a new one, or else the portraits slide around all over the place
-			// ngl its kinda funny
-			FlxTween.tween(portrait, {x: newX + enterX}, 0.2, {ease: FlxEase.quadInOut});
 		}
 
 		// change expressions
-		var curExpression = dialogueData.dialogue[curPage].expression;
+		var newExpression = dialogueData.dialogue[curPage].expression;
+		if (newExpression != null)
+			curExpression = newExpression;
+
 		portrait.animation.play(curExpression);
 	}
 
+	function runEvent(eventArray:Array<Dynamic>)
+	{
+		var event = eventArray[0];
+
+		switch (event)
+		{
+			case "image":
+				var _sprite:Dynamic = eventArray[1];
+				var _x = eventArray[2];
+				var _y = eventArray[3];
+				var _scaleX = eventArray[4];
+				var _scaleY = eventArray[5];
+
+				trace(Paths.file(_sprite));
+
+				eventImage = new FlxSprite(_x, _y);
+
+				if (Std.is(_sprite, Array))
+				{
+					eventImage.frames = Paths.getSparrowAtlas(_sprite[0]);
+
+					eventImage.animation.addByPrefix("anim", _sprite[1], 24, _sprite[2]);
+					eventImage.animation.play("anim");
+				}
+				else
+				{
+					eventImage.loadGraphic(Paths.file(_sprite + ".png"));
+				}
+
+				eventImage.scale.set(_scaleX, _scaleY);
+				add(eventImage);
+
+			case "sound":
+				var _sound = eventArray[1] + "." + Paths.SOUND_EXT;
+
+				trace(Paths.file(_sound));
+
+				FlxG.sound.play(Paths.file(_sound));
+		}
+	}
+
+	function updateEvents(force:Bool = false)
+	{
+		var curEvents = dialogueData.dialogue[curPage].events;
+
+		if (eventImage != null)
+			eventImage.destroy();
+
+		// do da current vent
+		if (curEvents == null)
+			return;
+
+		for (event in curEvents)
+		{
+			trace(event);
+			runEvent(event);
+		}
+	}
+
+	// mario
 	function closeDialog()
 	{
 		whenDaFinish();
+		alphabetText.playSounds = false;
 		kill();
 	}
 
@@ -418,7 +528,7 @@ class DialogueBox extends FlxSpriteGroup
 		if (FlxG.keys.justPressed.SHIFT)
 			closeDialog();
 
-		if (FlxG.keys.justPressed.ENTER && textStarted)
+		if (FlxG.keys.justPressed.ANY && textStarted)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 

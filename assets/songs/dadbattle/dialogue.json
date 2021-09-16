@@ -1,0 +1,58 @@
+{
+    "box": "speech_bubble_talking",
+    "boxState": "normal",
+    "dialogue": [
+        {
+            "portrait": "kade",
+            "expression": "normal",
+            "text": "I have no idea what Psych engine is."
+        },
+        {
+            "portrait": "bf2",
+            "text": "vine boom"
+        },
+        {
+            "portrait": "kade",
+            "text": "I really wish I didn't make engines.\nBecause I made fucking the worse\ndecision of my life."
+        },
+        {
+            "text": "Because all these engines either\nfucking suck."
+        },
+        {
+            "portrait": "bf2",
+            "text": "vine boom"
+        },
+        {
+            "portrait": "kade",
+            "text": "They copy me."
+        },
+        {
+            "portrait": "bf2",
+            "text": "vine boom"
+        },
+        {
+            "portrait": "kade",
+            "text": "Or they copy somebody else."
+        },
+        {
+            "portrait": "bf2",
+            "text": "vine boom"
+        },
+        {
+            "portrait": "kade",
+            "text": "Nobodys original."
+        },
+        {
+            "portrait": "bf2",
+            "text": "vine boom"
+        },
+        {
+            "portrait": "kade",
+            "text": "Its fucking really stupid."
+        },
+        {
+            "portrait": "bf2",
+            "text": "kade\nwtf dude"
+        }
+    ]
+}

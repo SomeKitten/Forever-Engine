@@ -16,6 +16,7 @@ We hope you learn something new!
    :caption: Tutorials
 
    tutorials/1-getting-started
+   tutorials/dialogue
 
 
 .. Indices and tables

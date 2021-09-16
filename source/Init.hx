@@ -106,6 +106,7 @@ class Init extends FlxState
 			"Enables the custom Forever Engine titlescreen! (only effective with a restart)",
 			FORCED
 		],
+		'Skip Cutscenes' => [false, 0, 'Skip the cutscenes in story mode. (Includes Dialogue)'],
 		'Camera-fixed Judgements' => [false, 0, ""],
 	];
 

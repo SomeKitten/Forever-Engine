@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="kade.png">
+	<!-- Created with Adobe Animate version 20.0.0.17400 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Kade Bitchass Motherfucker0000" x="0" y="0" width="487" height="615" pivotX="243.5" pivotY="309.95"/>
+	<SubTexture name="Kade Bitchass Motherfucker0001" x="507" y="0" width="487" height="615"/>
+	<SubTexture name="Kade Bitchass Motherfucker0002" x="1014" y="0" width="487" height="615"/>
+	<SubTexture name="Kade Bitchass Motherfucker0003" x="1521" y="0" width="487" height="615"/>
+	<SubTexture name="Kade Bitchass Motherfucker0004" x="0" y="635" width="487" height="615"/>
+	<SubTexture name="Kade Bitchass Motherfucker0005" x="507" y="635" width="487" height="615"/>
+	<SubTexture name="Kade Bitchass Motherfucker0006" x="507" y="635" width="487" height="615"/>
+	<SubTexture name="Kade Bitchass Motherfucker0007" x="507" y="635" width="487" height="615"/>
+	<SubTexture name="Kade Bitchass Motherfucker0008" x="507" y="635" width="487" height="615"/>
+</TextureAtlas>

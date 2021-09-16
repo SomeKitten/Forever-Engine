@@ -10,5 +10,6 @@
 		}
 		
 	},
-	"haxe.enableExtendedIndentation": true
+	"haxe.enableExtendedIndentation": true,
+	"restructuredtext.confPath": "${workspaceFolder}\\docs"
 }

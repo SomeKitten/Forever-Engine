@@ -15,13 +15,12 @@ using StringTools;
 /**
  * Loosley based on FlxTypeText lolol
  */
-// using this for dialog is hell
 class Alphabet extends FlxSpriteGroup
 {
-	public var textSpeed:Float = 0.05;
+	public var textSpeed:Float = 0.06;
 	public var randomSpeed:Bool = false; // When enabled, it'll change the speed of the text speed randomly between 80% and 180%
 
-	private var textSize:Float;
+	public var textSize:Float;
 
 	public var paused:Bool = false;
 
@@ -61,6 +60,8 @@ class Alphabet extends FlxSpriteGroup
 	public var soundChoices:Array<String> = ["GF_1", "GF_2", "GF_3", "GF_4",];
 	public var beginPath:String = "assets/sounds/";
 	public var soundChance:Int = 40;
+	public var playSounds:Bool = true;
+	public var lastPlayed:Int = 0;
 
 	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false, ?textSize:Float = 1)
 	{
@@ -75,6 +76,8 @@ class Alphabet extends FlxSpriteGroup
 
 	public function startText(newText, typed)
 	{
+		yMulti = 1;
+		finishedLine = false;
 		xPosResetted = true;
 
 		_finalText = newText;
@@ -191,8 +194,6 @@ class Alphabet extends FlxSpriteGroup
 		if (swagTypingTimer != null)
 			swagTypingTimer.destroy();
 
-		finishedLine = false;
-
 		// Create a new timer
 		swagTypingTimer = new FlxTimer().start(textSpeed, function(tmr:FlxTimer)
 		{
@@ -252,13 +253,20 @@ class Alphabet extends FlxSpriteGroup
 					letter.x += 90;
 				}
 
-				if (FlxG.random.bool(soundChance))
+				if (FlxG.random.bool(soundChance) || lastPlayed > 2)
 				{
-					var cur = FlxG.random.int(0, soundChoices.length - 1);
-					var daSound:String = beginPath + soundChoices[cur] + "." + Paths.SOUND_EXT;
+					if (playSounds)
+					{
+						lastPlayed = 0;
 
-					FlxG.sound.play(daSound);
+						var cur = FlxG.random.int(0, soundChoices.length - 1);
+						var daSound:String = beginPath + soundChoices[cur] + "." + Paths.SOUND_EXT;
+
+						FlxG.sound.play(daSound);
+					}
 				}
+				else
+					lastPlayed += 1;
 
 				add(letter);
 
@@ -272,6 +280,7 @@ class Alphabet extends FlxSpriteGroup
 
 			// I'm sorry for this implementation being a bit janky but the FlxTimer loops were not reliable for this
 			// Hope you forgive me <3 <3 xoxo Sammu
+			// i forgive u sammu :D
 			if (loopNum >= splitWords.length)
 			{
 				finishedLine = true;
@@ -358,7 +367,7 @@ class AlphaCharacter extends FlxSprite
 		FlxG.log.add('the row' + row);
 
 		y = (110 - height);
-		y += row * 60;
+		y += row * 50;
 	}
 
 	public function createNumber(letter:String):Void
@@ -376,17 +385,23 @@ class AlphaCharacter extends FlxSprite
 			case '.':
 				animation.addByPrefix(letter, 'period', 24);
 				animation.play(letter);
-				y += 50;
+				setGraphicSize(8, 8);
+				y += 48;
 			case "'":
 				animation.addByPrefix(letter, 'apostraphie', 24);
 				animation.play(letter);
-				y -= 0;
+				setGraphicSize(10, 10);
+				y += 20;
 			case "?":
 				animation.addByPrefix(letter, 'question mark', 24);
 				animation.play(letter);
+				setGraphicSize(20, 40);
+				y += 16;
 			case "!":
 				animation.addByPrefix(letter, 'exclamation point', 24);
 				animation.play(letter);
+				setGraphicSize(10, 40);
+				y += 16;
 			default:
 				animation.addByPrefix(letter, letter, 24);
 				animation.play(letter);
