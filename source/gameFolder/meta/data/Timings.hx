@@ -16,7 +16,7 @@ class Timings
 	// from left to right
 	// max milliseconds, score from it and percentage
 	public static var ratingsMap:Map<String, Array<Dynamic>> = [
-		"sick" => [30, 350, 100],
+		"sick" => [45, 350, 100],
 		"good" => [100, 150, 50],
 		"bad" => [120, 0, 15],
 		"shit" => [140, -20, -75],

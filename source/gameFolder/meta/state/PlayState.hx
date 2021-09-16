@@ -1187,7 +1187,8 @@ class PlayState extends MusicBeatState
 			vocals.volume = 1;
 
 			characterPlayAnimation(coolNote, character);
-			characterStrums.members[coolNote.noteData].playAnim('confirm', true);
+			if (characterStrums.members[coolNote.noteData] != null)
+				characterStrums.members[coolNote.noteData].playAnim('confirm', true);
 
 			if (canDisplayRating)
 			{
@@ -1234,7 +1235,8 @@ class PlayState extends MusicBeatState
 			{
 				// coolNote.callMods();
 				coolNote.kill();
-				notes.remove(coolNote, true);
+				if (notes.members.contains(coolNote))
+					notes.remove(coolNote, true);
 				coolNote.destroy();
 			}
 			//
