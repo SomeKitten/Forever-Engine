@@ -177,6 +177,7 @@ class Init extends FlxState
 		FlxG.mouse.useSystemCursor = true; // Use system cursor because it's prettier
 		FlxG.mouse.visible = false; // Hide mouse on start
 
+		// Main.switchState(this, new TestState());
 		gotoTitleScreen();
 	}
 

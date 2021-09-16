@@ -70,7 +70,7 @@ class Main extends Sprite
 
 	public static var gameVersion:String = '0.2.3.1';
 
-	public static var loadedAssets:Array<FlxBasic> = [];
+	public static var loadedAssets:Array<Dynamic> = [];
 
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
@@ -213,7 +213,7 @@ class Main extends Sprite
 		FlxG.switchState(target);
 
 		// this dont work yet but maybe soon
-		dumpCache(curState);
+		// dumpCache(curState);
 	}
 
 	public static function updateFramerate(newFramerate:Int)
@@ -233,12 +233,13 @@ class Main extends Sprite
 
 	public static function dumpCache(curState:FlxState)
 	{
-		/*
-			for (asset in loadedAssets)
-			{
-				curState.remove(asset);
-			}
-			// */
+		///*
+		for (asset in loadedAssets)
+		{
+			loadedAssets.remove(asset);
+		}
+
+		// */
 	}
 
 	function onCrash(e:UncaughtErrorEvent):Void
