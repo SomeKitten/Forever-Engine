@@ -108,6 +108,7 @@ class Init extends FlxState
 		],
 		'Skip Cutscenes' => [false, 0, 'Skip the cutscenes in story mode. (Includes Dialogue)'],
 		'Camera-fixed Judgements' => [false, 0, ""],
+		'Display Miss Count' => [false, 0, "When enabled, displays the amount of misses you have in a song."],
 	];
 
 	public static var trueSettings:Map<String, Dynamic> = [];
@@ -177,6 +178,7 @@ class Init extends FlxState
 		FlxG.mouse.useSystemCursor = true; // Use system cursor because it's prettier
 		FlxG.mouse.visible = false; // Hide mouse on start
 
+		// Main.switchState(this, new TestState());
 		gotoTitleScreen();
 	}
 

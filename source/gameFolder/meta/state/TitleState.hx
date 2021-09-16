@@ -22,6 +22,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
+import gameFolder.meta.data.dependency.Discord;
 import gameFolder.meta.data.font.Alphabet;
 import gameFolder.meta.state.menus.*;
 import lime.app.Application;
@@ -68,6 +69,10 @@ class TitleState extends MusicBeatState
 		if (!initialized)
 		{
 			///*
+			#if !html5
+			Discord.changePresence('TITLE SCREEN', 'Main Menu');
+			#end
+
 			var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
 			diamond.persist = true;
 			diamond.destroyOnNoUse = false;

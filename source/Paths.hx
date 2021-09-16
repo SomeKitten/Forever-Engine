@@ -166,7 +166,7 @@ class Paths
 
 	inline static public function getSparrowAtlas(key:String, ?library:String)
 	{
-		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
+		return cacheGet(FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library)));
 	}
 
 	inline static public function getPackerAtlas(key:String, ?library:String)
@@ -175,4 +175,11 @@ class Paths
 	}
 
 	// WIP STUFFS GONNA GO HERE, HI FLIPPY AND SMOKEY LMAO
+
+	static function cacheGet(theAsset:Dynamic):Dynamic
+	{
+		if (!Main.loadedAssets.contains(theAsset))
+			Main.loadedAssets.push(theAsset);
+		return Main.loadedAssets[Main.loadedAssets.indexOf(theAsset)];
+	}
 }

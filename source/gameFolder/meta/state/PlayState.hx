@@ -36,6 +36,10 @@ import openfl.utils.Assets;
 
 using StringTools;
 
+#if !html5
+import gameFolder.meta.data.dependency.Discord;
+#end
+
 class PlayState extends MusicBeatState
 {
 	public static var startTimer:FlxTimer;
@@ -77,6 +81,11 @@ class PlayState extends MusicBeatState
 	// I'm funny just trust me
 	private var curSection:Int = 0;
 	private var camFollow:FlxObject;
+
+	// Discord RPC variables
+	public static var songDetails:String = "";
+	public static var detailsSub:String = "";
+	public static var detailsPausedText:String = "";
 
 	//
 	private static var prevCamFollow:FlxObject;
@@ -121,11 +130,14 @@ class PlayState extends MusicBeatState
 	public static var songScore:Int = 0;
 
 	var storyDifficultyText:String = "";
-	var iconRPC:String = "";
-	var songLength:Float = 0;
+
+	public static var iconRPC:String = "";
+
+	public static var songLength:Float = 0;
 
 	private var stageBuild:Stage;
-	private var uiHUD:ClassHUD;
+
+	public static var uiHUD:ClassHUD;
 
 	public static var daPixelZoom:Float = 6;
 	public static var determinedChartType:String = "";
@@ -358,10 +370,7 @@ class PlayState extends MusicBeatState
 
 			// open pause substate
 			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-
-			#if desktop
-			// DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconRPC);
-			#end
+			updateRPC(true);
 		}
 
 		// make sure you're not cheating lol
@@ -537,12 +546,40 @@ class PlayState extends MusicBeatState
 
 		if (animationsPlay[0] != null && (animationsPlay[0].strumTime - Conductor.songPosition) <= 0)
 		{
-			characterPlayAnimation(animationsPlay[0], dadOpponent);
+			goodNoteHit(animationsPlay[0], dadOpponent, dadStrums, false);
 			animationsPlay.splice(animationsPlay.indexOf(animationsPlay[0]), 1);
 		}
 
 		// handle all of the note calls
 		noteCalls();
+	}
+
+	override public function onFocus():Void
+	{
+		if (!paused)
+			updateRPC(false);
+		super.onFocus();
+	}
+
+	override public function onFocusLost():Void
+	{
+		updateRPC(true);
+		super.onFocusLost();
+	}
+
+	public static function updateRPC(pausedRPC:Bool)
+	{
+		#if !html5
+		var displayRPC:String = (pausedRPC) ? detailsPausedText : songDetails;
+
+		if (health > 0)
+		{
+			if (Conductor.songPosition > 0 && !pausedRPC)
+				Discord.changePresence(displayRPC, detailsSub, iconRPC, true, songLength - Conductor.songPosition);
+			else
+				Discord.changePresence(displayRPC, detailsSub, iconRPC);
+		}
+		#end
 	}
 
 	var animationsPlay:Array<Note> = [];
@@ -1040,7 +1077,7 @@ class PlayState extends MusicBeatState
 				combo += 1;
 			}
 			else
-				missNoteCheck(true, direction, character, false);
+				missNoteCheck(true, direction, character, false, true);
 		}
 	}
 
@@ -1151,7 +1188,8 @@ class PlayState extends MusicBeatState
 			vocals.volume = 1;
 
 			characterPlayAnimation(coolNote, character);
-			characterStrums.members[coolNote.noteData].playAnim('confirm', true);
+			if (characterStrums.members[coolNote.noteData] != null)
+				characterStrums.members[coolNote.noteData].playAnim('confirm', true);
 
 			if (canDisplayRating)
 			{
@@ -1197,7 +1235,8 @@ class PlayState extends MusicBeatState
 			{
 				// coolNote.callMods();
 				coolNote.kill();
-				notes.remove(coolNote, true);
+				if (notes.members.contains(coolNote))
+					notes.remove(coolNote, true);
 				coolNote.destroy();
 			}
 			//
@@ -1211,14 +1250,14 @@ class PlayState extends MusicBeatState
 		health += (healthBase * (ratingMultiplier / 100));
 	}
 
-	function missNoteCheck(?includeAnimation:Bool = false, direction:Int = 0, character:Character, popMiss:Bool = false)
+	function missNoteCheck(?includeAnimation:Bool = false, direction:Int = 0, character:Character, popMiss:Bool = false, lockMiss:Bool = false)
 	{
 		if (includeAnimation)
 		{
 			var stringDirection:String = UIStaticArrow.getArrowFromNumber(direction);
 
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
-			character.playAnim('sing' + stringDirection.toUpperCase() + 'miss');
+			character.playAnim('sing' + stringDirection.toUpperCase() + 'miss', lockMiss);
 		}
 		decreaseCombo(popMiss);
 
@@ -1267,12 +1306,12 @@ class PlayState extends MusicBeatState
 			songMusic.onComplete = endSong;
 			vocals.play();
 
-			#if desktop
+			#if !html5
 			// Song duration in a float, useful for the time left feature
 			songLength = songMusic.length;
 
 			// Updating Discord Rich Presence (with Time Left)
-			// DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC, true, songLength);
+			updateRPC(false);
 			#end
 		}
 	}
@@ -1283,6 +1322,18 @@ class PlayState extends MusicBeatState
 
 		var songData = SONG;
 		Conductor.changeBPM(songData.bpm);
+
+		// String that contains the mode defined here so it isn't necessary to call changePresence for each mode
+		songDetails = CoolUtil.dashToSpace(SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(storyDifficulty);
+
+		// String for when the game is paused
+		detailsPausedText = "Paused - " + songDetails;
+
+		// set details for song stuffs
+		detailsSub = "";
+
+		// Updating Discord Rich Presence.
+		updateRPC(false);
 
 		curSong = songData.song;
 		songMusic = new FlxSound().loadEmbedded(Sound.fromFile('./' + Paths.inst(SONG.song)), false, true);
@@ -1486,18 +1537,9 @@ class PlayState extends MusicBeatState
 				startTimer.active = true;
 			paused = false;
 
-			/*
-				#if desktop
-				if (startTimer.finished)
-				{
-					DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC, true, songLength - Conductor.songPosition);
-				}
-				else
-				{
-					DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC);
-				}
-				#end
-				// */
+			///*
+			updateRPC(false);
+			// */
 		}
 
 		super.closeSubState();

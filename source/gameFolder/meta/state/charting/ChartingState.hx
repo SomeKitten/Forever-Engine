@@ -29,6 +29,7 @@ import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Section.SwagSection;
 import gameFolder.meta.data.Song.SwagSong;
+import gameFolder.meta.data.dependency.Discord;
 import gameFolder.meta.subState.charting.*;
 import haxe.Json;
 import haxe.io.Bytes;
@@ -104,6 +105,10 @@ class ChartingState extends MusicBeatState
 			FlxG.sound.music.stop();
 			// vocals.stop();
 		}
+
+		#if !html5
+		Discord.changePresence('CHARTING STATE', 'Freeplay');
+		#end
 
 		FlxG.mouse.useSystemCursor = false; // Use system cursor because it's prettier
 		FlxG.mouse.visible = true; // Hide mouse on start

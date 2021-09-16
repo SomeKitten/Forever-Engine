@@ -83,7 +83,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		// small info bar, kinda like the KE watermark
 		// based on scoretxt which I will set up as well
 		var infoDisplay:String = CoolUtil.dashToSpace(PlayState.SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(PlayState.storyDifficulty)
-			+ " - Forever BETA v" + Main.gameVersion;
+			+ " - FE BETA v" + Main.gameVersion;
 
 		infoBar = new FlxText(5, FlxG.height - 30, 0, infoDisplay, 20);
 		infoBar.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -95,8 +95,6 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 	{
 		// pain, this is like the 7th attempt
 		healthBar.percent = (PlayState.health * 50);
-
-		updateScoreText();
 
 		var iconLerp = 0.5;
 		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, iconLerp)));
@@ -121,7 +119,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 			iconP2.animation.curAnim.curFrame = 0;
 	}
 
-	private function updateScoreText()
+	public function updateScoreText()
 	{
 		var importSongScore = PlayState.songScore;
 		var importPlayStateCombo = PlayState.combo;
@@ -132,10 +130,16 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		if (displayAccuracy)
 		{
 			scoreBar.text += ' // Accuracy: ' + Std.string(Math.floor(Timings.getAccuracy() * 100) / 100) + '%' + Timings.comboDisplay;
+			if (Init.trueSettings.get('Display Miss Count'))
+				scoreBar.text += ' // Misses: ' + Std.string(PlayState.misses);
 			scoreBar.text += ' // Rank: ' + Std.string(Timings.returnScoreRating().toUpperCase());
 		}
 
 		scoreBar.x = ((FlxG.width / 2) - (scoreBar.width / 2));
+
+		// update playstate
+		PlayState.detailsSub = scoreBar.text;
+		PlayState.updateRPC(false);
 	}
 
 	public function beatHit()
