@@ -52,6 +52,8 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
+		super.create();
+
 		/**
 			Wanna add songs? They're in the Main state now, you can just find the week array and add a song there to a specific week.
 			Alternatively, you can make a folder in the Songs folder and put your songs there, however, this gives you less
@@ -144,8 +146,6 @@ class FreeplayState extends MusicBeatState
 		selector.size = 40;
 		selector.text = ">";
 		// add(selector);
-
-		super.create();
 	}
 
 	public function addSong(songName:String, weekNum:Int, songCharacter:String, songColor:FlxColor)

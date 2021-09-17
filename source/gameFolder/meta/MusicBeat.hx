@@ -34,6 +34,10 @@ class MusicBeatState extends FNFUIState
 	// class create event
 	override function create()
 	{
+		// dump the cache if you're going elsewhere
+		if (Main.lastState != this)
+			Main.dumpCache();
+
 		if (transIn != null)
 			trace('reg ' + transIn.region);
 

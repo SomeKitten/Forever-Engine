@@ -149,7 +149,7 @@ class PlayState extends MusicBeatState
 	// at the beginning of the playstate
 	override public function create()
 	{
-		Main.dumpCache(this);
+		super.create();
 
 		// reset any values and variables that are static
 		songScore = 0;
@@ -342,8 +342,6 @@ class PlayState extends MusicBeatState
 			songIntroCutscene();
 		else
 			startCountdown();
-
-		super.create();
 	}
 
 	var staticDisplace:Int = 0;

@@ -1,5 +1,6 @@
 import flixel.FlxG;
 import flixel.FlxState;
+import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
 import gameFolder.meta.CoolUtil;
 import gameFolder.meta.InfoHud;

@@ -91,6 +91,8 @@ class ChartingState extends MusicBeatState
 
 	override public function create():Void
 	{
+		super.create();
+
 		//
 		chartType = 'FNF';
 
@@ -218,7 +220,6 @@ class ChartingState extends MusicBeatState
 		Conductor.mapBPMChanges(_song);
 
 		FlxG.camera.follow(strumLineCam);
-		super.create();
 
 		debugText = new FlxText(0, 0, 0, '', 24);
 		// add(debugText);
