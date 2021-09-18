@@ -35,6 +35,8 @@ class MainMenuState extends MusicBeatState
 	// the create 'state'
 	override function create()
 	{
+		super.create();
+
 		// set the transitions to the previously set ones
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
@@ -134,8 +136,6 @@ class MainMenuState extends MusicBeatState
 		add(versionShit);
 
 		//
-
-		super.create();
 	}
 
 	// var colorTest:Float = 0;

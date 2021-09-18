@@ -33,6 +33,8 @@ class OptionsMenuState extends MusicBeatState
 
 	override public function create():Void
 	{
+		super.create();
+
 		// define the categories
 		/* 
 			To explain how these will work, each main category is just any group of options, the options in the category are defined
@@ -126,8 +128,6 @@ class OptionsMenuState extends MusicBeatState
 		infoText.textField.background = true;
 		infoText.textField.backgroundColor = FlxColor.BLACK;
 		add(infoText);
-
-		super.create();
 
 		loadSubgroup('main');
 	}

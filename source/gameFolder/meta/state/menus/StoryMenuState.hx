@@ -53,6 +53,8 @@ class StoryMenuState extends MusicBeatState
 
 	override function create()
 	{
+		super.create();
+
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
 
@@ -189,8 +191,6 @@ class StoryMenuState extends MusicBeatState
 		// very unprofessional yoshubs!
 
 		updateText();
-
-		super.create();
 	}
 
 	override function update(elapsed:Float)
