@@ -420,8 +420,9 @@ class ChartingState extends MusicBeatState
 	{
 		//
 		var fakeStep = Std.string(FlxMath.roundDecimal((Conductor.songPosition / Conductor.stepCrochet), 2));
+		var fakeBeat = Std.string(FlxMath.roundDecimal((Conductor.songPosition / Conductor.stepCrochet) / 4, 2));
 		var songTime = Std.string(FlxMath.roundDecimal(Conductor.songPosition / 1000, 2));
-		informationBar.text = 'STEP: $fakeStep\nBEAT: $curBeat\nTIME: $songTime' + '\nBPM: ' + Conductor.bpm + '\n';
+		informationBar.text = 'STEP: $fakeStep\nBEAT: $fakeBeat\nTIME: $songTime' + '\nBPM: ' + Conductor.bpm + '\n';
 
 		// putting this code here cus fuck you
 
