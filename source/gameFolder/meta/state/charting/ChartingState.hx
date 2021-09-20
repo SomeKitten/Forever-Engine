@@ -25,6 +25,8 @@ import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import gameFolder.gameObjects.*;
 import gameFolder.gameObjects.userInterface.*;
+import gameFolder.gameObjects.userInterface.notes.*;
+import gameFolder.gameObjects.userInterface.notes.Strumline.UIStaticArrow;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Section.SwagSection;

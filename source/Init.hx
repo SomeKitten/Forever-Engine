@@ -89,7 +89,7 @@ class Init extends FlxState
 			NOT_FORCED,
 			['none', 'Deuteranopia', 'Protanopia', 'Tritanopia']
 		],
-		"UI Skin" => ['default', 1, 'Choose a UI Skin for ratings, combo, etc.', NOT_FORCED, ''],
+		"UI Skin" => ['default', 1, 'Choose a UI Skin for judgements, combo, etc.', NOT_FORCED, ''],
 		"Note Skin" => ['default', 1, 'Choose a note skin.', NOT_FORCED, ''],
 		"Framerate Cap" => [120, 1, 'Define your maximum FPS.', NOT_FORCED, ['']],
 		"Opaque Arrows" => [false, 0, "Makes the arrows at the top of the screen opaque again.", NOT_FORCED],
@@ -107,7 +107,11 @@ class Init extends FlxState
 			"Enables the custom Forever Engine titlescreen! (only effective with a restart)",
 			FORCED
 		],
-		'Camera-fixed Judgements' => [false, 0, ""],
+		'SM-like Judgements' => [
+			false,
+			0,
+			"Fixes the judgements to the camera instead of to the world itself, making them easier to read."
+		],
 		'Display Miss Count' => [false, 0, "When enabled, displays the amount of misses you have in a song."],
 	];
 

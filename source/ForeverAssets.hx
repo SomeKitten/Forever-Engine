@@ -4,11 +4,13 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
-import gameFolder.gameObjects.Note;
 import gameFolder.gameObjects.userInterface.*;
 import gameFolder.gameObjects.userInterface.menu.*;
+import gameFolder.gameObjects.userInterface.notes.*;
+import gameFolder.gameObjects.userInterface.notes.Strumline.UIStaticArrow;
 import gameFolder.meta.data.Conductor;
 import gameFolder.meta.data.Section.SwagSection;
+import gameFolder.meta.data.Timings;
 import gameFolder.meta.state.PlayState;
 
 using StringTools;
@@ -21,10 +23,9 @@ class ForeverAssets
 {
 	//
 	public static function generateCombo(asset:String, assetModifier:String = 'base', changeableSkin:String = 'default', baseLibrary:String, negative:Bool,
-			createdColor:FlxColor, scoreInt:Int, recycleGroup:FlxTypedGroup<FlxSprite>):FlxSprite
+			createdColor:FlxColor, scoreInt:Int):FlxSprite
 	{
-		var newSprite:FlxSprite = recycleGroup.recycle(FlxSprite)
-			.loadGraphic(Paths.image(ForeverTools.returnSkinAsset(asset, assetModifier, changeableSkin, baseLibrary)));
+		var newSprite:FlxSprite = new FlxSprite().loadGraphic(Paths.image(ForeverTools.returnSkinAsset(asset, assetModifier, changeableSkin, baseLibrary)));
 		switch (assetModifier)
 		{
 			case 'pixel':
@@ -66,11 +67,11 @@ class ForeverAssets
 		return newSprite;
 	}
 
-	public static function generateRating(asset:String, assetModifier:String = 'base', changeableSkin:String = 'default', baseLibrary:String,
-			recycleGroup:FlxTypedGroup<FlxSprite>):FlxSprite
+	public static function generateRating(asset:String, perfectSick:Bool, timing:String, assetModifier:String = 'base', changeableSkin:String = 'default',
+			baseLibrary:String):FlxSprite
 	{
-		var rating:FlxSprite = recycleGroup.recycle(FlxSprite)
-			.loadGraphic(Paths.image(ForeverTools.returnSkinAsset(asset, assetModifier, changeableSkin, baseLibrary)));
+		var rating:FlxSprite = new FlxSprite().loadGraphic(Paths.image(ForeverTools.returnSkinAsset('judgements', assetModifier, changeableSkin,
+			baseLibrary)), true, 500, 163);
 		switch (assetModifier)
 		{
 			default:
@@ -81,6 +82,19 @@ class ForeverAssets
 				rating.acceleration.y = 550;
 				rating.velocity.y = -FlxG.random.int(140, 175);
 				rating.velocity.x = -FlxG.random.int(0, 10);
+
+				rating.animation.add('base', [
+					Std.int((Timings.judgementsMap.get(asset)[0] * 2) + (perfectSick ? 0 : 2) + (timing == 'late' ? 1 : 0))
+				], 24, false);
+				rating.animation.play('base');
+		}
+
+		if (assetModifier == 'pixel')
+			rating.setGraphicSize(Std.int(rating.width * PlayState.daPixelZoom * 0.7));
+		else
+		{
+			rating.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+			rating.setGraphicSize(Std.int(rating.width * 0.7));
 		}
 
 		return rating;

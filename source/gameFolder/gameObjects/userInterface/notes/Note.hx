@@ -1,4 +1,4 @@
-package gameFolder.gameObjects;
+package gameFolder.gameObjects.userInterface.notes;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -6,7 +6,8 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import gameFolder.gameObjects.userInterface.UIStaticArrow;
+import gameFolder.gameObjects.userInterface.notes.*;
+import gameFolder.gameObjects.userInterface.notes.Strumline.UIStaticArrow;
 import gameFolder.meta.*;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Section.SwagSection;
@@ -81,8 +82,7 @@ class Note extends FNFSprite
 			canBeHit = false;
 
 		if (tooLate)
-			if (alpha > 0.3)
-				alpha -= 0.05;
+			alpha -= 0.05;
 	}
 
 	/**

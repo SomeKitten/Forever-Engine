@@ -23,6 +23,7 @@ import flixel.ui.FlxSpriteButton;
 import flixel.util.FlxColor;
 import gameFolder.gameObjects.*;
 import gameFolder.gameObjects.userInterface.*;
+import gameFolder.gameObjects.userInterface.notes.*;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Conductor.BPMChangeEvent;
