@@ -902,7 +902,7 @@ class PlayState extends MusicBeatState
 					&& Init.trueSettings.get('Downscroll')))
 			&& (autoplay || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
 		{
-			var swagRectY = ((strumline.receptors.members[Math.floor(daNote.noteData)].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y) + 25;
+			var swagRectY = ((strumline.receptors.members[Math.floor(daNote.noteData)].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y);
 			var swagRect = new FlxRect(0, 0, daNote.width * 2, daNote.height);
 			// I feel genuine pain
 			// basically these should be flipped based on if it is downscroll or not
