@@ -29,10 +29,12 @@ import gameFolder.meta.*;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Song.SwagSong;
+import gameFolder.meta.shaders.PerspectiveShader.PerspectiveHelper;
 import gameFolder.meta.state.charting.*;
 import gameFolder.meta.state.menus.*;
 import gameFolder.meta.subState.*;
 import openfl.events.KeyboardEvent;
+import openfl.filters.ShaderFilter;
 import openfl.media.Sound;
 import openfl.utils.Assets;
 
@@ -133,6 +135,9 @@ class PlayState extends MusicBeatState
 
 	public static var strumLines:FlxTypedGroup<Strumline>;
 	public static var strumHUD:Array<FlxCamera> = [];
+
+	// public var uEffect:PerspectiveHelper = new PerspectiveHelper();
+	public static var uEffects:Array<PerspectiveHelper> = [];
 
 	// at the beginning of the playstate
 	override public function create()
@@ -290,6 +295,7 @@ class PlayState extends MusicBeatState
 
 		// strumline camera setup
 		strumHUD = [];
+		uEffects = [];
 		for (i in 0...strumLines.length)
 		{
 			// generate a new strum camera
@@ -298,6 +304,12 @@ class PlayState extends MusicBeatState
 
 			strumHUD[i].cameras = [camHUD];
 			FlxG.cameras.add(strumHUD[i]);
+
+			// generate a new perspective shader
+			uEffects[i] = new PerspectiveHelper();
+
+			// set shaders
+			strumHUD[i].setFilters([new ShaderFilter(uEffects[i].shader)]);
 			// set this strumline's camera to the designated camera
 			strumLines.members[i].cameras = [strumHUD[i]];
 		}
@@ -340,6 +352,31 @@ class PlayState extends MusicBeatState
 			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 			updateRPC(true);
 		}
+
+		/* feel free to reenable these
+			for (i in 0...uEffects.length)
+			{
+				if (FlxG.keys.justPressed.P)
+				{
+					uEffects[i].rotX += 0.1;
+				}
+
+				if (FlxG.keys.justPressed.I)
+				{
+					uEffects[i].rotX -= 0.1;
+				}
+
+				if (FlxG.keys.justPressed.U)
+				{
+					uEffects[i].rotY += 0.1;
+				}
+
+				if (FlxG.keys.justPressed.T)
+				{
+					uEffects[i].rotY -= 0.1;
+				}
+			}
+		 */
 
 		// make sure you're not cheating lol
 		if (!isStoryMode)
@@ -865,8 +902,8 @@ class PlayState extends MusicBeatState
 					&& Init.trueSettings.get('Downscroll')))
 			&& (autoplay || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
 		{
-			var swagRectY = ((strumline.receptors.members[Math.floor(daNote.noteData)].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y);
-			var swagRect = new FlxRect(0, 0, daNote.width * 2, daNote.height * 2);
+			var swagRectY = ((strumline.receptors.members[Math.floor(daNote.noteData)].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y) + 25;
+			var swagRect = new FlxRect(0, 0, daNote.width * 2, daNote.height);
 			// I feel genuine pain
 			// basically these should be flipped based on if it is downscroll or not
 			if (Init.trueSettings.get('Downscroll'))
@@ -1270,6 +1307,11 @@ class PlayState extends MusicBeatState
 			// trace('ui shit break');
 			if ((startTimer != null) && (!startTimer.finished))
 				startTimer.active = false;
+
+			for (i in 0...strumHUD.length)
+			{
+				strumHUD[i].filtersEnabled = false;
+			}
 		}
 
 		// trace('open substate');
@@ -1291,6 +1333,11 @@ class PlayState extends MusicBeatState
 			///*
 			updateRPC(false);
 			// */
+
+			for (i in 0...strumHUD.length)
+			{
+				strumHUD[i].filtersEnabled = true;
+			}
 		}
 
 		super.closeSubState();
