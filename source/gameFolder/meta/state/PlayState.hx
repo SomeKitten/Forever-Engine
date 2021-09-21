@@ -288,10 +288,9 @@ class PlayState extends MusicBeatState
 
 		//
 		var placement = (FlxG.width / 2);
-		dadStrums = new Strumline(placement - (FlxG.width / 4), this, dadOpponent, false, true, false, 4, Init.trueSettings.get('Downscroll'));
+		dadStrums = new Strumline(placement, this, dadOpponent, false, true, false, 4, Init.trueSettings.get('Downscroll'));
 		dadStrums.visible = !Init.trueSettings.get('Centered Notefield');
-		boyfriendStrums = new Strumline(placement + (!Init.trueSettings.get('Centered Notefield') ? (FlxG.width / 4) : 0), this, boyfriend, true, false, true,
-			4, Init.trueSettings.get('Downscroll'));
+		boyfriendStrums = new Strumline(placement, this, boyfriend, true, false, true, 4, Init.trueSettings.get('Downscroll'));
 
 		strumLines.add(dadStrums);
 		strumLines.add(boyfriendStrums);
@@ -317,6 +316,14 @@ class PlayState extends MusicBeatState
 			strumLines.members[i].cameras = [strumHUD[i]];
 		}
 		add(strumLines);
+
+		// set strumHUD cams to separate positions if not centered notefields
+		if (!Init.trueSettings.get('Centered Notefield'))
+		{
+			var truePlacement = placement - (FlxG.width / 4);
+			strumHUD[0].x -= truePlacement;
+			strumHUD[1].x += truePlacement;
+		}
 
 		uiHUD = new ClassHUD();
 		add(uiHUD);
@@ -356,30 +363,28 @@ class PlayState extends MusicBeatState
 			updateRPC(true);
 		}
 
-		/* feel free to reenable these
-			for (i in 0...uEffects.length)
+		for (i in 0...uEffects.length)
+		{
+			if (FlxG.keys.pressed.P)
 			{
-				if (FlxG.keys.justPressed.P)
-				{
-					uEffects[i].rotX += 0.1;
-				}
-
-				if (FlxG.keys.justPressed.I)
-				{
-					uEffects[i].rotX -= 0.1;
-				}
-
-				if (FlxG.keys.justPressed.U)
-				{
-					uEffects[i].rotY += 0.1;
-				}
-
-				if (FlxG.keys.justPressed.T)
-				{
-					uEffects[i].rotY -= 0.1;
-				}
+				uEffects[i].rotX += 0.01;
 			}
-		 */
+
+			if (FlxG.keys.pressed.I)
+			{
+				uEffects[i].rotX -= 0.01;
+			}
+
+			if (FlxG.keys.pressed.U)
+			{
+				uEffects[i].rotY += 0.01;
+			}
+
+			if (FlxG.keys.pressed.T)
+			{
+				uEffects[i].rotY -= 0.01;
+			}
+		}
 
 		// make sure you're not cheating lol
 		if (!isStoryMode)
