@@ -104,6 +104,7 @@ class PlayState extends MusicBeatState
 	var lastReportedPlayheadPosition:Int = 0;
 	var songTime:Float = 0;
 
+	public static var uiRCam:FlxCamera;
 	public static var camHUD:FlxCamera;
 	public static var camGame:FlxCamera;
 
@@ -317,12 +318,23 @@ class PlayState extends MusicBeatState
 		}
 		add(strumLines);
 
+		// create the TRUE receptor camera
+		uiRCam = new FlxCamera();
+		uiRCam.bgColor.alpha = 0;
+		FlxG.cameras.add(uiRCam);
+
 		// set strumHUD cams to separate positions if not centered notefields
 		if (!Init.trueSettings.get('Centered Notefield'))
 		{
 			var truePlacement = placement - (FlxG.width / 4);
 			strumHUD[0].x -= truePlacement;
 			strumHUD[1].x += truePlacement;
+		}
+
+		// sets the receptor cameras to a separate camera
+		for (i in 0...strumLines.length)
+		{
+			strumHUD[i].cameras = [uiRCam];
 		}
 
 		uiHUD = new ClassHUD();
@@ -1318,11 +1330,6 @@ class PlayState extends MusicBeatState
 			// trace('ui shit break');
 			if ((startTimer != null) && (!startTimer.finished))
 				startTimer.active = false;
-
-			for (i in 0...strumHUD.length)
-			{
-				strumHUD[i].filtersEnabled = false;
-			}
 		}
 
 		// trace('open substate');
@@ -1344,11 +1351,6 @@ class PlayState extends MusicBeatState
 			///*
 			updateRPC(false);
 			// */
-
-			for (i in 0...strumHUD.length)
-			{
-				strumHUD[i].filtersEnabled = true;
-			}
 		}
 
 		super.closeSubState();
@@ -1415,6 +1417,7 @@ class PlayState extends MusicBeatState
 				blackShit.scrollFactor.set();
 				add(blackShit);
 				camHUD.visible = false;
+				uiRCam.visible = false;
 
 				// oooo spooky
 				FlxG.sound.play(Paths.sound('Lights_Shut_off'));
@@ -1454,6 +1457,7 @@ class PlayState extends MusicBeatState
 				add(blackScreen);
 				blackScreen.scrollFactor.set();
 				camHUD.visible = false;
+				uiRCam.visible = false;
 
 				new FlxTimer().start(0.1, function(tmr:FlxTimer)
 				{
@@ -1467,6 +1471,7 @@ class PlayState extends MusicBeatState
 					new FlxTimer().start(0.8, function(tmr:FlxTimer)
 					{
 						camHUD.visible = true;
+						uiRCam.visible = true;
 						remove(blackScreen);
 						FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 2.5, {
 							ease: FlxEase.quadInOut,
