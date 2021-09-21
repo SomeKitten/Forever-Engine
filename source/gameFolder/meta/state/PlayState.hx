@@ -188,6 +188,9 @@ class PlayState extends MusicBeatState
 		if (SONG.stage != null)
 			curStage = SONG.stage;
 
+		// cache ratings LOL
+		displayRating('sick', 'early', true);
+
 		stageBuild = new Stage(curStage);
 		add(stageBuild);
 
@@ -1079,13 +1082,13 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	public function displayRating(daRating:String, timing:String)
+	public function displayRating(daRating:String, timing:String, ?cache:Bool = false)
 	{
 		/* so you might be asking
 			"oh but if the rating isn't sick why not just reset it"
 			because miss judgements can pop, and they dont mess with your sick combo
 		 */
-		var rating = ForeverAssets.generateRating('$daRating', allSicks, timing, assetModifier, changeableSkin, 'UI');
+		var rating = ForeverAssets.generateRating('$daRating', (daRating == 'sick' ? allSicks : false), timing, assetModifier, changeableSkin, 'UI');
 		add(rating);
 
 		if (Init.trueSettings.get('SM-like Judgements'))
@@ -1094,6 +1097,9 @@ class PlayState extends MusicBeatState
 			rating.cameras = [camHUD];
 			rating.screenCenter();
 		}
+
+		if (cache)
+			rating.visible = false;
 
 		///*
 		FlxTween.tween(rating, {alpha: 0}, 0.2, {
