@@ -6,7 +6,6 @@ import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.util.FlxTimer;
 import gameFolder.meta.MusicBeat.MusicBeatSubState;
 
 class PreferenceSubstate extends MusicBeatSubState
@@ -56,45 +55,19 @@ class PreferenceSubstate extends MusicBeatSubState
 
 		purpleBottomBar.cameras = [camera];
 		purpleTopBar.cameras = [camera];
-
-		closing = false;
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if (!closing)
-		{
-			blackTopBar.y = FlxMath.lerp(0, blackTopBar.y, 0.75);
-			blackBottomBar.y = FlxMath.lerp(FlxG.height - blackBottomBar.height, blackBottomBar.y, 0.75);
-			topText.y = blackTopBar.y + 15;
+		blackTopBar.y = FlxMath.lerp(0, blackTopBar.y, 0.75);
+		blackBottomBar.y = FlxMath.lerp(FlxG.height - blackBottomBar.height, blackBottomBar.y, 0.75);
+		topText.y = blackTopBar.y + 15;
 
-			purpleTopBar.y = blackTopBar.y + 60;
-			purpleBottomBar.y = blackBottomBar.y + 9;
+		purpleTopBar.y = blackTopBar.y + 60;
+		purpleBottomBar.y = blackBottomBar.y + 9;
 
-			background.alpha = FlxMath.lerp(150 / 255, background.alpha, 0.75);
-		}
-		else
-		{
-			blackTopBar.y = FlxMath.lerp(-75, blackTopBar.y, 0.75);
-			blackBottomBar.y = FlxMath.lerp(FlxG.height, blackBottomBar.y, 0.75);
-			topText.y = blackTopBar.y + 15;
-
-			purpleTopBar.y = blackTopBar.y + 60;
-			purpleBottomBar.y = blackBottomBar.y + 9;
-
-			background.alpha = FlxMath.lerp(0, background.alpha, 0.75);
-		}
-
-		if (FlxG.keys.justPressed.BACKSPACE)
-		{
-			closing = true;
-
-			new FlxTimer().start(0.2, function(_)
-			{
-				close();
-			});
-		}
+		background.alpha = FlxMath.lerp(150 / 255, background.alpha, 0.75);
 	}
 }
