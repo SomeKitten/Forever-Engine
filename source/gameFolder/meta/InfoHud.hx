@@ -74,23 +74,25 @@ class InfoHud extends TextField
 			times.shift();
 		}
 
-		var currentCount = times.length;
-		currentFPS = Math.round((currentCount + cacheCount) / 2);
-		memoryUsage = Math.round(System.totalMemory / (1e+6)); // division to convey the memory usage in megabytes
 		// according to google, if this is wrong blame google lmao
 
 		// pretty sure that was to avoid optimisation issues and shit but like I dunno man I'm not writing an if statement that updates all of these at once
 		// if (currentCount != cacheCount && display)
 		text = "";
 		if (displayFps)
+		{
+			currentFPS = Math.round((times.length + cacheCount) / 2);
 			text += "FPS: " + currentFPS + "\n";
+			cacheCount = times.length;
+		}
 		if (displayExtra)
 			text += "State: " + Main.mainClassState + "\n";
 		if (displayMemory)
+		{
+			memoryUsage = Math.round(System.totalMemory / (1e+6)); // division to convey the memory usage in megabytes
 			text += "Memory: " + memoryUsage + " mb";
-		// mb stands for my bad
-
-		cacheCount = currentCount;
+			// mb stands for my bad
+		}
 	}
 
 	// be able to call framerates later on
