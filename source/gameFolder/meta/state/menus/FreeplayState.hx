@@ -41,6 +41,7 @@ class FreeplayState extends MusicBeatState
 	var intendedScore:Int = 0;
 
 	var songThread:Thread;
+	var threadActive:Bool = true;
 
 	private var grpSongs:FlxTypedGroup<Alphabet>;
 	private var curPlaying:Bool = false;
@@ -215,7 +216,7 @@ class FreeplayState extends MusicBeatState
 
 		if (controls.BACK)
 		{
-			songThread.sendMessage(-1);
+			threadActive = false;
 			Main.switchState(this, new MainMenuState());
 		}
 
@@ -234,7 +235,7 @@ class FreeplayState extends MusicBeatState
 			if (FlxG.sound.music != null)
 				FlxG.sound.music.stop();
 
-			songThread.sendMessage(-1);
+			threadActive = false;
 
 			Main.switchState(this, new PlayState());
 		}
@@ -326,22 +327,22 @@ class FreeplayState extends MusicBeatState
 			{
 				while (true)
 				{
+					if (!threadActive)
+					{
+						trace("Killing thread");
+						return;
+					}
+
 					var index:Null<Int> = Thread.readMessage(false);
 					if (index != null)
 					{
-						if (index == -1)
-						{
-							trace("Killing thread");
-							return;
-						}
-
 						if (index == curSelected && index != curSongPlaying)
 						{
 							trace("Loading index " + index);
 
 							var inst:Sound = Sound.fromFile('./' + Paths.inst(songs[curSelected].songName));
 
-							if (index == curSelected)
+							if (index == curSelected && threadActive)
 							{
 								FlxG.sound.playMusic(inst);
 
