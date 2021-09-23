@@ -1,0 +1,57 @@
+:root {
+    --content-wrap-background-color: #202326;
+    --content-background-color: #2e3236;
+    --navbar-background-color: #25282b;
+    --navbar-background-color-hover: #333639;
+    --navbar-background-color-active: #111417;
+    --navbar-current-background-color: #333639;
+    --navbar-current-background-color-hover: #44474a;
+    --navbar-current-background-color-active: #222528;
+    --navbar-level-1-color: #ddd;
+    --navbar-level-2-color: #ccc;
+    --navbar-level-3-color: #bbb;
+    --navbar-heading-color: #ee7381;
+    --navbar-scrollbar-color: #be5460;
+    --navbar-scrollbar-hover-color: #963e48;
+    --navbar-scrollbar-active-color: #5f3034;
+    --navbar-scrollbar-background: #1c1e21;
+
+    --link-color: #8cf;
+    --link-color-hover: #9df;
+    --link-color-active: #6ad;
+    --link-color-visited: #cb99f6;
+    --external-reference-icon: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEyIiB3aWR0aD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGNmIj48cGF0aCBkPSJtNy41IDcuMXYzLjRoLTZ2LTZoMy40Ii8+PHBhdGggZD0ibTUuNzY1IDFoNS4yMzV2NS4zOWwtMS41NzMgMS41NDctMS4zMS0xLjMxLTIuNzI0IDIuNzIzLTIuNjktMi42ODggMi44MS0yLjgwOC0xLjMxMy0xLjMxeiIvPjwvZz48L3N2Zz4K");
+
+    --hr-color: #555;
+    --table-row-odd-background-color: #3b3e41;
+    --code-background-color: #434649;
+    --code-border-color: #505356;
+    --code-literal-color: #faa;
+    --input-background-color: #333537;
+    --input-focus-border-color: #5f8cff;
+
+    --search-input-background-color: #43464a; /* derived from --input-background-color */
+    --search-match-color: #52b4ff; /* derived from --link-color */
+    --search-match-background-color: #414c56; /* derived from --link-color */
+    --search-active-color: #202326;
+    --search-credits-background-color: #202123; /* derived from --navbar-background-color */
+    --search-credits-color: #6b6b6b; /* derived from --footer-color */
+    --search-credits-link-color: #628fb1; /* derived from --link-color */
+}
+
+/* Center page (thank you godot-docs) */
+@media only screen and (min-width: 769px) {
+    .wy-body-for-nav {
+        /* Content */
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .wy-nav-side {
+        /* Side navbar */
+        left: inherit;
+    }
+    .rst-versions {
+        /* Doc versions */
+        left: inherit;
+    }
+}
