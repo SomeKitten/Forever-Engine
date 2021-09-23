@@ -1285,8 +1285,19 @@ class PlayState extends MusicBeatState
 		{
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.05;
+			// this code makes me الله لا يسامحكم لكونكم مشبوهين
+			// sorry shubs idk how to make this code better
 			for (hud in strumHUD)
+			{
 				hud.zoom += 0.05;
+
+				hud.y -= 5;
+				FlxTween.tween(hud, {y: hud.y + 5}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+			}
+			strumHUD[0].x -= 10;
+			strumHUD[1].x += 10;
+			FlxTween.tween(strumHUD[0], {x: strumHUD[0].x + 10}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+			FlxTween.tween(strumHUD[1], {x: strumHUD[1].x - 10}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
 		}
 
 		uiHUD.beatHit();
