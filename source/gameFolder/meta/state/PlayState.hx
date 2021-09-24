@@ -196,6 +196,7 @@ class PlayState extends MusicBeatState
 
 		// cache ratings LOL
 		displayRating('sick', 'early', true);
+		popUpCombo(true);
 
 		stageBuild = new Stage(curStage);
 		add(stageBuild);
@@ -540,15 +541,12 @@ class PlayState extends MusicBeatState
 		}
 
 		// spawn in the notes from the array
-		if (unspawnNotes[0] != null)
+		if ((unspawnNotes[0] != null) && ((unspawnNotes[0].strumTime - Conductor.songPosition) < 3500))
 		{
-			if ((unspawnNotes[0].strumTime - Conductor.songPosition) < 3500)
-			{
-				var dunceNote:Note = unspawnNotes[0];
-				// push note to its correct strumline
-				strumLines.members[Math.floor((dunceNote.noteData + (dunceNote.mustPress ? 4 : 0)) / numberOfKeys)].push(dunceNote);
-				unspawnNotes.splice(unspawnNotes.indexOf(dunceNote), 1);
-			}
+			var dunceNote:Note = unspawnNotes[0];
+			// push note to its correct strumline
+			strumLines.members[Math.floor((dunceNote.noteData + (dunceNote.mustPress ? 4 : 0)) / numberOfKeys)].push(dunceNote);
+			unspawnNotes.splice(unspawnNotes.indexOf(dunceNote), 1);
 		}
 
 		noteCalls();
@@ -1068,7 +1066,7 @@ class PlayState extends MusicBeatState
 
 	private var createdColor = FlxColor.fromRGB(204, 66, 66);
 
-	function popUpCombo()
+	function popUpCombo(?preload:Bool = false)
 	{
 		var comboString:String = Std.string(combo);
 		var negative = false;
@@ -1078,9 +1076,19 @@ class PlayState extends MusicBeatState
 		for (scoreInt in 0...stringArray.length)
 		{
 			// numScore.loadGraphic(Paths.image('UI/' + pixelModifier + 'num' + stringArray[scoreInt]));
-			var numScore = ForeverAssets.generateCombo('numbers/num' + stringArray[scoreInt], assetModifier, changeableSkin, 'UI', negative, createdColor,
-				scoreInt);
+			var numScore = ForeverAssets.generateCombo('combo', stringArray[scoreInt], (!negative ? allSicks : false), assetModifier, changeableSkin, 'UI',
+				negative, createdColor, scoreInt);
 			add(numScore);
+			// hardcoded lmao
+			if (Init.trueSettings.get('SM-like Judgements'))
+			{
+				numScore.cameras = [camHUD];
+				numScore.x += 100;
+				numScore.y += 50;
+			}
+
+			if (preload)
+				numScore.visible = false;
 
 			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
 				onComplete: function(tween:FlxTween)
@@ -1108,13 +1116,13 @@ class PlayState extends MusicBeatState
 		misses++;
 
 		// display negative combo
-		popUpCombo();
 		if (popMiss)
 		{
 			// doesnt matter miss ratings dont have timings
 			displayRating("miss", 'late');
 			healthCall(Timings.judgementsMap.get("miss")[3]);
 		}
+		popUpCombo();
 
 		// gotta do it manually here lol
 		Timings.updateFCDisplay();

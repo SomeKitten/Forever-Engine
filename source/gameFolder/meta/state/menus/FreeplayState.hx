@@ -93,7 +93,7 @@ class FreeplayState extends MusicBeatState
 		}
 
 		// LOAD MUSIC
-		ForeverTools.resetMenuMusic();
+		// ForeverTools.resetMenuMusic();
 
 		#if !html5
 		Discord.changePresence('FREEPLAY MENU', 'Main Menu');
@@ -355,9 +355,7 @@ class FreeplayState extends MusicBeatState
 								curSongPlaying = curSelected;
 							}
 							else
-							{
 								trace("Nevermind, skipping " + index);
-							}
 						}
 						else
 							trace("Skipping " + index);
