@@ -112,7 +112,11 @@ class Init extends FlxState
 			0,
 			"Fixes the judgements to the camera instead of to the world itself, making them easier to read."
 		],
-		'Display Miss Count' => [false, 0, "When enabled, displays the amount of misses you have in a song."],
+		'Display Miss Count' => [
+			false,
+			0,
+			"When enabled, displays the amount of combo breaks you have in a song."
+		],
 	];
 
 	public static var trueSettings:Map<String, Dynamic> = [];
@@ -182,7 +186,7 @@ class Init extends FlxState
 		FlxG.mouse.useSystemCursor = true; // Use system cursor because it's prettier
 		FlxG.mouse.visible = false; // Hide mouse on start
 
-		// Main.switchState(this, new TestState());
+		// Main.switchState(this, new ChartingState());
 		gotoTitleScreen();
 	}
 

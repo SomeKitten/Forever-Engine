@@ -137,7 +137,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		{
 			scoreBar.text += ' // Accuracy: ' + Std.string(Math.floor(Timings.getAccuracy() * 100) / 100) + '%' + Timings.comboDisplay;
 			if (Init.trueSettings.get('Display Miss Count'))
-				scoreBar.text += ' // Misses: ' + Std.string(PlayState.misses);
+				scoreBar.text += ' // Combo Breaks: ' + Std.string(PlayState.misses);
 			scoreBar.text += ' // Rank: ' + Std.string(Timings.returnScoreRating().toUpperCase());
 		}
 
