@@ -1,5 +1,6 @@
 package gameFolder.meta.shaders;
 
+import flixel.math.FlxAngle;
 import flixel.system.FlxAssets.FlxShader;
 
 class PerspectiveHelper
@@ -17,7 +18,7 @@ class PerspectiveHelper
 	function set_rotX(value:Float):Float
 	{
 		rotX = value;
-		shader.rotX.value = [value];
+		shader.rotX.value = [value * FlxAngle.TO_RAD];
 
 		return value;
 	}
@@ -25,7 +26,7 @@ class PerspectiveHelper
 	function set_rotY(value:Float):Float
 	{
 		rotY = value;
-		shader.rotY.value = [value];
+		shader.rotY.value = [value * FlxAngle.TO_RAD];
 
 		return value;
 	}

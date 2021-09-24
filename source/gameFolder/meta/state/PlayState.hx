@@ -380,22 +380,22 @@ class PlayState extends MusicBeatState
 		{
 			if (FlxG.keys.pressed.P)
 			{
-				uEffects[i].rotX += 0.01;
+				uEffects[i].rotX += 1;
 			}
 
 			if (FlxG.keys.pressed.I)
 			{
-				uEffects[i].rotX -= 0.01;
+				uEffects[i].rotX -= 1;
 			}
 
 			if (FlxG.keys.pressed.U)
 			{
-				uEffects[i].rotY += 0.01;
+				uEffects[i].rotY += 1;
 			}
 
 			if (FlxG.keys.pressed.T)
 			{
-				uEffects[i].rotY -= 0.01;
+				uEffects[i].rotY -= 1;
 			}
 		}
 
@@ -1297,6 +1297,8 @@ class PlayState extends MusicBeatState
 			// sorry shubs idk how to make this code better
 			for (hud in strumHUD)
 			{
+				if (hud.zoom != 1)
+					hud.zoom = 1;
 				hud.zoom += 0.05;
 
 				hud.y -= 5;
