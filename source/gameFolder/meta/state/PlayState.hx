@@ -29,6 +29,7 @@ import gameFolder.meta.*;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Song.SwagSong;
+import gameFolder.meta.shaders.PerspectiveShader.PerspectiveHelper;
 import gameFolder.meta.state.charting.*;
 import gameFolder.meta.state.menus.*;
 import gameFolder.meta.subState.*;
@@ -105,6 +106,7 @@ class PlayState extends MusicBeatState
 	var lastReportedPlayheadPosition:Int = 0;
 	var songTime:Float = 0;
 
+	public static var uiRCam:FlxCamera;
 	public static var camHUD:FlxCamera;
 	public static var camGame:FlxCamera;
 
@@ -136,6 +138,9 @@ class PlayState extends MusicBeatState
 
 	public static var strumLines:FlxTypedGroup<Strumline>;
 	public static var strumHUD:Array<FlxCamera> = [];
+
+	// public var uEffect:PerspectiveHelper = new PerspectiveHelper();
+	public static var uEffects:Array<PerspectiveHelper> = [];
 
 	// at the beginning of the playstate
 	override public function create()
@@ -287,16 +292,16 @@ class PlayState extends MusicBeatState
 
 		//
 		var placement = (FlxG.width / 2);
-		dadStrums = new Strumline(placement - (FlxG.width / 4), this, dadOpponent, false, true, false, 4, Init.trueSettings.get('Downscroll'));
+		dadStrums = new Strumline(placement, this, dadOpponent, false, true, false, 4, Init.trueSettings.get('Downscroll'));
 		dadStrums.visible = !Init.trueSettings.get('Centered Notefield');
-		boyfriendStrums = new Strumline(placement + (!Init.trueSettings.get('Centered Notefield') ? (FlxG.width / 4) : 0), this, boyfriend, true, false, true,
-			4, Init.trueSettings.get('Downscroll'));
+		boyfriendStrums = new Strumline(placement, this, boyfriend, true, false, true, 4, Init.trueSettings.get('Downscroll'));
 
 		strumLines.add(dadStrums);
 		strumLines.add(boyfriendStrums);
 
 		// strumline camera setup
 		strumHUD = [];
+		uEffects = [];
 		for (i in 0...strumLines.length)
 		{
 			// generate a new strum camera
@@ -305,10 +310,35 @@ class PlayState extends MusicBeatState
 
 			strumHUD[i].cameras = [camHUD];
 			FlxG.cameras.add(strumHUD[i]);
+
+			// generate a new perspective shader
+			uEffects[i] = new PerspectiveHelper();
+
+			// set shaders
+			strumHUD[i].setFilters([new ShaderFilter(uEffects[i].shader)]);
 			// set this strumline's camera to the designated camera
 			strumLines.members[i].cameras = [strumHUD[i]];
 		}
 		add(strumLines);
+
+		// create the TRUE receptor camera
+		uiRCam = new FlxCamera();
+		uiRCam.bgColor.alpha = 0;
+		FlxG.cameras.add(uiRCam);
+
+		// set strumHUD cams to separate positions if not centered notefields
+		if (!Init.trueSettings.get('Centered Notefield'))
+		{
+			var truePlacement = placement - (FlxG.width / 4);
+			strumHUD[0].x -= truePlacement;
+			strumHUD[1].x += truePlacement;
+		}
+
+		// sets the receptor cameras to a separate camera
+		for (i in 0...strumLines.length)
+		{
+			strumHUD[i].cameras = [uiRCam];
+		}
 
 		uiHUD = new ClassHUD();
 		add(uiHUD);
@@ -359,6 +389,8 @@ class PlayState extends MusicBeatState
 	{
 		stageBuild.stageUpdateConstant(elapsed, boyfriend, gf, dadOpponent);
 
+		var pr = FlxG.keys.pressed;
+
 		super.update(elapsed);
 
 		FlxG.camera.followLerp = elapsed * 2;
@@ -378,6 +410,51 @@ class PlayState extends MusicBeatState
 			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 			updateRPC(true);
 		}
+
+		/*
+			for (i in 0...uEffects.length)
+			{
+				if (pr.P)
+				{
+					uEffects[i].rotX += 1;
+				}
+
+				if (pr.I)
+				{
+					uEffects[i].rotX -= 1;
+				}
+
+				if (pr.U)
+				{
+					uEffects[i].rotY += 1;
+				}
+
+				if (pr.T)
+				{
+					uEffects[i].rotY -= 1;
+				}
+
+				if (pr.Y)
+				{
+					uEffects[i].skewX += 1;
+				}
+
+				if (pr.R)
+				{
+					uEffects[i].skewX -= 1;
+				}
+
+				if (pr.E)
+				{
+					uEffects[i].skewY += 1;
+				}
+
+				if (pr.Q)
+				{
+					uEffects[i].skewY -= 1;
+				}
+			}
+		 */
 
 		// make sure you're not cheating lol
 		if (!isStoryMode)
@@ -1273,8 +1350,27 @@ class PlayState extends MusicBeatState
 		{
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.05;
+			// this code makes me الله لا يسامحكم لكونكم مشبوهين
+			// sorry shubs idk how to make this code better
 			for (hud in strumHUD)
+			{
+				if (hud.zoom != 1)
+					hud.zoom = 1;
 				hud.zoom += 0.05;
+
+				if (!Init.trueSettings.get('Centered Notefield'))
+				{
+					hud.y -= 5;
+					FlxTween.tween(hud, {y: hud.y + 5}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+				}
+			}
+			if (!Init.trueSettings.get('Centered Notefield'))
+			{
+				strumHUD[0].x -= 10;
+				strumHUD[1].x += 10;
+				FlxTween.tween(strumHUD[0], {x: strumHUD[0].x + 10}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+				FlxTween.tween(strumHUD[1], {x: strumHUD[1].x - 10}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+			}
 		}
 
 		uiHUD.beatHit();
@@ -1405,6 +1501,7 @@ class PlayState extends MusicBeatState
 				blackShit.scrollFactor.set();
 				add(blackShit);
 				camHUD.visible = false;
+				uiRCam.visible = false;
 
 				// oooo spooky
 				FlxG.sound.play(Paths.sound('Lights_Shut_off'));
@@ -1444,6 +1541,7 @@ class PlayState extends MusicBeatState
 				add(blackScreen);
 				blackScreen.scrollFactor.set();
 				camHUD.visible = false;
+				uiRCam.visible = false;
 
 				new FlxTimer().start(0.1, function(tmr:FlxTimer)
 				{
@@ -1457,6 +1555,7 @@ class PlayState extends MusicBeatState
 					new FlxTimer().start(0.8, function(tmr:FlxTimer)
 					{
 						camHUD.visible = true;
+						uiRCam.visible = true;
 						remove(blackScreen);
 						FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 2.5, {
 							ease: FlxEase.quadInOut,
