@@ -2,6 +2,7 @@ package gameFolder.meta.shaders;
 
 import flixel.math.FlxAngle;
 import flixel.system.FlxAssets.FlxShader;
+import openfl.display.GraphicsShader;
 
 class PerspectiveHelper
 {
@@ -13,16 +14,16 @@ class PerspectiveHelper
 
 	public function new()
 	{
-		shader.rotX.value = [0];
-		shader.rotY.value = [0];
-		shader.skewX.value = [0];
-		shader.skewY.value = [0];
+		shader.data.rotX.value = [0];
+		shader.data.rotY.value = [0];
+		shader.data.skewX.value = [0];
+		shader.data.skewY.value = [0];
 	}
 
 	function set_rotX(value:Float):Float
 	{
 		rotX = value;
-		shader.rotX.value = [value * FlxAngle.TO_RAD];
+		shader.data.rotX.value = [value * FlxAngle.TO_RAD];
 
 		return value;
 	}
@@ -30,7 +31,7 @@ class PerspectiveHelper
 	function set_rotY(value:Float):Float
 	{
 		rotY = value;
-		shader.rotY.value = [value * FlxAngle.TO_RAD];
+		shader.data.rotY.value = [value * FlxAngle.TO_RAD];
 
 		return value;
 	}
@@ -38,7 +39,7 @@ class PerspectiveHelper
 	function set_skewX(value:Float):Float
 	{
 		skewX = value;
-		shader.skewX.value = [value * FlxAngle.TO_RAD];
+		shader.data.skewX.value = [value * FlxAngle.TO_RAD];
 
 		return value;
 	}
@@ -46,15 +47,15 @@ class PerspectiveHelper
 	function set_skewY(value:Float):Float
 	{
 		skewY = value;
-		shader.skewY.value = [value * FlxAngle.TO_RAD];
+		shader.data.skewY.value = [value * FlxAngle.TO_RAD];
 
 		return value;
 	}
 }
 
-class PerspectiveShader extends FlxShader
+class PerspectiveShader extends GraphicsShader
 {
-	@:glFragmentSource('
+	var frag = '
         #pragma header
 
         uniform float rotX;
@@ -124,9 +125,10 @@ class PerspectiveShader extends FlxShader
             gl_FragColor = vec4(texture(bitmap, uv) + vec4(uv.x, uv.y, 0.0, 0.1) * 0.0);
             //gl_FragColor = vec4(uv.x, uv.y, 0.0, 1.0);
             }
-        }')
+        }';
+
 	public function new()
 	{
-		super();
+		super("", frag);
 	}
 }

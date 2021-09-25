@@ -384,9 +384,9 @@ class PlayState extends MusicBeatState
 		// Uncomment the code below to apply the effect
 
 		/*
-		var shader:GraphicsShader = new GraphicsShader("", File.getContent("./assets/shaders/vhs.frag"));
-		FlxG.camera.setFilters([new ShaderFilter(shader)]);
-		*/
+			var shader:GraphicsShader = new GraphicsShader("", File.getContent("./assets/shaders/vhs.frag"));
+			FlxG.camera.setFilters([new ShaderFilter(shader)]);
+		 */
 	}
 
 	var staticDisplace:Int = 0;
