@@ -8,11 +8,15 @@ class PerspectiveHelper
 	public var shader(default, null):PerspectiveShader = new PerspectiveShader();
 	public var rotX(default, set):Float = 0;
 	public var rotY(default, set):Float = 0;
+	public var skewX(default, set):Float = 0;
+	public var skewY(default, set):Float = 0;
 
 	public function new()
 	{
 		shader.rotX.value = [0];
 		shader.rotY.value = [0];
+		shader.skewX.value = [0];
+		shader.skewY.value = [0];
 	}
 
 	function set_rotX(value:Float):Float
@@ -30,6 +34,22 @@ class PerspectiveHelper
 
 		return value;
 	}
+
+	function set_skewX(value:Float):Float
+	{
+		skewX = value;
+		shader.skewX.value = [value * FlxAngle.TO_RAD];
+
+		return value;
+	}
+
+	function set_skewY(value:Float):Float
+	{
+		skewY = value;
+		shader.skewY.value = [value * FlxAngle.TO_RAD];
+
+		return value;
+	}
 }
 
 class PerspectiveShader extends FlxShader
@@ -39,6 +59,8 @@ class PerspectiveShader extends FlxShader
 
         uniform float rotX;
         uniform float rotY;
+        uniform float skewX;
+        uniform float skewY;
 
         float plane( in vec3 norm, in vec3 po, in vec3 ro, in vec3 rd ) {
             float de = dot(norm, rd);
@@ -66,10 +88,16 @@ class PerspectiveShader extends FlxShader
             
             //Find the plane hit point in space
             vec3 pos = (rayDirection * plane(normal, quadCenter, rayOrigin, rayDirection)) - quadCenter;
+
+            vec2 projectedUV = vec2(dot(pos, right) / dot(right, right), dot(pos, up)    / dot(up,    up)) + 0.5;
             
+            // set skew
+            projectedUV -= 0.5;
+            projectedUV *= mat2(1,skewX,skewY,1);
+            projectedUV += 0.5;
+
             //Find the texture UV by projecting the hit point along the plane dirs
-            return vec2(dot(pos, right) / dot(right, right),
-                        dot(pos, up)    / dot(up,    up)) + 0.5;
+            return projectedUV;
         }
 
         void main() {

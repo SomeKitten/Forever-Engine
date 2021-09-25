@@ -356,6 +356,8 @@ class PlayState extends MusicBeatState
 	{
 		stageBuild.stageUpdateConstant(elapsed, boyfriend, gf, dadOpponent);
 
+		var pr = FlxG.keys.pressed;
+
 		super.update(elapsed);
 
 		FlxG.camera.followLerp = elapsed * 2;
@@ -378,24 +380,44 @@ class PlayState extends MusicBeatState
 
 		for (i in 0...uEffects.length)
 		{
-			if (FlxG.keys.pressed.P)
+			if (pr.P)
 			{
 				uEffects[i].rotX += 1;
 			}
 
-			if (FlxG.keys.pressed.I)
+			if (pr.I)
 			{
 				uEffects[i].rotX -= 1;
 			}
 
-			if (FlxG.keys.pressed.U)
+			if (pr.U)
 			{
 				uEffects[i].rotY += 1;
 			}
 
-			if (FlxG.keys.pressed.T)
+			if (pr.T)
 			{
 				uEffects[i].rotY -= 1;
+			}
+
+			if (pr.Y)
+			{
+				uEffects[i].skewX += 1;
+			}
+
+			if (pr.R)
+			{
+				uEffects[i].skewX -= 1;
+			}
+
+			if (pr.E)
+			{
+				uEffects[i].skewY += 1;
+			}
+
+			if (pr.Q)
+			{
+				uEffects[i].skewY -= 1;
 			}
 		}
 
