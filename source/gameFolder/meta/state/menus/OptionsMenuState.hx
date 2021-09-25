@@ -458,21 +458,17 @@ class OptionsMenuState extends MusicBeatState
 	{
 		var fps = selector.fpsCap;
 		var bgdark = selector.darkBG;
-		if (!fps && !bgdark)
+		if (fps)
 		{
-			// get the current option as a number
-			var storedNumber:Int = 0;
-			for (curOption in 0...selector.options.length)
-			{
-				if (selector.options[curOption] == selector.optionChosen.text)
-					storedNumber = curOption;
-			}
-
-			var newSelection = storedNumber + updateBy;
-			if (newSelection < 0)
-				newSelection = selector.options.length - 1;
-			else if (newSelection >= selector.options.length)
-				newSelection = 0;
+			// bro I dont even know if the engine works in html5 why am I even doing this
+			// lazily hardcoded fps cap
+			var originalFPS = Init.trueSettings.get(activeSubgroup.members[curSelection].text);
+			var increase = 15 * updateBy;
+			if (originalFPS + increase < 30)
+				increase = 0;
+			// high fps cap
+			if (originalFPS + increase > 360)
+				increase = 0;
 
 			if (updateBy == -1)
 				selector.selectorPlay('left', 'press');
@@ -481,10 +477,10 @@ class OptionsMenuState extends MusicBeatState
 
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 
-			selector.chosenOptionString = selector.options[newSelection];
-			selector.optionChosen.text = selector.chosenOptionString;
-
-			Init.trueSettings.set(activeSubgroup.members[curSelection].text, selector.chosenOptionString);
+			originalFPS += increase;
+			selector.chosenOptionString = Std.string(originalFPS);
+			selector.optionChosen.text = Std.string(originalFPS);
+			Init.trueSettings.set(activeSubgroup.members[curSelection].text, originalFPS);
 			Init.saveSettings();
 		}
 		else if (bgdark)
@@ -511,16 +507,21 @@ class OptionsMenuState extends MusicBeatState
 			Init.trueSettings.set(activeSubgroup.members[curSelection].text, originaldark);
 			Init.saveSettings();
 		}
-		else
-		{ // bro I dont even know if the engine works in html5 why am I even doing this
-			// lazily hardcoded fps cap
-			var originalFPS = Init.trueSettings.get(activeSubgroup.members[curSelection].text);
-			var increase = 15 * updateBy;
-			if (originalFPS + increase < 30)
-				increase = 0;
-			// high fps cap
-			if (originalFPS + increase > 360)
-				increase = 0;
+		else if (!fps && !bgdark)
+		{ 
+			// get the current option as a number
+			var storedNumber:Int = 0;
+			for (curOption in 0...selector.options.length)
+			{
+				if (selector.options[curOption] == selector.optionChosen.text)
+					storedNumber = curOption;
+			}
+
+			var newSelection = storedNumber + updateBy;
+			if (newSelection < 0)
+				newSelection = selector.options.length - 1;
+			else if (newSelection >= selector.options.length)
+				newSelection = 0;
 
 			if (updateBy == -1)
 				selector.selectorPlay('left', 'press');
@@ -529,10 +530,10 @@ class OptionsMenuState extends MusicBeatState
 
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 
-			originalFPS += increase;
-			selector.chosenOptionString = Std.string(originalFPS);
-			selector.optionChosen.text = Std.string(originalFPS);
-			Init.trueSettings.set(activeSubgroup.members[curSelection].text, originalFPS);
+			selector.chosenOptionString = selector.options[newSelection];
+			selector.optionChosen.text = selector.chosenOptionString;
+
+			Init.trueSettings.set(activeSubgroup.members[curSelection].text, selector.chosenOptionString);
 			Init.saveSettings();
 		}
 	}

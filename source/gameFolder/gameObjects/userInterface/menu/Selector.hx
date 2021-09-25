@@ -27,6 +27,7 @@ class Selector extends FlxTypedSpriteGroup<FlxSprite>
 		super(x, y);
 
 		this.options = options;
+		trace(options);
 
 		// oops magic numbers
 		var shiftX = 48;
@@ -52,19 +53,15 @@ class Selector extends FlxTypedSpriteGroup<FlxSprite>
 		#end
 
 		chosenOptionString = Init.trueSettings.get(word);
-		if (fpsCap)
+		if (fpsCap || darkBG)
 		{
 			chosenOptionString = Std.string(Init.trueSettings.get(word));
-			optionChosen = new Alphabet(FlxG.width / 2 + ((fpsCap) ? 200 : 0), shiftY + 20, chosenOptionString, ((fpsCap) ? false : true), false);
-			add(optionChosen);
-			// This is weird...
+			optionChosen = new Alphabet(FlxG.width / 2 + 200, shiftY + 20, chosenOptionString, false, false);
 		}
-		else if (darkBG)
-		{
-			chosenOptionString = Std.string(Init.trueSettings.get(word));
-			optionChosen = new Alphabet(FlxG.width / 2 + ((darkBG) ? 200 : 0), shiftY + 20, chosenOptionString, ((darkBG) ? false : true), false);
-			add(optionChosen);
-		}
+		else
+			optionChosen = new Alphabet(FlxG.width / 2, shiftY + 20, chosenOptionString, true, false);
+
+		add(optionChosen);
 	}
 
 	public function createSelector(objectX:Float = 0, objectY:Float = 0, word:String, dir:String):FNFSprite
