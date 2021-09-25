@@ -1323,13 +1323,19 @@ class PlayState extends MusicBeatState
 					hud.zoom = 1;
 				hud.zoom += 0.05;
 
-				hud.y -= 5;
-				FlxTween.tween(hud, {y: hud.y + 5}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+				if (!Init.trueSettings.get('Centered Notefield'))
+				{
+					hud.y -= 5;
+					FlxTween.tween(hud, {y: hud.y + 5}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+				}
 			}
-			strumHUD[0].x -= 10;
-			strumHUD[1].x += 10;
-			FlxTween.tween(strumHUD[0], {x: strumHUD[0].x + 10}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
-			FlxTween.tween(strumHUD[1], {x: strumHUD[1].x - 10}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+			if (!Init.trueSettings.get('Centered Notefield'))
+			{
+				strumHUD[0].x -= 10;
+				strumHUD[1].x += 10;
+				FlxTween.tween(strumHUD[0], {x: strumHUD[0].x + 10}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+				FlxTween.tween(strumHUD[1], {x: strumHUD[1].x - 10}, 0.75 * (FlxG.updateFramerate / 60), {ease: FlxEase.sineOut});
+			}
 		}
 
 		uiHUD.beatHit();
