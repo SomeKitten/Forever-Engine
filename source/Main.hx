@@ -68,7 +68,7 @@ class Main extends Sprite
 	public static var mainClassState:Class<FlxState> = Init; // Determine the main class state of the game
 	public static var framerate:Int = 120; // How many frames per second the game should run at.
 
-	public static var gameVersion:String = '0.2.4';
+	public static var gameVersion:String = '0.2.4.1';
 
 	public static var loadedAssets:Array<FlxBasic> = [];
 

@@ -137,6 +137,8 @@ class PlayState extends MusicBeatState
 	public static var strumLines:FlxTypedGroup<Strumline>;
 	public static var strumHUD:Array<FlxCamera> = [];
 
+	private var allUIs:Array<FlxCamera> = [];
+
 	// at the beginning of the playstate
 	override public function create()
 	{
@@ -170,6 +172,7 @@ class PlayState extends MusicBeatState
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD);
+		allUIs.push(camHUD);
 		FlxCamera.defaultCameras = [camGame];
 
 		// default song
@@ -310,6 +313,7 @@ class PlayState extends MusicBeatState
 			strumHUD[i].bgColor.alpha = 0;
 
 			strumHUD[i].cameras = [camHUD];
+			allUIs.push(strumHUD[i]);
 			FlxG.cameras.add(strumHUD[i]);
 			// set this strumline's camera to the designated camera
 			strumLines.members[i].cameras = [strumHUD[i]];
@@ -502,14 +506,12 @@ class PlayState extends MusicBeatState
 		var easeLerp = 0.95;
 		// camera stuffs
 		FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom + forceZoom[0], FlxG.camera.zoom, easeLerp);
-		camHUD.zoom = FlxMath.lerp(1 + forceZoom[1], camHUD.zoom, easeLerp);
-		for (hud in strumHUD)
+		for (hud in allUIs)
 			hud.zoom = FlxMath.lerp(1 + forceZoom[1], hud.zoom, easeLerp);
 
 		// not even forcezoom anymore but still
 		FlxG.camera.angle = FlxMath.lerp(0 + forceZoom[2], FlxG.camera.angle, easeLerp);
-		camHUD.angle = FlxMath.lerp(0 + forceZoom[3], camHUD.angle, easeLerp);
-		for (hud in strumHUD)
+		for (hud in allUIs)
 			hud.angle = FlxMath.lerp(0 + forceZoom[3], hud.angle, easeLerp);
 
 		if (health <= 0 && startedCountdown)
@@ -1590,6 +1592,8 @@ class PlayState extends MusicBeatState
 	override function add(Object:FlxBasic):FlxBasic
 	{
 		Main.loadedAssets.insert(Main.loadedAssets.length, Object);
+		if (Init.trueSettings.get('Disable Antialiasing') && Std.isOfType(Object, FlxSprite))
+			cast(Object, FlxSprite).antialiasing = false;
 		return super.add(Object);
 	}
 }

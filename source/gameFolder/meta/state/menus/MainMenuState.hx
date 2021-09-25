@@ -59,7 +59,7 @@ class MainMenuState extends MusicBeatState
 		bg.setGraphicSize(Std.int(bg.width * 1.1));
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		bg.antialiasing = true;
 		add(bg);
 
 		magenta = new FlxSprite(-85).loadGraphic(Paths.image('menus/base/menuDesat'));
@@ -69,7 +69,7 @@ class MainMenuState extends MusicBeatState
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
-		magenta.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		magenta.antialiasing = true;
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 
@@ -109,7 +109,7 @@ class MainMenuState extends MusicBeatState
 			// actually add the item
 			menuItems.add(menuItem);
 			menuItem.scrollFactor.set();
-			menuItem.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+			menuItem.antialiasing = true;
 			menuItem.updateHitbox();
 
 			/*

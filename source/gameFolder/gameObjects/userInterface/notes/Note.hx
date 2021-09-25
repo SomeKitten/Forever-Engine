@@ -142,7 +142,7 @@ class Note extends FNFSprite
 				newNote.animation.addByPrefix('bluehold', 'blue hold piece');
 				newNote.setGraphicSize(Std.int(newNote.width * 0.7));
 				newNote.updateHitbox();
-				newNote.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				newNote.antialiasing = true;
 		}
 		//
 		if (!isSustainNote)
@@ -243,7 +243,7 @@ class Note extends FNFSprite
 				{
 					newNote.setGraphicSize(Std.int(newNote.width * 0.7));
 					newNote.updateHitbox();
-					newNote.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+					newNote.antialiasing = true;
 				}
 		}
 

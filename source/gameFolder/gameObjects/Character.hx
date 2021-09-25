@@ -32,12 +32,16 @@ class Character extends FNFSprite
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
 		super(x, y);
-
-		curCharacter = character;
 		this.isPlayer = isPlayer;
 
+		setCharacter(character);
+	}
+
+	function setCharacter(character:String)
+	{
+		curCharacter = character;
 		var tex:FlxAtlasFrames;
-		antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		antialiasing = true;
 
 		switch (curCharacter)
 		{

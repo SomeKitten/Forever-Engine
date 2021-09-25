@@ -102,7 +102,7 @@ class StoryMenuState extends MusicBeatState
 			grpWeekText.add(weekThing);
 
 			weekThing.screenCenter(X);
-			weekThing.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+			weekThing.antialiasing = true;
 			// weekThing.updateHitbox();
 
 			// Needs an offset thingie
@@ -113,7 +113,7 @@ class StoryMenuState extends MusicBeatState
 				lock.animation.addByPrefix('lock', 'lock');
 				lock.animation.play('lock');
 				lock.ID = i;
-				lock.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				lock.antialiasing = true;
 				grpLocks.add(lock);
 			}
 		}
@@ -123,7 +123,7 @@ class StoryMenuState extends MusicBeatState
 		for (char in 0...3)
 		{
 			var weekCharacterThing:MenuCharacter = new MenuCharacter((FlxG.width * 0.25) * (1 + char) - 150, weekCharacters[curWeek][char]);
-			weekCharacterThing.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+			weekCharacterThing.antialiasing = true;
 			switch (weekCharacterThing.character)
 			{
 				case 'dad':

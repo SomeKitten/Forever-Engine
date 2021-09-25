@@ -22,7 +22,7 @@ class HealthIcon extends FlxSprite
 			char = char.substring(0, char.indexOf('-'));
 		}
 
-		antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		antialiasing = true;
 		loadGraphic(Paths.image('icons/icon-' + char), true, 150, 150);
 		animation.add('icon', [0, 1], 0, false, isPlayer);
 		animation.play('icon');

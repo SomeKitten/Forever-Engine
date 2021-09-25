@@ -123,7 +123,7 @@ class OptionsMenuState extends MusicBeatState
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.color = 0xCE64DF;
-		bg.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		bg.antialiasing = true;
 		add(bg);
 
 		infoText = new FlxText(5, FlxG.height - 24, 0, "", 32);

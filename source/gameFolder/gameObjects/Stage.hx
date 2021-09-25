@@ -97,7 +97,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				halloweenBG.animation.addByPrefix('idle', 'halloweem bg0');
 				halloweenBG.animation.addByPrefix('lightning', 'halloweem bg lightning strike', 24, false);
 				halloweenBG.animation.play('idle');
-				halloweenBG.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				halloweenBG.antialiasing = true;
 				add(halloweenBG);
 
 			// isHalloween = true;
@@ -124,7 +124,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 					light.visible = false;
 					light.setGraphicSize(Std.int(light.width * 0.85));
 					light.updateHitbox();
-					light.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+					light.antialiasing = true;
 					phillyCityLights.add(light);
 				}
 
@@ -182,7 +182,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				limo.frames = limoTex;
 				limo.animation.addByPrefix('drive', "Limo stage", 24);
 				limo.animation.play('drive');
-				limo.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				limo.antialiasing = true;
 
 				fastCar = new FNFSprite(-300, 160).loadGraphic(Paths.image('backgrounds/' + curStage + '/fastCarLol'));
 			// loadArray.add(limo);
@@ -191,7 +191,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				PlayState.defaultCamZoom = 0.80;
 
 				var bg:FNFSprite = new FNFSprite(-1000, -500).loadGraphic(Paths.image('backgrounds/' + curStage + '/bgWalls'));
-				bg.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				bg.antialiasing = true;
 				bg.scrollFactor.set(0.2, 0.2);
 				bg.active = false;
 				bg.setGraphicSize(Std.int(bg.width * 0.8));
@@ -201,14 +201,14 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				upperBoppers = new FNFSprite(-240, -90);
 				upperBoppers.frames = Paths.getSparrowAtlas('backgrounds/' + curStage + '/upperBop');
 				upperBoppers.animation.addByPrefix('bop', "Upper Crowd Bob", 24, false);
-				upperBoppers.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				upperBoppers.antialiasing = true;
 				upperBoppers.scrollFactor.set(0.33, 0.33);
 				upperBoppers.setGraphicSize(Std.int(upperBoppers.width * 0.85));
 				upperBoppers.updateHitbox();
 				add(upperBoppers);
 
 				var bgEscalator:FNFSprite = new FNFSprite(-1100, -600).loadGraphic(Paths.image('backgrounds/' + curStage + '/bgEscalator'));
-				bgEscalator.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				bgEscalator.antialiasing = true;
 				bgEscalator.scrollFactor.set(0.3, 0.3);
 				bgEscalator.active = false;
 				bgEscalator.setGraphicSize(Std.int(bgEscalator.width * 0.9));
@@ -216,14 +216,14 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				add(bgEscalator);
 
 				var tree:FNFSprite = new FNFSprite(370, -250).loadGraphic(Paths.image('backgrounds/' + curStage + '/christmasTree'));
-				tree.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				tree.antialiasing = true;
 				tree.scrollFactor.set(0.40, 0.40);
 				add(tree);
 
 				bottomBoppers = new FNFSprite(-300, 140);
 				bottomBoppers.frames = Paths.getSparrowAtlas('backgrounds/' + curStage + '/bottomBop');
 				bottomBoppers.animation.addByPrefix('bop', 'Bottom Level Boppers', 24, false);
-				bottomBoppers.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				bottomBoppers.antialiasing = true;
 				bottomBoppers.scrollFactor.set(0.9, 0.9);
 				bottomBoppers.setGraphicSize(Std.int(bottomBoppers.width * 1));
 				bottomBoppers.updateHitbox();
@@ -231,18 +231,18 @@ class Stage extends FlxTypedGroup<FlxBasic>
 
 				var fgSnow:FNFSprite = new FNFSprite(-600, 700).loadGraphic(Paths.image('backgrounds/' + curStage + '/fgSnow'));
 				fgSnow.active = false;
-				fgSnow.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				fgSnow.antialiasing = true;
 				add(fgSnow);
 
 				santa = new FNFSprite(-840, 150);
 				santa.frames = Paths.getSparrowAtlas('backgrounds/' + curStage + '/santa');
 				santa.animation.addByPrefix('idle', 'santa idle in fear', 24, false);
-				santa.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				santa.antialiasing = true;
 				add(santa);
 			case 'mallEvil':
 				curStage = 'mallEvil';
 				var bg:FNFSprite = new FNFSprite(-400, -500).loadGraphic(Paths.image('backgrounds/mall/evilBG'));
-				bg.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				bg.antialiasing = true;
 				bg.scrollFactor.set(0.2, 0.2);
 				bg.active = false;
 				bg.setGraphicSize(Std.int(bg.width * 0.8));
@@ -250,12 +250,12 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				add(bg);
 
 				var evilTree:FNFSprite = new FNFSprite(300, -300).loadGraphic(Paths.image('backgrounds/mall/evilTree'));
-				evilTree.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				evilTree.antialiasing = true;
 				evilTree.scrollFactor.set(0.2, 0.2);
 				add(evilTree);
 
 				var evilSnow:FNFSprite = new FNFSprite(-200, 700).loadGraphic(Paths.image("backgrounds/mall/evilSnow"));
-				evilSnow.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				evilSnow.antialiasing = true;
 				add(evilSnow);
 			case 'school':
 				curStage = 'school';
@@ -335,7 +335,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				PlayState.defaultCamZoom = 0.9;
 				curStage = 'stage';
 				var bg:FNFSprite = new FNFSprite(-600, -200).loadGraphic(Paths.image('backgrounds/' + curStage + '/stageback'));
-				bg.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				bg.antialiasing = true;
 				bg.scrollFactor.set(0.9, 0.9);
 				bg.active = false;
 
@@ -345,7 +345,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				var stageFront:FNFSprite = new FNFSprite(-650, 600).loadGraphic(Paths.image('backgrounds/' + curStage + '/stagefront'));
 				stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
 				stageFront.updateHitbox();
-				stageFront.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				stageFront.antialiasing = true;
 				stageFront.scrollFactor.set(0.9, 0.9);
 				stageFront.active = false;
 
@@ -355,7 +355,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 				var stageCurtains:FNFSprite = new FNFSprite(-500, -300).loadGraphic(Paths.image('backgrounds/' + curStage + '/stagecurtains'));
 				stageCurtains.setGraphicSize(Std.int(stageCurtains.width * 0.9));
 				stageCurtains.updateHitbox();
-				stageCurtains.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+				stageCurtains.antialiasing = true;
 				stageCurtains.scrollFactor.set(1.3, 1.3);
 				stageCurtains.active = false;
 
@@ -601,6 +601,8 @@ class Stage extends FlxTypedGroup<FlxBasic>
 	override function add(Object:FlxBasic):FlxBasic
 	{
 		Main.loadedAssets.insert(Main.loadedAssets.length, Object);
+		if (Init.trueSettings.get('Disable Antialiasing') && Std.isOfType(Object, FlxSprite))
+			cast(Object, FlxSprite).antialiasing = false;
 		return super.add(Object);
 	}
 }
