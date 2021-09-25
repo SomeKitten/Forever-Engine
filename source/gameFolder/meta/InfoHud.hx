@@ -1,7 +1,6 @@
 package gameFolder.meta;
 
 // import Main;
-import flixel.FlxG;
 import haxe.Timer;
 import openfl.events.Event;
 import openfl.system.System;
@@ -82,10 +81,7 @@ class InfoHud extends TextField
 		text = "";
 		if (displayFps)
 		{
-			if (Math.isNaN(FlxG.updateFramerate))
-				currentFPS = Math.round((times.length + cacheCount) / 2);
-			else
-				currentFPS = FlxG.updateFramerate;
+			currentFPS = Math.round((times.length + cacheCount) / 2);
 			text += "FPS: " + currentFPS + "\n";
 			cacheCount = times.length;
 		}
