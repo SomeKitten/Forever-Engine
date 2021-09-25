@@ -257,6 +257,12 @@ class PlayState extends MusicBeatState
 		// set song position before beginning
 		Conductor.songPosition = -(Conductor.crochet * 4);
 
+		// darken everything but the arrows and ui via a flxsprite
+		var darknessBG:FlxSprite = new FlxSprite(FlxG.width * -0.5, FlxG.height * -0.5).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
+		darknessBG.alpha = Init.trueSettings.get('Stage Darkness') * 0.01;
+		darknessBG.scrollFactor.set(0, 0);
+		add(darknessBG);
+
 		// strum setup
 		strumLines = new FlxTypedGroup<Strumline>();
 
@@ -269,7 +275,7 @@ class PlayState extends MusicBeatState
 		// create the game camera
 		camFollow = new FlxObject(0, 0, 1, 1);
 		camFollow.setPosition(camPos.x, camPos.y);
-		// check if the camera was following someone previouslyw
+		// check if the camera was following someone previously
 		if (prevCamFollow != null)
 		{
 			camFollow = prevCamFollow;

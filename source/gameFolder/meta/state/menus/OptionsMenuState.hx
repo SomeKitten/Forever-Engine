@@ -43,6 +43,8 @@ class OptionsMenuState extends MusicBeatState
 			If you plug in a value, the script will run when the option is hovered over.
 		 */
 
+		// NOTE : Make sure to check Init.hx if you are trying to add options.
+
 		#if !html5
 		Discord.changePresence('OPTIONS MENU', 'Main Menu');
 		#end
@@ -91,6 +93,7 @@ class OptionsMenuState extends MusicBeatState
 					['Accessibility Settings', null],
 					['', null],
 					['Filter', getFromOption],
+					["Stage Darkness", getFromOption],
 					['Reduced Movements', getFromOption],
 					// this shouldn't be get from option, just testing
 					['', null],
@@ -387,7 +390,7 @@ class OptionsMenuState extends MusicBeatState
 					case 1:
 						// selector
 						var selector:Selector = new Selector(10, letter.y, letter.text, Init.gameSettings.get(letter.text)[4],
-							(letter.text == 'Framerate Cap') ? true : false);
+							(letter.text == 'Framerate Cap') ? true : false, (letter.text == 'Stage Darkness') ? true : false);
 
 						extrasMap.set(letter, selector);
 					default:
@@ -454,7 +457,8 @@ class OptionsMenuState extends MusicBeatState
 	function updateSelector(selector:Selector, updateBy:Int)
 	{
 		var fps = selector.fpsCap;
-		if (!fps)
+		var bgdark = selector.darkBG;
+		if (!fps && !bgdark)
 		{
 			// get the current option as a number
 			var storedNumber:Int = 0;
@@ -481,6 +485,30 @@ class OptionsMenuState extends MusicBeatState
 			selector.optionChosen.text = selector.chosenOptionString;
 
 			Init.trueSettings.set(activeSubgroup.members[curSelection].text, selector.chosenOptionString);
+			Init.saveSettings();
+		}
+		else if (bgdark)
+		{
+			// lazily hardcoded darkness cap
+			var originaldark = Init.trueSettings.get(activeSubgroup.members[curSelection].text);
+			var increase = 5 * updateBy;
+			if (originaldark + increase < 0)
+				increase = 0;
+			// high darkness cap
+			if (originaldark + increase > 100)
+				increase = 0;
+
+			if (updateBy == -1)
+				selector.selectorPlay('left', 'press');
+			else
+				selector.selectorPlay('right', 'press');
+
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+
+			originaldark += increase;
+			selector.chosenOptionString = Std.string(originaldark);
+			selector.optionChosen.text = Std.string(originaldark);
+			Init.trueSettings.set(activeSubgroup.members[curSelection].text, originaldark);
 			Init.saveSettings();
 		}
 		else

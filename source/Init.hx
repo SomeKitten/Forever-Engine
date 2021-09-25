@@ -55,6 +55,12 @@ class Init extends FlxState
 			'Whether to reduce movements, like icons bouncing or beat zooms in gameplay.',
 			NOT_FORCED
 		],
+		'Stage Darkness' => [
+			0,
+			1,
+			'Darkens non-ui elements, useful if you find the characters and backgrounds distracting.',
+			NOT_FORCED
+		],
 		'Display Accuracy' => [true, 0, 'Whether to display your accuracy on screen.', NOT_FORCED],
 		'Disable Antialiasing' => [
 			false,
@@ -222,6 +228,11 @@ class Init extends FlxState
 			|| trueSettings.get("Framerate Cap") < 30
 			|| trueSettings.get("Framerate Cap") > 360)
 			trueSettings.set("Framerate Cap", 30);
+
+		if (!Std.isOfType(trueSettings.get("Stage Darkness"), Int)
+			|| trueSettings.get("Stage Darkness") < 0
+			|| trueSettings.get("Stage Darkness") > 100)
+			trueSettings.set("Stage Darkness", 0);
 
 		// 'hardcoded' ui skins
 		gameSettings.get("UI Skin")[4] = CoolUtil.returnAssetsLibrary('UI');
