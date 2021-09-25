@@ -378,48 +378,50 @@ class PlayState extends MusicBeatState
 			updateRPC(true);
 		}
 
-		for (i in 0...uEffects.length)
-		{
-			if (pr.P)
+		/*
+			for (i in 0...uEffects.length)
 			{
-				uEffects[i].rotX += 1;
-			}
+				if (pr.P)
+				{
+					uEffects[i].rotX += 1;
+				}
 
-			if (pr.I)
-			{
-				uEffects[i].rotX -= 1;
-			}
+				if (pr.I)
+				{
+					uEffects[i].rotX -= 1;
+				}
 
-			if (pr.U)
-			{
-				uEffects[i].rotY += 1;
-			}
+				if (pr.U)
+				{
+					uEffects[i].rotY += 1;
+				}
 
-			if (pr.T)
-			{
-				uEffects[i].rotY -= 1;
-			}
+				if (pr.T)
+				{
+					uEffects[i].rotY -= 1;
+				}
 
-			if (pr.Y)
-			{
-				uEffects[i].skewX += 1;
-			}
+				if (pr.Y)
+				{
+					uEffects[i].skewX += 1;
+				}
 
-			if (pr.R)
-			{
-				uEffects[i].skewX -= 1;
-			}
+				if (pr.R)
+				{
+					uEffects[i].skewX -= 1;
+				}
 
-			if (pr.E)
-			{
-				uEffects[i].skewY += 1;
-			}
+				if (pr.E)
+				{
+					uEffects[i].skewY += 1;
+				}
 
-			if (pr.Q)
-			{
-				uEffects[i].skewY -= 1;
+				if (pr.Q)
+				{
+					uEffects[i].skewY -= 1;
+				}
 			}
-		}
+		 */
 
 		// make sure you're not cheating lol
 		if (!isStoryMode)
