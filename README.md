@@ -42,19 +42,18 @@ I don't care how big this section gets over time, I will actually keep expanding
 
 [Yoshubs](https://github.com/Yoshubs) - made the engine. she just so happens to be very fucking stupid for accidentally pushing the martian mixtape source code into forever engine's base github page
 
+[Pixloen](https://github.com/PixlJacket) - made a lot of the custom assets that forever engine uses, he also gave me a lot of general advice on how to improve the engine as well as his input on both how to improve upon the base game and how the input system felt and such. ALSO PROGRAMMED SIMPLY JUDGEMENTS AND BACKGROUND DARKEN, He basically co-owns the engine lmao
 
-[Pixloen](https://github.com/PixlJacket) - made a lot of the custom assets that forever engine uses, he also gave me a lot of general advice on how to improve the engine as well as his input on both how to improve upon the base game and how the input system felt and such. He basically co-owns the engine lmao
+[Gedehari](https://github.com/gedehari) - BANGER ASS PROGRAMMER, made the freeplay loading thread to avoid lag issues in freeplay, waveform render code (which will be used soon), freaking EXTERNAL SHADER SUPPORT for modcharts when they're a thing and so many other things like the crashlogger. I urge you to check out his project, [Izzy Engine](https://github.com/gedehari/IzzyEngine), which he let me borrow a lot of aspects from which I still owe him for lmao. AWESOME dude I can't stress this enough
 
-[Gedehari](https://github.com/gedehari) - Amazing dude who I just met a couple of days ago, but he knows what he's doing so well and it feels like we're good friends despite only having known each other for a couple of weeks. He helped with a lot of the code for streamlining things like the Freeplay Menu as well as explaining things like the note quants (with pixl). A lot of my most recent code is heavily based on his project, [Izzy Engine](https://github.com/gedehari/IzzyEngine), which he let me borrow a lot of aspects from which I still owe him for lmao. He's also helping with waveforms for the chart editor!
+[ImCodist](https://github.com/ImCodist) - helped with a couple of pull requests and issue fixes, ALSO MADE THE WHOLE ASS FREAKING DIALOGUE SYSTEM, but, I'm not gonna give him any credit at all, because he stole my obsidian soul in minecraft and I will never forgive him for that!!!!
 
 [Scarlett](https://github.com/SomeKitten) - Overall cool friend of mine who knows a lot about programming and math that has helped me out countless times, still going here helping me with pushes, commits, etc. She wrote the finalised math formula for the note quants and fixed the song name issue.
 
 [Oneilr](https://oneilr.newgrounds.com/) - Cool Guy Oneilr, made some of the custom assets, mostly the animated ones like the custom note splashes to avoid the week 7 embargo as well as some other things like the checkmarks in the options menu.
 
-[ImCodist](https://github.com/ImCodist) - helped with a couple of pull requests and issue fixes, but, I'm not gonna give him any credit at all, because he stole my obsidian soul in minecraft and I will never forgive him for that!!!!
-
 [HelloSammu](https://github.com/hellosammu) - weird catgirl programmer, they scare me
-CREDITED MAINTENANCE AND SOME MISC FIXES
+CREDITED MAINTENANCE AND SOME MISC FIXES, also scaleable text for dialogue functions
 
 [ninjamuffin99](https://ninjamuffin99.newgrounds.com/) - HE MADE THE BASE GAME SO LIKE WITHOUT HIM THIS WOULD NOT BE POSSIBLE GO CHECK HIM OUT RIGHT NOW
 
@@ -63,11 +62,11 @@ rest of the rise n' skate team - that mod is the reason im even making an engine
 ----------------------------------------------
 SHOUTOUTS
 ----------------------------------------------
-[Fl0pD00dle](https://fl0pd00dle.newgrounds.com/) - Is making some custom assets in the future, is a really cool and underrated guy who's awesome to talk to and I hope he feels better soon. WHEN THEY'RE IMPLEMENTED HE'LL GET BUMPED TO CONTRIBUTOR
+[Fl0pD00dle](https://fl0pd00dle.newgrounds.com/) - Is making some custom assets in the future, is a really cool and underrated guy who's awesome to talk to. WHEN THEY'RE IMPLEMENTED HE'LL GET BUMPED TO CONTRIBUTOR (WORKING ON IT LOL)
 
 [HThagomizer](https://github.com/HThagomizer) - not MURDERING ME for accidentally pushing the martian mixtape source code
 
-[Tsuraran](https://twitter.com/_Tsuraran) - DOPE ASS CUSTOM MENU MUSIC INCOMING, also made vs skipper with clockwerk which is fucking hilarious ALSO YEAH I'LL BUMP AS WELL AFTER ITS IN THE ENGINE
+[Tsuraran](https://twitter.com/_Tsuraran) - DOPE ASS CUSTOM MENU MUSIC INCOMING, also made vs skipper with clockwerk which is fucking hilarious ALSO YEAH I'LL BUMP AS WELL AFTER ITS IN THE ENGINE (YES IM WORKING ON IT TOO LMAO)
 
 [Clockwerk](https://twitter.com/ClockwerkSmurf) - also made vs skipper, oh my god what were you guys thinking
 
