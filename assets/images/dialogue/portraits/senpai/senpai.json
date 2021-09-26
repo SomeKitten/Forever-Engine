@@ -1,0 +1,16 @@
+{
+    "name": "senpai",
+    "expressions": {
+        "normal": "Senpai Portrait Enter",
+        "mad": "SENPAI ANGRY IMPACT SPEECH"
+    },
+    "position": [420, 370],
+    "scale": 5.4,
+    "flipX": true,
+    "antialiasing": false,
+    "loop": false,
+
+    "sounds": ["pixelText"],
+    "soundChance": 100,
+    "soundPath": "sounds/"
+}

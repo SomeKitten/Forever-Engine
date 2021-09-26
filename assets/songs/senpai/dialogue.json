@@ -1,0 +1,18 @@
+{
+    "box": "dialogueBox-pixel",
+    "boxState": "normal",
+    "dialogue": [
+        {
+            "portrait": "senpai",
+            "expression": "normal",
+            "text": "Ah, a new fair maiden has come in search of true love!"
+        },
+        {
+            "text": "A serenade between gentlemen shall decide where her beautiful heart shall reside."
+        },
+        {
+            "portrait": "bf-pixel",
+            "text": "Beep bo bop"
+        }
+    ]
+}

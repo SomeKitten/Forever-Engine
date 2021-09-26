@@ -17,7 +17,11 @@ using StringTools;
  */
 class Alphabet extends FlxSpriteGroup
 {
-	public var delay:Float = 0.05;
+	public var textSpeed:Float = 0.06;
+	public var randomSpeed:Bool = false; // When enabled, it'll change the speed of the text speed randomly between 80% and 180%
+
+	public var textSize:Float;
+
 	public var paused:Bool = false;
 
 	// for menu shit
@@ -39,6 +43,8 @@ class Alphabet extends FlxSpriteGroup
 
 	public var widthOfWords:Float = FlxG.width;
 
+	public var finishedLine:Bool = false;
+
 	var yMulti:Float = 1;
 
 	// custom shit
@@ -51,22 +57,32 @@ class Alphabet extends FlxSpriteGroup
 
 	var isBold:Bool = false;
 
-	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false)
+	public var soundChoices:Array<String> = ["GF_1", "GF_2", "GF_3", "GF_4",];
+	public var beginPath:String = "assets/sounds/";
+	public var soundChance:Int = 40;
+	public var playSounds:Bool = true;
+	public var lastPlayed:Int = 0;
+
+	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false, ?textSize:Float = 1)
 	{
 		super(x, y);
 
 		this.text = text;
 		isBold = bold;
+		this.textSize = textSize;
 
-		restartText(text, typed);
+		startText(text, typed);
 	}
 
-	public function restartText(text, typed)
+	public function startText(newText, typed)
 	{
+		yMulti = 1;
+		finishedLine = false;
 		xPosResetted = true;
 
-		_finalText = text;
-		textInit = text;
+		_finalText = newText;
+		textInit = newText;
+		this.text = newText;
 
 		if (text != "")
 		{
@@ -79,6 +95,22 @@ class Alphabet extends FlxSpriteGroup
 				addText();
 			}
 		}
+		else
+		{
+			if (swagTypingTimer != null)
+			{
+				destroyText();
+				swagTypingTimer.cancel();
+				swagTypingTimer.destroy();
+			}
+		}
+	}
+
+	function destroyText():Void
+	{
+		for (_sprite in _sprites.copy())
+			_sprite.destroy();
+		clear();
 	}
 
 	public var arrayLetters:Array<AlphaCharacter>;
@@ -91,10 +123,6 @@ class Alphabet extends FlxSpriteGroup
 		var xPos:Float = 0;
 		for (character in splitWords)
 		{
-			// if (character.fastCodeAt() == " ")
-			// {
-			// }
-
 			if (character == " " || character == "-")
 				lastWasSpace = true;
 
@@ -102,7 +130,6 @@ class Alphabet extends FlxSpriteGroup
 			var isSymbol:Bool = AlphaCharacter.symbols.contains(character);
 
 			if ((AlphaCharacter.alphabet.indexOf(character.toLowerCase()) != -1) || (AlphaCharacter.numbers.contains(character)))
-				// if (AlphaCharacter.alphabet.contains(character.toLowerCase()))
 			{
 				if (xPosResetted)
 				{
@@ -121,8 +148,7 @@ class Alphabet extends FlxSpriteGroup
 					lastWasSpace = false;
 				}
 
-				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
-				var letter:AlphaCharacter = new AlphaCharacter(xPos, 0);
+				var letter:AlphaCharacter = new AlphaCharacter(xPos, 0, textSize);
 
 				if (isBold)
 					letter.createBold(character);
@@ -141,35 +167,36 @@ class Alphabet extends FlxSpriteGroup
 
 				lastSprite = letter;
 			}
-
-			// loopNum += 1;
 		}
-
-		// add(displayedLetters);
 	}
 
 	function doSplitWords():Void
-	{
 		splitWords = _finalText.split("");
-	}
 
 	public var personTalking:String = 'gf';
+
+	public var swagTypingTimer:FlxTimer;
 
 	public function startTypedText():Void
 	{
 		_finalText = text;
 		doSplitWords();
 
-		// trace(arrayShit);
+		// Remove all the old garbage
+		destroyText();
 
 		var loopNum:Int = 0;
 
 		var xPos:Float = 0;
 		var curRow:Int = 0;
 
-		new FlxTimer().start(0.05, function(tmr:FlxTimer)
+		// Forget any potential old timers
+		if (swagTypingTimer != null)
+			swagTypingTimer.destroy();
+
+		// Create a new timer
+		swagTypingTimer = new FlxTimer().start(textSpeed, function(tmr:FlxTimer)
 		{
-			// trace(_finalText.fastCodeAt(loopNum) + " " + _finalText.charAt(loopNum));
 			if (_finalText.fastCodeAt(loopNum) == "\n".code)
 			{
 				yMulti += 1;
@@ -191,15 +218,11 @@ class Alphabet extends FlxSpriteGroup
 			#end
 
 			if (AlphaCharacter.alphabet.indexOf(splitWords[loopNum].toLowerCase()) != -1 || isNumber || isSymbol)
-				// if (AlphaCharacter.alphabet.contains(splitWords[loopNum].toLowerCase()) || isNumber || isSymbol)
-
 			{
 				if (lastSprite != null && !xPosResetted)
 				{
 					lastSprite.updateHitbox();
 					xPos += lastSprite.width + 3;
-					// if (isBold)
-					// xPos -= 80;
 				}
 				else
 				{
@@ -212,10 +235,7 @@ class Alphabet extends FlxSpriteGroup
 					xPos += 20;
 					lastWasSpace = false;
 				}
-				// trace(_finalText.fastCodeAt(loopNum) + " " + _finalText.charAt(loopNum));
-
-				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
-				var letter:AlphaCharacter = new AlphaCharacter(xPos, 55 * yMulti);
+				var letter:AlphaCharacter = new AlphaCharacter(xPos, 55 * yMulti, textSize);
 				letter.row = curRow;
 				if (isBold)
 				{
@@ -233,11 +253,20 @@ class Alphabet extends FlxSpriteGroup
 					letter.x += 90;
 				}
 
-				if (FlxG.random.bool(40))
+				if (FlxG.random.bool(soundChance) || lastPlayed > 2)
 				{
-					var daSound:String = "GF_";
-					FlxG.sound.play(Paths.soundRandom(daSound, 1, 4));
+					if (playSounds)
+					{
+						lastPlayed = 0;
+
+						var cur = FlxG.random.int(0, soundChoices.length - 1);
+						var daSound:String = beginPath + soundChoices[cur] + "." + Paths.SOUND_EXT;
+
+						FlxG.sound.play(daSound);
+					}
 				}
+				else
+					lastPlayed += 1;
 
 				add(letter);
 
@@ -246,8 +275,18 @@ class Alphabet extends FlxSpriteGroup
 
 			loopNum += 1;
 
-			tmr.time = FlxG.random.float(0.04, 0.09);
-		}, splitWords.length);
+			if (randomSpeed)
+				tmr.time = FlxG.random.float(0.8 * textSpeed, 1.8 * textSpeed);
+
+			// I'm sorry for this implementation being a bit janky but the FlxTimer loops were not reliable for this
+			// Hope you forgive me <3 <3 xoxo Sammu
+			// i forgive u sammu :D
+			if (loopNum >= splitWords.length)
+			{
+				finishedLine = true;
+				tmr.destroy();
+			}
+		}, 0);
 	}
 
 	override function update(elapsed:Float)
@@ -271,7 +310,7 @@ class Alphabet extends FlxSpriteGroup
 					arrayLetters[i].destroy();
 			//
 			lastSprite = null;
-			restartText(text, false);
+			startText(text, false);
 		}
 
 		super.update(elapsed);
@@ -288,9 +327,12 @@ class AlphaCharacter extends FlxSprite
 
 	public var row:Int = 0;
 
-	public function new(x:Float, y:Float)
+	private var textSize:Float = 1;
+
+	public function new(x:Float, y:Float, ?textSize:Float = 1)
 	{
 		super(x, y);
+		this.textSize = textSize;
 		var tex = Paths.getSparrowAtlas('UI/default/base/alphabet');
 		frames = tex;
 
@@ -304,6 +346,7 @@ class AlphaCharacter extends FlxSprite
 			// or just load regular text
 			animation.addByPrefix(letter, letter.toUpperCase() + " bold", 24);
 			animation.play(letter);
+			scale.set(textSize, textSize);
 			updateHitbox();
 		}
 	}
@@ -318,12 +361,13 @@ class AlphaCharacter extends FlxSprite
 
 		animation.addByPrefix(letter, letter + " " + letterCase, 24);
 		animation.play(letter);
+		scale.set(textSize, textSize);
 		updateHitbox();
 
 		FlxG.log.add('the row' + row);
 
 		y = (110 - height);
-		y += row * 60;
+		y += row * 50;
 	}
 
 	public function createNumber(letter:String):Void
@@ -341,17 +385,23 @@ class AlphaCharacter extends FlxSprite
 			case '.':
 				animation.addByPrefix(letter, 'period', 24);
 				animation.play(letter);
-				y += 50;
+				setGraphicSize(8, 8);
+				y += 48;
 			case "'":
 				animation.addByPrefix(letter, 'apostraphie', 24);
 				animation.play(letter);
-				y -= 0;
+				setGraphicSize(10, 10);
+				y += 20;
 			case "?":
 				animation.addByPrefix(letter, 'question mark', 24);
 				animation.play(letter);
+				setGraphicSize(20, 40);
+				y += 16;
 			case "!":
 				animation.addByPrefix(letter, 'exclamation point', 24);
 				animation.play(letter);
+				setGraphicSize(10, 40);
+				y += 16;
 			default:
 				animation.addByPrefix(letter, letter, 24);
 				animation.play(letter);

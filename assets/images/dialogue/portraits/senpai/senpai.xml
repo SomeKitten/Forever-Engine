@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="senpai.png">
+	<!-- Created with Adobe Animate version 20.0.0.17400 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="SENPAI ANGRY IMPACT SPEECH0000" x="0" y="0" width="248" height="144" pivotX="257" pivotY="179"/>
+	<SubTexture name="Senpai Portrait Enter0000" x="0" y="164" width="248" height="144" pivotX="244" pivotY="-301"/>
+</TextureAtlas>

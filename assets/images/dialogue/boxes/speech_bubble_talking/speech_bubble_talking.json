@@ -1,0 +1,13 @@
+{
+    "position": [20, 370],
+    "states": {
+        "normal": {
+            "open": ["Speech Bubble Normal Open"],
+            "default": ["speech bubble normal", [-30, 0]]
+        },
+        "yell": {
+            "open": ["speech bubble loud open", [80, 140]],
+            "default": ["AHH speech bubble", [0, 80]]
+        }
+    }
+}

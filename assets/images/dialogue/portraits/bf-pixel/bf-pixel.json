@@ -1,0 +1,14 @@
+{
+    "name": "bf-pixel",
+    "expressions": {
+        "normal": "Boyfriend portrait enter"
+    },
+    "position": [630, 370],
+    "scale": 5.4,
+    "antialiasing": false,
+    "loop": false,
+
+    "sounds": ["pixelText"],
+    "soundChance": 100,
+    "soundPath": "sounds/"
+}

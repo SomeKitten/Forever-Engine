@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="bf.png">
+	<!-- Created with Adobe Animate version 20.0.0.17400 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Angry Talk0000" x="0" y="0" width="410" height="424" pivotX="206.15" pivotY="217.35"/>
+	<SubTexture name="Angry Talk0001" x="430" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0002" x="860" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0003" x="860" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0004" x="1290" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0005" x="1290" y="0" width="410" height="424"/>
+	<SubTexture name="Angry Talk0006" x="0" y="444" width="410" height="424"/>
+	<SubTexture name="Angry Talk0007" x="0" y="444" width="410" height="424"/>
+	<SubTexture name="Normal Talk0000" x="430" y="444" width="410" height="423" pivotX="206.25" pivotY="216.15"/>
+	<SubTexture name="Normal Talk0001" x="860" y="444" width="410" height="423"/>
+	<SubTexture name="Normal Talk0002" x="1290" y="444" width="410" height="423"/>
+	<SubTexture name="Normal Talk0003" x="1290" y="444" width="410" height="423"/>
+	<SubTexture name="Normal Talk0004" x="0" y="888" width="410" height="423"/>
+	<SubTexture name="Normal Talk0005" x="0" y="888" width="410" height="423"/>
+	<SubTexture name="Normal Talk0006" x="430" y="888" width="410" height="423"/>
+	<SubTexture name="Normal Talk0007" x="430" y="888" width="410" height="423"/>
+	<SubTexture name="Smug Talk0000" x="860" y="888" width="409" height="421" pivotX="205.45" pivotY="214.6"/>
+	<SubTexture name="Smug Talk0001" x="1289" y="888" width="409" height="421"/>
+	<SubTexture name="Smug Talk0002" x="0" y="1331" width="409" height="421"/>
+	<SubTexture name="Smug Talk0003" x="0" y="1331" width="409" height="421"/>
+	<SubTexture name="Smug Talk0004" x="429" y="1331" width="409" height="421"/>
+	<SubTexture name="Smug Talk0005" x="429" y="1331" width="409" height="421"/>
+	<SubTexture name="Smug Talk0006" x="858" y="1331" width="409" height="421"/>
+	<SubTexture name="Smug Talk0007" x="858" y="1331" width="409" height="421"/>
+</TextureAtlas>

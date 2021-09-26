@@ -113,6 +113,7 @@ class Init extends FlxState
 			"Enables the custom Forever Engine titlescreen! (only effective with a restart)",
 			FORCED
 		],
+		'Skip Cutscenes' => [false, 0, 'Skip the cutscenes in story mode. (Includes Dialogue)'],
 		'SM-like Judgements' => [
 			false,
 			0,
@@ -123,6 +124,7 @@ class Init extends FlxState
 			0,
 			"When enabled, displays the amount of combo breaks you have in a song."
 		],
+
 	];
 
 	public static var trueSettings:Map<String, Dynamic> = [];

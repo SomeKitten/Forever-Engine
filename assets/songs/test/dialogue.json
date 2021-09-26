@@ -1,0 +1,68 @@
+{
+    "box": "speech_bubble_talking",
+    "boxState": "normal",
+    "dialogue": [
+        {
+            "portrait": "bf",
+            "expression": "normal",
+            "text": "hey"
+        },
+        {
+            "portrait": "bf",
+            "expression": "normal",
+            "text": "do you know sawcon"
+        },
+        {
+            "portrait": "bf",
+            "expression": "normal",
+            "text": "whats sawcon lmao"
+        },
+        {
+            "portrait": "bf",
+            "expression": "smug",
+            "text": "sawcon deez nuts"
+        },
+        {
+            "portrait": "bf",
+            "expression": "smug",
+            "text": "idiot"
+        },
+        {
+            "portrait": "bf",
+            "expression": "mad",
+            "text": "I fucking hate you."
+        },
+        {
+            "portrait": "bf-pixel",
+            "expression": "normal",
+            "text": "I am going to kick your ass.",
+            "boxState": "yell",
+            "scale": 1.4
+        },
+        {
+            "portrait": "bf",
+            "expression": "mad",
+            "text": "Bet.",
+            "boxState": "normal",
+            "scale": 0.8
+        },
+        {
+            "portrait": "bf",
+            "expression": "smug",
+            "text": "'lololololololol' .'`?!\nline break test.`?!\ncool",
+            "speed": 10
+        },
+        {
+            "portrait": "bf",
+            "expression": "mad",
+            "text": "Shut the fuck up...\nShut the fuck up...... !!'? .''?!",
+            "boxState": "yell",
+            "speed": 0.5
+        },
+        {
+            "portrait": "bf",
+            "expression": "mad",
+            "text": "Seriously!\nI cant believe I hate you!"
+        }
+    ]
+}
