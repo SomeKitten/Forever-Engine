@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import gameFolder.gameObjects.Note;
+import gameFolder.gameObjects.userInterface.notes.*;
 import gameFolder.meta.data.Section.SwagSection;
 import gameFolder.meta.data.Song.SwagSong;
 import gameFolder.meta.state.PlayState;
@@ -19,14 +19,10 @@ import gameFolder.meta.state.charting.ChartingState;
 **/
 class ChartLoader
 {
-	// set up some variables maybe and then public static functions that can be used anywhere
-	public static var unspawnNotes:Array<Note> = [];
-
 	// hopefully this makes it easier for people to load and save chart features and such, y'know the deal lol
-	public static function generateChartType(?typeOfChart:String = "FNF")
+	public static function generateChartType(songData:SwagSong, ?typeOfChart:String = "FNF"):Array<Note>
 	{
-		//
-		var songData = PlayState.SONG;
+		var unspawnNotes:Array<Note> = [];
 		var noteData:Array<SwagSection>;
 
 		noteData = songData.notes;
@@ -125,11 +121,7 @@ class ChartLoader
 					songs made in forever engine with the base game then you can do that too.
 				 */
 		}
-	}
 
-	public static function returnUnspawnNotes()
 		return unspawnNotes;
-
-	public static function flushUnspawnNotes()
-		unspawnNotes = [];
+	}
 }

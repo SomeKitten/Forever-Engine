@@ -33,7 +33,7 @@ class OptionsSubstate extends MusicBeatSubState
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.color = 0xCE64DF;
-		bg.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		bg.antialiasing = true;
 		add(bg);
 
 		super.create();

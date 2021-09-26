@@ -43,6 +43,8 @@ class OptionsMenuState extends MusicBeatState
 			If you plug in a value, the script will run when the option is hovered over.
 		 */
 
+		// NOTE : Make sure to check Init.hx if you are trying to add options.
+
 		#if !html5
 		Discord.changePresence('OPTIONS MENU', 'Main Menu');
 		#end
@@ -87,10 +89,12 @@ class OptionsMenuState extends MusicBeatState
 					['', null],
 					['Disable Antialiasing', getFromOption],
 					['No Camera Note Movement', getFromOption],
+					['SM-like Judgements', getFromOption],
 					['', null],
 					['Accessibility Settings', null],
 					['', null],
 					['Filter', getFromOption],
+					["Stage Darkness", getFromOption],
 					['Reduced Movements', getFromOption],
 					// this shouldn't be get from option, just testing
 					['', null],
@@ -120,7 +124,7 @@ class OptionsMenuState extends MusicBeatState
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.color = 0xCE64DF;
-		bg.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		bg.antialiasing = true;
 		add(bg);
 
 		infoText = new FlxText(5, FlxG.height - 24, 0, "", 32);
@@ -387,7 +391,7 @@ class OptionsMenuState extends MusicBeatState
 					case 1:
 						// selector
 						var selector:Selector = new Selector(10, letter.y, letter.text, Init.gameSettings.get(letter.text)[4],
-							(letter.text == 'Framerate Cap') ? true : false);
+							(letter.text == 'Framerate Cap') ? true : false, (letter.text == 'Stage Darkness') ? true : false);
 
 						extrasMap.set(letter, selector);
 					default:
@@ -454,8 +458,58 @@ class OptionsMenuState extends MusicBeatState
 	function updateSelector(selector:Selector, updateBy:Int)
 	{
 		var fps = selector.fpsCap;
-		if (!fps)
+		var bgdark = selector.darkBG;
+		if (fps)
 		{
+			// bro I dont even know if the engine works in html5 why am I even doing this
+			// lazily hardcoded fps cap
+			var originalFPS = Init.trueSettings.get(activeSubgroup.members[curSelection].text);
+			var increase = 15 * updateBy;
+			if (originalFPS + increase < 30)
+				increase = 0;
+			// high fps cap
+			if (originalFPS + increase > 360)
+				increase = 0;
+
+			if (updateBy == -1)
+				selector.selectorPlay('left', 'press');
+			else
+				selector.selectorPlay('right', 'press');
+
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+
+			originalFPS += increase;
+			selector.chosenOptionString = Std.string(originalFPS);
+			selector.optionChosen.text = Std.string(originalFPS);
+			Init.trueSettings.set(activeSubgroup.members[curSelection].text, originalFPS);
+			Init.saveSettings();
+		}
+		else if (bgdark)
+		{
+			// lazily hardcoded darkness cap
+			var originaldark = Init.trueSettings.get(activeSubgroup.members[curSelection].text);
+			var increase = 5 * updateBy;
+			if (originaldark + increase < 0)
+				increase = 0;
+			// high darkness cap
+			if (originaldark + increase > 100)
+				increase = 0;
+
+			if (updateBy == -1)
+				selector.selectorPlay('left', 'press');
+			else
+				selector.selectorPlay('right', 'press');
+
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+
+			originaldark += increase;
+			selector.chosenOptionString = Std.string(originaldark);
+			selector.optionChosen.text = Std.string(originaldark);
+			Init.trueSettings.set(activeSubgroup.members[curSelection].text, originaldark);
+			Init.saveSettings();
+		}
+		else if (!fps && !bgdark)
+		{ 
 			// get the current option as a number
 			var storedNumber:Int = 0;
 			for (curOption in 0...selector.options.length)
@@ -481,30 +535,6 @@ class OptionsMenuState extends MusicBeatState
 			selector.optionChosen.text = selector.chosenOptionString;
 
 			Init.trueSettings.set(activeSubgroup.members[curSelection].text, selector.chosenOptionString);
-			Init.saveSettings();
-		}
-		else
-		{ // bro I dont even know if the engine works in html5 why am I even doing this
-			// lazily hardcoded fps cap
-			var originalFPS = Init.trueSettings.get(activeSubgroup.members[curSelection].text);
-			var increase = 15 * updateBy;
-			if (originalFPS + increase < 30)
-				increase = 0;
-			// high fps cap
-			if (originalFPS + increase > 360)
-				increase = 0;
-
-			if (updateBy == -1)
-				selector.selectorPlay('left', 'press');
-			else
-				selector.selectorPlay('right', 'press');
-
-			FlxG.sound.play(Paths.sound('scrollMenu'));
-
-			originalFPS += increase;
-			selector.chosenOptionString = Std.string(originalFPS);
-			selector.optionChosen.text = Std.string(originalFPS);
-			Init.trueSettings.set(activeSubgroup.members[curSelection].text, originalFPS);
 			Init.saveSettings();
 		}
 	}

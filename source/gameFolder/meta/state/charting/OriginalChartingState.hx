@@ -23,6 +23,7 @@ import flixel.ui.FlxSpriteButton;
 import flixel.util.FlxColor;
 import gameFolder.gameObjects.*;
 import gameFolder.gameObjects.userInterface.*;
+import gameFolder.gameObjects.userInterface.notes.*;
 import gameFolder.meta.MusicBeat.MusicBeatState;
 import gameFolder.meta.data.*;
 import gameFolder.meta.data.Conductor.BPMChangeEvent;
@@ -83,7 +84,7 @@ class OriginalChartingState extends MusicBeatState
 	**/
 	var curSelectedNote:Array<Dynamic>;
 
-	var tempBpm:Int = 0;
+	var tempBpm:Float = 0;
 
 	var vocals:FlxSound;
 
@@ -473,7 +474,7 @@ class OriginalChartingState extends MusicBeatState
 	}*/
 	function sectionStartTime():Float
 	{
-		var daBPM:Int = _song.bpm;
+		var daBPM:Float = _song.bpm;
 		var daPos:Float = 0;
 		for (i in 0...curSection)
 		{
@@ -848,7 +849,7 @@ class OriginalChartingState extends MusicBeatState
 		else
 		{
 			// get last bpm
-			var daBPM:Int = _song.bpm;
+			var daBPM:Float = _song.bpm;
 			for (i in 0...curSection)
 				if (_song.notes[i].changeBPM)
 					daBPM = _song.notes[i].bpm;

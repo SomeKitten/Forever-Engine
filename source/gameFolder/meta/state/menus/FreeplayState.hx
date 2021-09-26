@@ -21,6 +21,7 @@ import gameFolder.meta.data.font.Alphabet;
 import lime.utils.Assets;
 import openfl.media.Sound;
 import sys.FileSystem;
+import sys.thread.Thread;
 
 using StringTools;
 
@@ -31,12 +32,16 @@ class FreeplayState extends MusicBeatState
 
 	var selector:FlxText;
 	var curSelected:Int = 0;
+	var curSongPlaying:Int = -1;
 	var curDifficulty:Int = 1;
 
 	var scoreText:FlxText;
 	var diffText:FlxText;
 	var lerpScore:Int = 0;
 	var intendedScore:Int = 0;
+
+	var songThread:Thread;
+	var threadActive:Bool = true;
 
 	private var grpSongs:FlxTypedGroup<Alphabet>;
 	private var curPlaying:Bool = false;
@@ -88,7 +93,7 @@ class FreeplayState extends MusicBeatState
 		}
 
 		// LOAD MUSIC
-		ForeverTools.resetMenuMusic();
+		// ForeverTools.resetMenuMusic();
 
 		#if !html5
 		Discord.changePresence('FREEPLAY MENU', 'Main Menu');
@@ -211,6 +216,7 @@ class FreeplayState extends MusicBeatState
 
 		if (controls.BACK)
 		{
+			threadActive = false;
 			Main.switchState(this, new MainMenuState());
 		}
 
@@ -228,6 +234,8 @@ class FreeplayState extends MusicBeatState
 
 			if (FlxG.sound.music != null)
 				FlxG.sound.music.stop();
+
+			threadActive = false;
 
 			Main.switchState(this, new PlayState());
 		}
@@ -305,11 +313,61 @@ class FreeplayState extends MusicBeatState
 		}
 		//
 
+		trace("curSelected: " + curSelected);
+
 		changeDiff();
+		changeSongPlaying();
+	}
+
+	function changeSongPlaying()
+	{
+		if (songThread == null)
+		{
+			songThread = Thread.create(function()
+			{
+				while (true)
+				{
+					if (!threadActive)
+					{
+						trace("Killing thread");
+						return;
+					}
+
+					var index:Null<Int> = Thread.readMessage(false);
+					if (index != null)
+					{
+						if (index == curSelected && index != curSongPlaying)
+						{
+							trace("Loading index " + index);
+
+							var inst:Sound = Sound.fromFile('./' + Paths.inst(songs[curSelected].songName));
+
+							if (index == curSelected && threadActive)
+							{
+								FlxG.sound.playMusic(inst);
+
+								if (FlxG.sound.music.fadeTween != null)
+									FlxG.sound.music.fadeTween.cancel();
+
+								FlxG.sound.music.volume = 0.0;
+								FlxG.sound.music.fadeIn(1.0, 0.0, 1.0);
+
+								curSongPlaying = curSelected;
+							}
+							else
+								trace("Nevermind, skipping " + index);
+						}
+						else
+							trace("Skipping " + index);
+					}
+				}
+			});
+		}
+
+		songThread.sendMessage(curSelected);
 	}
 
 	var playingSongs:Array<FlxSound> = [];
-	var songPlayThread:sys.thread.Thread;
 }
 
 class SongMetadata

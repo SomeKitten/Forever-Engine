@@ -90,14 +90,14 @@ class CustomTitlescreen extends MusicBeatState
 		persistentUpdate = true;
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		// bg.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		// bg.antialiasing = true;
 		// bg.setGraphicSize(Std.int(bg.width * 0.6));
 		// bg.updateHitbox();
 		add(bg);
 
 		logoBl = new FlxSprite();
 		logoBl.loadGraphic(Paths.image('menus/base/title/FELogo'));
-		logoBl.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		logoBl.antialiasing = true;
 
 		logoBl.setGraphicSize(Std.int(logoBl.width / 2));
 		logoBl.updateHitbox();
@@ -115,7 +115,7 @@ class CustomTitlescreen extends MusicBeatState
 		titleText.frames = Paths.getSparrowAtlas('menus/base/title/titleEnter');
 		titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24);
 		titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
-		titleText.antialiasing = (!Init.trueSettings.get('Disable Antialiasing'));
+		titleText.antialiasing = true;
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
 		// titleText.screenCenter(X);

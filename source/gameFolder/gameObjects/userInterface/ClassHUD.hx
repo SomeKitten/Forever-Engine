@@ -82,8 +82,14 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 
 		// small info bar, kinda like the KE watermark
 		// based on scoretxt which I will set up as well
-		var infoDisplay:String = CoolUtil.dashToSpace(PlayState.SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(PlayState.storyDifficulty)
-			+ " - FE BETA v" + Main.gameVersion;
+		var infoDisplay:String = CoolUtil.dashToSpace(PlayState.SONG.song) + ' - ' + CoolUtil.difficultyFromNumber(PlayState.storyDifficulty);
+		var engineDisplay:String = "Forever Engine BETA v" + Main.gameVersion;
+		var engineBar:FlxText = new FlxText(0, FlxG.height - 30, 0, engineDisplay, 16);
+		engineBar.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		engineBar.updateHitbox();
+		engineBar.x = FlxG.width - engineBar.width - 5;
+		engineBar.scrollFactor.set();
+		add(engineBar);
 
 		infoBar = new FlxText(5, FlxG.height - 30, 0, infoDisplay, 20);
 		infoBar.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -131,7 +137,7 @@ class ClassHUD extends FlxTypedGroup<FlxBasic>
 		{
 			scoreBar.text += ' // Accuracy: ' + Std.string(Math.floor(Timings.getAccuracy() * 100) / 100) + '%' + Timings.comboDisplay;
 			if (Init.trueSettings.get('Display Miss Count'))
-				scoreBar.text += ' // Misses: ' + Std.string(PlayState.misses);
+				scoreBar.text += ' // Combo Breaks: ' + Std.string(PlayState.misses);
 			scoreBar.text += ' // Rank: ' + Std.string(Timings.returnScoreRating().toUpperCase());
 		}
 

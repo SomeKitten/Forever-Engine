@@ -55,6 +55,12 @@ class Init extends FlxState
 			'Whether to reduce movements, like icons bouncing or beat zooms in gameplay.',
 			NOT_FORCED
 		],
+		'Stage Darkness' => [
+			0,
+			1,
+			'Darkens non-ui elements, useful if you find the characters and backgrounds distracting.',
+			NOT_FORCED
+		],
 		'Display Accuracy' => [true, 0, 'Whether to display your accuracy on screen.', NOT_FORCED],
 		'Disable Antialiasing' => [
 			false,
@@ -89,7 +95,7 @@ class Init extends FlxState
 			NOT_FORCED,
 			['none', 'Deuteranopia', 'Protanopia', 'Tritanopia']
 		],
-		"UI Skin" => ['default', 1, 'Choose a UI Skin for ratings, combo, etc.', NOT_FORCED, ''],
+		"UI Skin" => ['default', 1, 'Choose a UI Skin for judgements, combo, etc.', NOT_FORCED, ''],
 		"Note Skin" => ['default', 1, 'Choose a note skin.', NOT_FORCED, ''],
 		"Framerate Cap" => [120, 1, 'Define your maximum FPS.', NOT_FORCED, ['']],
 		"Opaque Arrows" => [false, 0, "Makes the arrows at the top of the screen opaque again.", NOT_FORCED],
@@ -108,8 +114,17 @@ class Init extends FlxState
 			FORCED
 		],
 		'Skip Cutscenes' => [false, 0, 'Skip the cutscenes in story mode. (Includes Dialogue)'],
-		'Camera-fixed Judgements' => [false, 0, ""],
-		'Display Miss Count' => [false, 0, "When enabled, displays the amount of misses you have in a song."],
+		'SM-like Judgements' => [
+			false,
+			0,
+			"Fixes the judgements to the camera instead of to the world itself, making them easier to read."
+		],
+		'Display Miss Count' => [
+			false,
+			0,
+			"When enabled, displays the amount of combo breaks you have in a song."
+		],
+
 	];
 
 	public static var trueSettings:Map<String, Dynamic> = [];
@@ -179,7 +194,7 @@ class Init extends FlxState
 		FlxG.mouse.useSystemCursor = true; // Use system cursor because it's prettier
 		FlxG.mouse.visible = false; // Hide mouse on start
 
-		// Main.switchState(this, new TestState());
+		// Main.switchState(this, new ChartingState());
 		gotoTitleScreen();
 	}
 
@@ -215,6 +230,11 @@ class Init extends FlxState
 			|| trueSettings.get("Framerate Cap") < 30
 			|| trueSettings.get("Framerate Cap") > 360)
 			trueSettings.set("Framerate Cap", 30);
+
+		if (!Std.isOfType(trueSettings.get("Stage Darkness"), Int)
+			|| trueSettings.get("Stage Darkness") < 0
+			|| trueSettings.get("Stage Darkness") > 100)
+			trueSettings.set("Stage Darkness", 0);
 
 		// 'hardcoded' ui skins
 		gameSettings.get("UI Skin")[4] = CoolUtil.returnAssetsLibrary('UI');

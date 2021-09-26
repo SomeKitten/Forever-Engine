@@ -1,10 +1,10 @@
 package gameFolder.meta.data;
 
-import gameFolder.gameObjects.Note;
+import gameFolder.gameObjects.userInterface.notes.*;
 import gameFolder.meta.state.PlayState;
 
 /**
-	Here's a class that calculates timings and ratings for the songs and such
+	Here's a class that calculates timings and judgements for the songs and such
 **/
 class Timings
 {
@@ -15,17 +15,17 @@ class Timings
 
 	// from left to right
 	// max milliseconds, score from it and percentage
-	public static var ratingsMap:Map<String, Array<Dynamic>> = [
-		"sick" => [45, 350, 100],
-		"good" => [100, 150, 50],
-		"bad" => [120, 0, 15],
-		"shit" => [140, -20, -75],
-		"miss" => [180, -50, -100],
+	public static var judgementsMap:Map<String, Array<Dynamic>> = [
+		"sick" => [0, 45, 350, 100],
+		"good" => [1, 100, 150, 40],
+		"bad" => [2, 120, 0, 5],
+		"shit" => [3, 140, -50, -100],
+		"miss" => [4, 180, -100, -150],
 	];
 
 	public static var msThreshold:Float = 0;
 
-	// set the score ratings for later use
+	// set the score judgements for later use
 	public static var scoreRating:Map<String, Int> = ["s" => 90, "a" => 80, "b" => 70, "c" => 50, "d" => 40, "e" => 20, "f" => 0,];
 
 	public static var ratingFinal:String = "f";
@@ -43,9 +43,9 @@ class Timings
 
 		// reset ms threshold
 		var biggestThreshold:Float = 0;
-		for (i in ratingsMap.keys())
-			if (ratingsMap.get(i)[0] > biggestThreshold)
-				biggestThreshold = ratingsMap.get(i)[0];
+		for (i in judgementsMap.keys())
+			if (judgementsMap.get(i)[1] > biggestThreshold)
+				biggestThreshold = judgementsMap.get(i)[1];
 		msThreshold = biggestThreshold;
 
 		notesHit = 0;
