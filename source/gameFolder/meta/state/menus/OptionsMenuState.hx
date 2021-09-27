@@ -66,9 +66,7 @@ class OptionsMenuState extends MusicBeatState
 					['Centered Notefield', getFromOption],
 					['Ghost Tapping', getFromOption],
 					['Display Accuracy', getFromOption],
-					['Skip Cutscenes', getFromOption],
-					['Display Miss Count', getFromOption],
-					//
+					['Skip Text', getFromOption],
 					['', null],
 					['Meta Settings', null],
 					['', null],
@@ -89,7 +87,7 @@ class OptionsMenuState extends MusicBeatState
 					['', null],
 					['Disable Antialiasing', getFromOption],
 					['No Camera Note Movement', getFromOption],
-					['SM-like Judgements', getFromOption],
+					['Fixed Judgements', getFromOption],
 					['', null],
 					['Accessibility Settings', null],
 					['', null],
@@ -382,13 +380,13 @@ class OptionsMenuState extends MusicBeatState
 			{
 				switch (Init.gameSettings.get(letter.text)[1])
 				{
-					case 0:
+					case Init.SettingTypes.Checkmark:
 						// checkmark
 						var checkmark = ForeverAssets.generateCheckmark(10, letter.y, 'checkboxThingie', 'base', 'default', 'UI');
 						checkmark.playAnim(Std.string(Init.trueSettings.get(letter.text)) + ' finished');
 
 						extrasMap.set(letter, checkmark);
-					case 1:
+					case Init.SettingTypes.Selector:
 						// selector
 						var selector:Selector = new Selector(10, letter.y, letter.text, Init.gameSettings.get(letter.text)[4],
 							(letter.text == 'Framerate Cap') ? true : false, (letter.text == 'Stage Darkness') ? true : false);
@@ -413,7 +411,7 @@ class OptionsMenuState extends MusicBeatState
 		{
 			switch (Init.gameSettings.get(activeSubgroup.members[curSelection].text)[1])
 			{
-				case 0:
+				case Init.SettingTypes.Checkmark:
 					// checkmark basics lol
 					if (controls.ACCEPT)
 					{
@@ -432,7 +430,7 @@ class OptionsMenuState extends MusicBeatState
 							lockedMovement = false;
 						});
 					}
-				case 1:
+				case Init.SettingTypes.Selector:
 					#if !html5
 					var selector:Selector = currentAttachmentMap.get(activeSubgroup.members[curSelection]);
 
@@ -512,17 +510,20 @@ class OptionsMenuState extends MusicBeatState
 		{ 
 			// get the current option as a number
 			var storedNumber:Int = 0;
-			for (curOption in 0...selector.options.length)
-			{
-				if (selector.options[curOption] == selector.optionChosen.text)
-					storedNumber = curOption;
+			var newSelection:Int = storedNumber;
+			if (selector.options != null) {
+				for (curOption in 0...selector.options.length)
+				{
+					if (selector.options[curOption] == selector.optionChosen.text)
+						storedNumber = curOption;
+				}
+				
+				newSelection = storedNumber + updateBy;
+				if (newSelection < 0)
+					newSelection = selector.options.length - 1;
+				else if (newSelection >= selector.options.length)
+					newSelection = 0;
 			}
-
-			var newSelection = storedNumber + updateBy;
-			if (newSelection < 0)
-				newSelection = selector.options.length - 1;
-			else if (newSelection >= selector.options.length)
-				newSelection = 0;
 
 			if (updateBy == -1)
 				selector.selectorPlay('left', 'press');
@@ -579,5 +580,6 @@ class OptionsMenuState extends MusicBeatState
 				lockedMovement = false;
 			});
 		}
+		//
 	}
 }

@@ -301,17 +301,7 @@ class OptionsSubstate extends MusicBeatSubState
 		Init.saveSettings(); // for offset
 		super.close();
 	}
-
-	/// options submenu stuffs
-	/// right here lol
-	//
-	// I think
-	//
-	// just a little further
-	//
-	// almost there
-	//
-	// got it!
+	
 	private var submenu:FlxSprite;
 
 	private function openSubmenu()

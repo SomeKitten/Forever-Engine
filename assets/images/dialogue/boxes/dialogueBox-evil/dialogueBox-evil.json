@@ -1,0 +1,15 @@
+{
+    "position": [515, 370],
+    "textPos": [200, 480],
+    "scale": 5.4,
+    "antialiasing": false,
+    "singleFrame": true,
+    "doFlip": false,
+    "bgColor": [255, 255, 255],
+    "states": {
+        "normal": {
+            "open": ["Spirit Textbox spawn instance 1"],
+            "default": ["Spirit Textbox spawn instance 1"]
+        }
+    }
+}

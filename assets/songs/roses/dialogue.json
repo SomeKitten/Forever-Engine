@@ -1,0 +1,18 @@
+{
+    "box": "dialogueBox-pixel",
+    "boxState": "normal",
+    "dialogue": [
+        {
+            "portrait": "senpai",
+            "expression": "mad",
+            "text": "Not bad for an ugly worm."
+        },
+        {
+            "text": "But this time I'll rip your nuts off \nright after your girlfriend \nfinishes gargling mine."
+        },
+        {
+            "portrait": "bf-pixel",
+            "text": "Bop beep be be skdoo bep"
+        }
+    ]
+}

@@ -96,8 +96,12 @@ class CustomTitlescreen extends MusicBeatState
 		add(bg);
 
 		logoBl = new FlxSprite();
-		logoBl.loadGraphic(Paths.image('menus/base/title/FELogo'));
+		logoBl.frames = Paths.getSparrowAtlas('menus/base/title/foreverlogo');
+		logoBl.animation.addByPrefix('bumpin', 'forever bop', 16, false, false, false);
+		logoBl.animation.play('bumpin');
 		logoBl.antialiasing = true;
+
+		logoBl.updateHitbox();
 
 		logoBl.setGraphicSize(Std.int(logoBl.width / 2));
 		logoBl.updateHitbox();
@@ -166,8 +170,6 @@ class CustomTitlescreen extends MusicBeatState
 		// FlxG.watch.addQuick('amp', FlxG.sound.music.amplitude);
 		logoBl.scale.x = FlxMath.lerp(newLogoScale, logoBl.scale.x, 0.95);
 		logoBl.scale.y = FlxMath.lerp(newLogoScale, logoBl.scale.y, 0.95);
-
-		logoBl.angle = FlxMath.lerp(0, logoBl.angle, 0.95);
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
 
@@ -271,16 +273,7 @@ class CustomTitlescreen extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
-
-		var increment = 1.05;
-		if (curBeat % 2 == 0)
-			increment = 1.15;
-
-		logoBl.setGraphicSize(Std.int(initLogowidth * increment));
-		logoBl.angle += increment * 1.5 * (curBeat % 4) * (reverser);
-
-		if (curBeat % 8 == 0)
-			reverser = -reverser;
+		logoBl.animation.play('bumpin');
 
 		switch (curBeat)
 		{

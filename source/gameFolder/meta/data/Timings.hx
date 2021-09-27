@@ -16,11 +16,11 @@ class Timings
 	// from left to right
 	// max milliseconds, score from it and percentage
 	public static var judgementsMap:Map<String, Array<Dynamic>> = [
-		"sick" => [0, 45, 350, 100],
-		"good" => [1, 100, 150, 40],
-		"bad" => [2, 120, 0, 5],
-		"shit" => [3, 140, -50, -100],
-		"miss" => [4, 180, -100, -150],
+		"sick" => [0, 50, 350, 100],
+		"good" => [1, 100, 150, 75],
+		"bad" => [2, 120, 0, 25],
+		"shit" => [3, 160, -50, -150],
+		"miss" => [4, 200, -100, -175],
 	];
 
 	public static var msThreshold:Float = 0;

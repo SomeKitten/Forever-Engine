@@ -49,10 +49,11 @@ class Stage extends FlxTypedGroup<FlxBasic>
 
 	var daPixelZoom = PlayState.daPixelZoom;
 
+	public var foreground:FlxTypedGroup<FlxBasic>;
+
 	public function new(curStage)
 	{
 		super();
-
 		this.curStage = curStage;
 
 		/// get hardcoded stage type if chart is fnf style
@@ -82,6 +83,9 @@ class Stage extends FlxTypedGroup<FlxBasic>
 
 			PlayState.curStage = curStage;
 		}
+
+		// to apply to foreground use foreground.add(); instead of add();
+		foreground = new FlxTypedGroup<FlxBasic>();
 
 		//
 		switch (curStage)

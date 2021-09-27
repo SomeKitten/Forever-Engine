@@ -80,6 +80,8 @@ class ChartingState extends MusicBeatState
 	private var curRenderedSustains:FlxTypedGroup<Note>;
 	private var curRenderedSections:FlxTypedGroup<FlxBasic>;
 
+	private var arrowGroup:FlxTypedSpriteGroup<UIStaticArrow>;
+
 	override public function create()
 	{
 		//
@@ -102,6 +104,8 @@ class ChartingState extends MusicBeatState
 		curRenderedSustains = new FlxTypedGroup<Note>();
 		curRenderedSections = new FlxTypedGroup<FlxBasic>();
 
+		generateNotes();
+
 		add(curRenderedSections);
 		add(curRenderedSustains);
 		add(curRenderedNotes);
@@ -114,6 +118,31 @@ class ChartingState extends MusicBeatState
 		add(strumLine);
 		strumLine.screenCenter(X);
 
+		// and now the epic note thingies
+		arrowGroup = new FlxTypedSpriteGroup<UIStaticArrow>(0, 0);
+		for (i in 0...keysTotal)
+		{
+			var typeReal:Int = i;
+			if (typeReal > 3)
+				typeReal -= 4;
+
+			var newArrow:UIStaticArrow = ForeverAssets.generateUIArrows(((FlxG.width / 2) - ((keysTotal / 2) * gridSize)) + ((i - 1) * gridSize),
+				-76, typeReal, 'chart editor');
+
+			newArrow.ID = i;
+			newArrow.setGraphicSize(gridSize);
+			newArrow.updateHitbox();
+			newArrow.alpha = 0.9;
+			newArrow.antialiasing = true;
+
+			// lol silly idiot
+			newArrow.playAnim('static');
+
+			arrowGroup.add(newArrow);
+		}
+		add(arrowGroup);
+		arrowGroup.x -= 1;
+
 		// code from the playstate so I can separate the camera and hud
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -124,7 +153,12 @@ class ChartingState extends MusicBeatState
 		FlxCamera.defaultCameras = [camGame];
 
 		FlxG.camera.follow(strumLineCam);
+
+		FlxG.mouse.useSystemCursor = false; // Use system cursor because it's prettier
+		FlxG.mouse.visible = true; // Hide mouse on start
 	}
+
+	var hitSoundsPlayed:Array<Note> = [];
 
 	override public function update(elapsed:Float)
 	{
@@ -142,7 +176,7 @@ class ChartingState extends MusicBeatState
 				songMusic.play();
 
 				// reset note tick sounds
-				// hitSoundsPlayed = [];
+				hitSoundsPlayed = [];
 
 				// playButtonAnimation('play');
 			}
@@ -164,6 +198,7 @@ class ChartingState extends MusicBeatState
 
 		strumLine.y = getYfromStrum(Conductor.songPosition);
 		strumLineCam.y = strumLine.y + (FlxG.height / 3);
+		arrowGroup.y = strumLine.y;
 
 		coolGradient.y = strumLineCam.y - (FlxG.height / 2);
 		coolGrid.y = strumLineCam.y - (FlxG.height / 2);
@@ -178,6 +213,19 @@ class ChartingState extends MusicBeatState
 			ForeverTools.killMusic([songMusic, vocals]);
 			Main.switchState(this, new PlayState());
 		}
+
+		// call all rendered notes lol
+		curRenderedNotes.forEach(function(epicNote:Note){
+			if ((epicNote.y < (strumLineCam.y - (FlxG.height / 2) - epicNote.height))
+			|| (epicNote.y > (strumLineCam.y + (FlxG.height / 2)))) {
+				// do epic note calls for strum stuffs
+				if (Math.floor(Conductor.songPosition / Conductor.stepCrochet) == Math.floor(epicNote.strumTime / Conductor.stepCrochet) 
+					&& (!hitSoundsPlayed.contains(epicNote))) {
+					
+					hitSoundsPlayed.push(epicNote);
+				}
+			}
+		});
 	}
 
 	function getStrumTime(yPos:Float):Float
@@ -209,9 +257,30 @@ class ChartingState extends MusicBeatState
 		add(fullGrid);
 	}
 
+	var sectionsMax = 0;
+
 	function generateNotes()
 	{
 		// GENERATING THE GRID NOTES!
+		curRenderedNotes.clear();
+		curRenderedSustains.clear();
+
+		//sectionsMax = 1;
+		for (section in 0..._song.notes.length)
+		{
+			sectionsMax = section;
+			for (i in _song.notes[section].sectionNotes)
+			{
+				// note stuffs
+				var daNoteAlt = 0;
+				if (i.length > 2)
+					daNoteAlt = i[3];
+				generateChartNote(i[1], i[0], i[2], daNoteAlt, section);
+			}
+			
+		}
+		// lolll
+		//sectionsMax--;
 	}
 
 	function loadSong(daSong:String):Void
@@ -236,6 +305,7 @@ class ChartingState extends MusicBeatState
 		if (curSong == _song)
 			songMusic.time = songPosition;
 		curSong = _song;
+		songPosition = 0;
 
 		pauseMusic();
 
@@ -247,10 +317,10 @@ class ChartingState extends MusicBeatState
 		//
 	}
 
-	private function generateChartNote(daNoteInfo, daStrumTime, daSus, daNoteAlt, noteSection, curNoteMap:Map<Note, Dynamic>)
+	private function generateChartNote(daNoteInfo, daStrumTime, daSus, daNoteAlt, noteSection)
 	{
 		//
-		var note:Note = new Note(daStrumTime, daNoteInfo % 4, daNoteAlt);
+		var note:Note = ForeverAssets.generateArrow(PlayState.assetModifier, daStrumTime, daNoteInfo % 4, 0, daNoteAlt, false, null);
 		// I love how there's 3 different engines that use this exact same variable name lmao
 		note.rawNoteData = daNoteInfo;
 		note.sustainLength = daSus;
@@ -264,12 +334,10 @@ class ChartingState extends MusicBeatState
 		note.y = Math.floor(getYfromStrum(daStrumTime));
 
 		curRenderedNotes.add(note);
-
-		curNoteMap.set(note, null);
-		generateSustain(daStrumTime, daNoteInfo, daSus, daNoteAlt, note, curNoteMap);
+		generateSustain(daStrumTime, daNoteInfo, daSus, daNoteAlt, note);
 	}
 
-	private function generateSustain(daStrumTime:Float = 0, daNoteInfo:Int = 0, daSus:Float = 0, daNoteAlt:Float = 0, note:Note, curNoteMap:Map<Note, Dynamic>)
+	private function generateSustain(daStrumTime:Float = 0, daNoteInfo:Int = 0, daSus:Float = 0, daNoteAlt:Float = 0, note:Note)
 	{
 		/*
 			if (daSus > 0)

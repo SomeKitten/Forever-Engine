@@ -1,0 +1,23 @@
+{
+    "box": "dialogueBox-evil",
+    "boxState": "normal",
+    "dialogue": [
+        {
+            "portrait": "senpai",
+            "expression": "mad",
+            "text": "Direct contact with real humans, \nafter being trapped in here for \nso long..."
+        },
+        {
+            "text": "and HER of all people."
+        },
+        {
+            "text": "I'll make her father pay for what \nhe's done to me and all the \nothers,,,,"
+        },
+        {
+            "text": "I'll beat you and make you take \nmy place."
+        },
+        {
+            "text": "You don't mind your bodies \nbeing borrowed right? It's only \nfair..."
+        }
+    ]
+}

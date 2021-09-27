@@ -402,6 +402,11 @@ class AlphaCharacter extends FlxSprite
 				animation.play(letter);
 				setGraphicSize(10, 40);
 				y += 16;
+			case ",":
+				animation.addByPrefix(letter, 'comma', 24);
+				animation.play(letter);
+				setGraphicSize(10, 10);
+				y += 48;
 			default:
 				animation.addByPrefix(letter, letter, 24);
 				animation.play(letter);

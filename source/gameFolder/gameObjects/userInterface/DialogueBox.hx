@@ -69,26 +69,26 @@ class DialogueBox extends FlxSpriteGroup
 
 		nothing yet :P
 	 */
-	var box:FNFSprite;
-	var bgFade:FlxSprite;
-	var portrait:FNFSprite;
-	var text:FlxText;
-	var alphabetText:Alphabet;
+	public var box:FNFSprite;
+	public var bgFade:FlxSprite;
+	public var portrait:FNFSprite;
+	public var text:FlxText;
+	public var alphabetText:Alphabet;
 
-	var dialogueData:DialogueFileDataDef;
-	var portraitData:PortraitDataDef;
-	var boxData:BoxDataDef;
+	public var dialogueData:DialogueFileDataDef;
+	public var portraitData:PortraitDataDef;
+	public var boxData:BoxDataDef;
 
-	var curPage:Int = 0;
-	var curCharacter:String;
-	var curExpression:String;
-	var curBoxState:String;
+	public var curPage:Int = 0;
+	public var curCharacter:String;
+	public var curExpression:String;
+	public var curBoxState:String;
 
-	var eventImage:Null<FlxSprite>;
+	public var eventImage:Null<FlxSprite>;
 
 	public var whenDaFinish:Void->Void;
 
-	var textStarted:Bool = false;
+	public var textStarted:Bool = false;
 
 	public static function createDialogue(thisDialogue:String):DialogueBox
 	{
@@ -97,7 +97,7 @@ class DialogueBox extends FlxSpriteGroup
 		return newDialogue;
 	}
 
-	function dialoguePath(file:String):String
+	public function dialoguePath(file:String):String
 	{
 		var dialoguePath = Paths.file('assets/images/dialogue/portraits/$curCharacter/$file');
 		var truePath = Paths.file(file);
@@ -162,7 +162,7 @@ class DialogueBox extends FlxSpriteGroup
 		add(skipText);
 	}
 
-	function updateDialog(force:Bool = false)
+	public function updateDialog(force:Bool = false)
 	{
 		// set current portrait
 		updateTextBox(force);
@@ -211,7 +211,7 @@ class DialogueBox extends FlxSpriteGroup
 			startText();
 	}
 
-	function updateTextBox(force:Bool = false)
+	public function updateTextBox(force:Bool = false)
 	{
 		var curBox = dialogueData.box;
 		var newState = dialogueData.dialogue[curPage].boxState;
@@ -303,7 +303,7 @@ class DialogueBox extends FlxSpriteGroup
 		}
 	}
 
-	function updatePortrait(force:Bool = false)
+	public function updatePortrait(force:Bool = false)
 	{
 		var newChar = dialogueData.dialogue[curPage].portrait;
 
@@ -487,14 +487,15 @@ class DialogueBox extends FlxSpriteGroup
 	}
 
 	// mario
-	function closeDialog()
+	// WOAH THE CODIST I LOVE MARIO!!!
+	public function closeDialog()
 	{
 		whenDaFinish();
 		alphabetText.playSounds = false;
 		kill();
 	}
 
-	function dialogDataCheck()
+	public function dialogDataCheck()
 	{
 		var tisOkay = true;
 
@@ -524,21 +525,6 @@ class DialogueBox extends FlxSpriteGroup
 		bgFade.alpha += 0.02;
 		if (bgFade.alpha > 0.6)
 			bgFade.alpha = 0.6;
-
-		if (FlxG.keys.justPressed.SHIFT)
-			closeDialog();
-
-		if (FlxG.keys.justPressed.ANY && textStarted)
-		{
-			FlxG.sound.play(Paths.sound('cancelMenu'));
-
-			curPage += 1;
-
-			if (curPage == dialogueData.dialogue.length)
-				closeDialog()
-			else
-				updateDialog();
-		}
 
 		super.update(elapsed);
 	}

@@ -79,9 +79,7 @@ class UIStaticArrow extends FlxSprite
 	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)
-	{
 		animOffsets[name] = [x, y];
-	}
 
 	public static function getArrowFromNumber(numb:Int)
 	{

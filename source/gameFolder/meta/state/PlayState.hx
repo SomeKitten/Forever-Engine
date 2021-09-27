@@ -107,6 +107,7 @@ class PlayState extends MusicBeatState
 
 	public static var camHUD:FlxCamera;
 	public static var camGame:FlxCamera;
+	public static var dialogueHUD:FlxCamera;
 
 	public var camDisplaceX:Float = 0;
 	public var camDisplaceY:Float = 0; // might not use depending on result
@@ -218,6 +219,7 @@ class PlayState extends MusicBeatState
 
 		dadOpponent = new Character(100, 100, SONG.player2);
 		boyfriend = new Boyfriend(770, 450, SONG.player1);
+		// if you want to change characters later use setCharacter() instead of new or it will break
 
 		var camPos:FlxPoint = new FlxPoint(gf.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
 
@@ -247,6 +249,8 @@ class PlayState extends MusicBeatState
 		add(dadOpponent);
 		add(boyfriend);
 
+		add(stageBuild.foreground);
+
 		// force them to dance
 		dadOpponent.dance();
 		gf.dance();
@@ -255,6 +259,7 @@ class PlayState extends MusicBeatState
 		// set song position before beginning
 		Conductor.songPosition = -(Conductor.crochet * 4);
 
+		// EVERYTHING SHOULD GO UNDER THIS, IF YOU PLAN ON SPAWNING SOMETHING LATER ADD IT TO STAGEBUILD OR FOREGROUND
 		// darken everything but the arrows and ui via a flxsprite
 		var darknessBG:FlxSprite = new FlxSprite(FlxG.width * -0.5, FlxG.height * -0.5).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
 		darknessBG.alpha = Init.trueSettings.get('Stage Darkness') * 0.01;
@@ -325,6 +330,11 @@ class PlayState extends MusicBeatState
 		uiHUD.cameras = [camHUD];
 		//
 
+		// create a hud over the hud camera for dialogue
+		dialogueHUD = new FlxCamera();
+		dialogueHUD.bgColor.alpha = 0;
+		FlxG.cameras.add(dialogueHUD);
+
 		// call the funny intro cutscene depending on the song
 		var freeplayOverride = true;
 		if (isStoryMode || freeplayOverride)
@@ -376,6 +386,26 @@ class PlayState extends MusicBeatState
 
 		if (health > 2)
 			health = 2;
+
+		// dialogue checks
+		if (dialogueBox != null && dialogueBox.alive) {
+			// wheee the shift closes the dialogue
+			if (FlxG.keys.justPressed.SHIFT)
+				dialogueBox.closeDialog();
+
+			// the change I made was just so that it would only take accept inputs
+			if (controls.ACCEPT && dialogueBox.textStarted)
+			{
+				FlxG.sound.play(Paths.sound('cancelMenu'));
+				dialogueBox.curPage += 1;
+
+				if (dialogueBox.curPage == dialogueBox.dialogueData.dialogue.length)
+					dialogueBox.closeDialog()
+				else
+					dialogueBox.updateDialog();
+			}
+
+		}
 
 		// pause the game if the game is allowed to pause and enter is pressed
 		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
@@ -777,7 +807,7 @@ class PlayState extends MusicBeatState
 				// special thanks to sam, they gave me the original system which kinda inspired my idea for this new one
 
 				// get the note ms timing
-				var noteDiff:Float = Math.abs(coolNote.strumTime - Conductor.songPosition + 4);
+				var noteDiff:Float = Math.abs(coolNote.strumTime - Conductor.songPosition);
 				trace(noteDiff);
 				// get the timing
 				if (coolNote.strumTime < Conductor.songPosition)
@@ -1070,7 +1100,7 @@ class PlayState extends MusicBeatState
 				negative, createdColor, scoreInt);
 			add(numScore);
 			// hardcoded lmao
-			if (Init.trueSettings.get('SM-like Judgements'))
+			if (Init.trueSettings.get('Fixed Judgements'))
 			{
 				numScore.cameras = [camHUD];
 				numScore.x += 100;
@@ -1143,7 +1173,7 @@ class PlayState extends MusicBeatState
 		var rating = ForeverAssets.generateRating('$daRating', (daRating == 'sick' ? allSicks : false), timing, assetModifier, changeableSkin, 'UI');
 		add(rating);
 
-		if (Init.trueSettings.get('SM-like Judgements'))
+		if (Init.trueSettings.get('Fixed Judgements'))
 		{
 			// bound to camera
 			rating.cameras = [camHUD];
@@ -1237,9 +1267,7 @@ class PlayState extends MusicBeatState
 	}
 
 	function sortByShit(Obj1:Note, Obj2:Note):Int
-	{
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.strumTime, Obj2.strumTime);
-	}
 
 	function resyncVocals():Void
 	{
@@ -1256,9 +1284,7 @@ class PlayState extends MusicBeatState
 		super.stepHit();
 		///*
 		if (songMusic.time > Conductor.songPosition + 20 || songMusic.time < Conductor.songPosition - 20)
-		{
 			resyncVocals();
-		}
 		//*/
 	}
 
@@ -1445,6 +1471,8 @@ class PlayState extends MusicBeatState
 		FlxG.switchState(new PlayState());
 	}
 
+	var dialogueBox:DialogueBox;
+
 	public function songIntroCutscene()
 	{
 		switch (curSong.toLowerCase())
@@ -1478,18 +1506,31 @@ class PlayState extends MusicBeatState
 					});
 				});
 			case 'roses':
-				FlxG.sound.play(Paths.sound('ANGRY'));
-			// schoolIntro(doof);
-			default:
+				// the same just play angery noise LOL
+				FlxG.sound.play(Paths.sound('ANGRY_TEXT_BOX'));
 				var dialogPath = Paths.json(SONG.song.toLowerCase() + '/dialogue');
 
-				if (!Init.trueSettings.get('Skip Cutscenes') && sys.FileSystem.exists(dialogPath))
+				if (!skipCutscenes() && sys.FileSystem.exists(dialogPath))
 				{
 					startedCountdown = false;
 
-					var dialogueBox:DialogueBox;
 					dialogueBox = DialogueBox.createDialogue(sys.io.File.getContent(dialogPath));
-					dialogueBox.cameras = [camHUD];
+					dialogueBox.cameras = [dialogueHUD];
+					dialogueBox.whenDaFinish = startCountdown;
+
+					add(dialogueBox);
+				}
+				else
+					startCountdown();
+			default:
+				var dialogPath = Paths.json(SONG.song.toLowerCase() + '/dialogue');
+
+				if (!skipCutscenes() && sys.FileSystem.exists(dialogPath))
+				{
+					startedCountdown = false;
+
+					dialogueBox = DialogueBox.createDialogue(sys.io.File.getContent(dialogPath));
+					dialogueBox.cameras = [dialogueHUD];
 					dialogueBox.whenDaFinish = startCountdown;
 
 					add(dialogueBox);
@@ -1498,6 +1539,27 @@ class PlayState extends MusicBeatState
 					startCountdown();
 		}
 		//
+	}
+
+	public static function skipCutscenes():Bool {
+		// pretty messy but an if statement is messier
+		if (Init.trueSettings.get('Skip Text') != null 
+		&& Std.isOfType(Init.trueSettings.get('Skip Text'), String)) {
+			switch (cast(Init.trueSettings.get('Skip Text'), String))
+			{
+				case 'never':
+					return false;
+				case 'freeplay only':
+					if (!isStoryMode)
+						return true;
+					else
+						return false;
+				default:
+					return true;
+			}
+		}
+
+		return false;
 	}
 
 	public static var swagCounter:Int = 0;

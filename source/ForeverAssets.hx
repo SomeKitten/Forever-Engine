@@ -185,9 +185,9 @@ class ForeverAssets
 				newStaticArrow.updateHitbox();
 				newStaticArrow.antialiasing = false;
 
-				newStaticArrow.addOffset('static', -67, -75);
-				newStaticArrow.addOffset('pressed', -67, -75);
-				newStaticArrow.addOffset('confirm', -67, -75);
+				newStaticArrow.addOffset('static', -67, -50);
+				newStaticArrow.addOffset('pressed', -67, -50);
+				newStaticArrow.addOffset('confirm', -67, -50);
 
 			case 'chart editor':
 				newStaticArrow.loadGraphic(Paths.image('UI/forever/base/chart editor/note_array'), true, 157, 156);
