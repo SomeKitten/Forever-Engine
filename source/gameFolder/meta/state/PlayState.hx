@@ -92,10 +92,8 @@ class PlayState extends MusicBeatState
 
 	public static var health:Float = 1; // mario
 	public static var combo:Int = 0;
-	// store judgement counts
+
 	public static var misses:Int = 0;
-	
-	public static var judgeCount:Array<Int>;
 
 	public var generatedMusic:Bool = false;
 
