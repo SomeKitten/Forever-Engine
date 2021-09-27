@@ -134,6 +134,12 @@ class Init extends FlxState
 			Checkmark,
 			"Fixes the judgements to the camera instead of to the world itself, making them easier to read."
 		],
+		'Simply Judgements' => [
+			false,
+			Checkmark,
+			"Simplifies the judgement animations, displaying only one judgement / rating sprite at a time."
+		],
+
 
 	];
 

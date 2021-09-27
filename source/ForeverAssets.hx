@@ -53,7 +53,7 @@ class ForeverAssets
 				newSprite.animation.play('base');
 		}
 
-		if (assetModifier == 'pixel')
+		if (assetModifier == 'pixel') 
 			newSprite.setGraphicSize(Std.int(newSprite.width * PlayState.daPixelZoom));
 		else
 		{
@@ -61,10 +61,11 @@ class ForeverAssets
 			newSprite.setGraphicSize(Std.int(newSprite.width * 0.5));
 		}
 		newSprite.updateHitbox();
-
+		if (!Init.trueSettings.get('Simply Judgements'))
+		{
 		newSprite.acceleration.y = FlxG.random.int(200, 300);
 		newSprite.velocity.y = -FlxG.random.int(140, 160);
-		newSprite.velocity.x = FlxG.random.float(-5, 5);
+		newSprite.velocity.x = FlxG.random.float(-5, 5);}
 
 		return newSprite;
 	}
@@ -88,10 +89,12 @@ class ForeverAssets
 				rating.screenCenter();
 				rating.x = (FlxG.width * 0.55) - 40;
 				rating.y -= 60;
+				if (!Init.trueSettings.get('Simply Judgements'))
+				{
 				rating.acceleration.y = 550;
 				rating.velocity.y = -FlxG.random.int(140, 175);
 				rating.velocity.x = -FlxG.random.int(0, 10);
-
+				}
 				rating.animation.add('base', [
 					Std.int((Timings.judgementsMap.get(asset)[0] * 2) + (perfectSick ? 0 : 2) + (timing == 'late' ? 1 : 0))
 				], 24, false);
