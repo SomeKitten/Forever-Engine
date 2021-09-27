@@ -140,6 +140,11 @@ class PlayState extends MusicBeatState
 
 	private var allUIs:Array<FlxCamera> = [];
 
+	// stores the last judgement object
+	public static var lastRating:FlxSprite;
+	// stores the last combo objects in an array
+	public static var lastCombo:Array<FlxSprite>;
+
 	// at the beginning of the playstate
 	override public function create()
 	{
@@ -150,6 +155,8 @@ class PlayState extends MusicBeatState
 		combo = 0;
 		health = 1;
 		misses = 0;
+		// sets up the combo object array
+		lastCombo = [];
 
 		defaultCamZoom = 1.05;
 		forceZoom = [0, 0, 0, 0];
@@ -1093,6 +1100,22 @@ class PlayState extends MusicBeatState
 		if ((comboString.startsWith('-')) || (combo == 0))
 			negative = true;
 		var stringArray:Array<String> = comboString.split("");
+		// deletes all combo sprites prior to initalizing new ones
+		if (lastCombo != null)
+		{
+			for (i in 0...lastCombo.length - 1)
+			{
+				lastCombo[i].kill();
+				lastCombo.remove(lastCombo[i]);
+			}
+			if (lastCombo.length == 1)
+			{
+				//this part is very jank, but it works
+				lastCombo[0].kill();
+				lastCombo.remove(lastCombo[0]);
+			}
+		}
+
 		for (scoreInt in 0...stringArray.length)
 		{
 			// numScore.loadGraphic(Paths.image('UI/' + pixelModifier + 'num' + stringArray[scoreInt]));
@@ -1100,23 +1123,37 @@ class PlayState extends MusicBeatState
 				negative, createdColor, scoreInt);
 			add(numScore);
 			// hardcoded lmao
+			if (!Init.trueSettings.get('Simply Judgements'))
+			{
+				add(numScore);
+				FlxTween.tween(numScore, {alpha: 0}, 0.2, {
+					onComplete: function(tween:FlxTween)
+					{
+						numScore.kill();
+					},
+					startDelay: Conductor.crochet * 0.002
+				});
+			}
+			else
+			{
+				add(numScore);
+				// centers combo
+				numScore.y += 10;
+				numScore.x -= 95;
+				numScore.x -= ((comboString.length - 1) * 22);
+				lastCombo.push(numScore);
+				FlxTween.tween(numScore, {y: numScore.y + 20}, 0.1, {type: FlxTween.BACKWARD, ease: FlxEase.circOut});
+			}
+			if (preload)
+				numScore.visible = false;
+			// hardcoded lmao
 			if (Init.trueSettings.get('Fixed Judgements'))
 			{
 				numScore.cameras = [camHUD];
 				numScore.x += 100;
 				numScore.y += 50;
-			}
-
-			if (preload)
-				numScore.visible = false;
-
-			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
-				onComplete: function(tween:FlxTween)
-				{
-					numScore.kill();
-				},
-				startDelay: Conductor.crochet * 0.002
-			});
+			} else 
+				numScore.x += 100;
 		}
 	}
 
@@ -1173,6 +1210,37 @@ class PlayState extends MusicBeatState
 		var rating = ForeverAssets.generateRating('$daRating', (daRating == 'sick' ? allSicks : false), timing, assetModifier, changeableSkin, 'UI');
 		add(rating);
 
+		if (!Init.trueSettings.get('Simply Judgements'))
+		{
+			add(rating);
+
+			FlxTween.tween(rating, {alpha: 0}, 0.2, {
+				onComplete: function(tween:FlxTween)
+				{
+					rating.kill();
+				},
+				startDelay: Conductor.crochet * 0.00125
+			});
+		}
+		else
+		{
+			if (lastRating != null)
+			{
+				lastRating.kill();
+			}
+			add(rating);
+			lastRating = rating;
+			FlxTween.tween(rating, {y: rating.y + 20}, 0.2, {type: FlxTweenType.BACKWARD, ease: FlxEase.circOut});
+			FlxTween.tween(rating, {"scale.x": 0, "scale.y": 0}, 0.1, {
+				onComplete: function(tween:FlxTween)
+				{
+					rating.kill();
+				},
+				startDelay: Conductor.crochet * 0.00125
+			});
+		}
+		// */
+
 		if (Init.trueSettings.get('Fixed Judgements'))
 		{
 			// bound to camera
@@ -1182,16 +1250,6 @@ class PlayState extends MusicBeatState
 
 		if (cache)
 			rating.visible = false;
-
-		///*
-		FlxTween.tween(rating, {alpha: 0}, 0.2, {
-			onComplete: function(tween:FlxTween)
-			{
-				rating.kill();
-			},
-			startDelay: Conductor.crochet * 0.00125
-		});
-		// */
 	}
 
 	function healthCall(?ratingMultiplier:Float = 0)
