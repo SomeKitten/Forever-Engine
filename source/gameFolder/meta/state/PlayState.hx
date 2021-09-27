@@ -92,6 +92,7 @@ class PlayState extends MusicBeatState
 
 	public static var health:Float = 1; // mario
 	public static var combo:Int = 0;
+
 	public static var misses:Int = 0;
 
 	public var generatedMusic:Bool = false;
@@ -1068,9 +1069,11 @@ class PlayState extends MusicBeatState
 		var score:Int = 50;
 
 		// notesplashes
-		if (baseRating == "sick") // create the note splash if you hit a sick
+		if (baseRating == "sick")
+			// create the note splash if you hit a sick
 			createSplash(coolNote, strumline);
-		else // if it isn't a sick, and you had a sick combo, then it becomes not sick :(
+		else
+ 			// if it isn't a sick, and you had a sick combo, then it becomes not sick :(
 			if (allSicks)
 				allSicks = false;
 
@@ -1103,14 +1106,8 @@ class PlayState extends MusicBeatState
 		// deletes all combo sprites prior to initalizing new ones
 		if (lastCombo != null)
 		{
-			for (i in 0...lastCombo.length - 1)
+			while (lastCombo.length > 0)
 			{
-				lastCombo[i].kill();
-				lastCombo.remove(lastCombo[i]);
-			}
-			if (lastCombo.length == 1)
-			{
-				//this part is very jank, but it works
 				lastCombo[0].kill();
 				lastCombo.remove(lastCombo[0]);
 			}
@@ -1150,9 +1147,8 @@ class PlayState extends MusicBeatState
 			if (Init.trueSettings.get('Fixed Judgements'))
 			{
 				numScore.cameras = [camHUD];
-				numScore.x += 100;
 				numScore.y += 50;
-			} else 
+			}
 				numScore.x += 100;
 		}
 	}
@@ -1453,7 +1449,9 @@ class PlayState extends MusicBeatState
 			Highscore.saveScore(SONG.song, songScore, storyDifficulty);
 
 		if (!isStoryMode)
+		{
 			Main.switchState(this, new FreeplayState());
+		}
 		else
 		{
 			// set the campaign's score higher
