@@ -719,27 +719,27 @@ class PlayState extends MusicBeatState
 				// check all of the controls
 				for (i in 0...pressControls.length)
 				{
-					// improved this a little bit, maybe its a lil
-					var possibleNoteList:Array<Note> = [];
-					var pressedNotes:Array<Note> = [];
-
-					characterStrums.notesGroup.forEachAlive(function(daNote:Note)
+					// and if a note is being pressed
+					if (pressControls[i])
 					{
-						if ((daNote.noteData == i) && daNote.canBeHit && !daNote.tooLate && !daNote.wasGoodHit)
-							possibleNoteList.push(daNote);
-					});
-					possibleNoteList.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+						// improved this a little bit, maybe its a lil
+						var possibleNoteList:Array<Note> = [];
+						var pressedNotes:Array<Note> = [];
 
-					// if there is a list of notes that exists for that control
-					if (possibleNoteList.length > 0)
-					{
-						var eligable = true;
-						var firstNote = true;
-						// loop through the possible notes
-						for (coolNote in possibleNoteList)
+						characterStrums.notesGroup.forEachAlive(function(daNote:Note)
 						{
-							// and if a note is being pressed
-							if (pressControls[coolNote.noteData])
+							if ((daNote.noteData == i) && daNote.canBeHit && !daNote.tooLate && !daNote.wasGoodHit)
+								possibleNoteList.push(daNote);
+						});
+						possibleNoteList.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+
+						// if there is a list of notes that exists for that control
+						if (possibleNoteList.length > 0)
+						{
+							var eligable = true;
+							var firstNote = true;
+							// loop through the possible notes
+							for (coolNote in possibleNoteList)
 							{
 								for (noteDouble in pressedNotes)
 								{
@@ -754,14 +754,14 @@ class PlayState extends MusicBeatState
 									goodNoteHit(coolNote, character, characterStrums, firstNote); // then hit the note
 									pressedNotes.push(coolNote);
 								}
+								// end of this little check
 							}
-							// end of this little check
+							//
 						}
-						//
+						else // else just call bad notes
+							if (!Init.trueSettings.get('Ghost Tapping'))
+								missNoteCheck(true, i, character, true);
 					}
-					else // else just call bad notes
-						if (!Init.trueSettings.get('Ghost Tapping') && pressControls[i])
-							missNoteCheck(true, i, character, true);
 					//
 				}
 			}
@@ -1139,7 +1139,7 @@ class PlayState extends MusicBeatState
 				numScore.x -= 95;
 				numScore.x -= ((comboString.length - 1) * 22);
 				lastCombo.push(numScore);
-				FlxTween.tween(numScore, {y: numScore.y + 20}, 0.1, {type: FlxTween.BACKWARD, ease: FlxEase.circOut});
+				FlxTween.tween(numScore, {y: numScore.y + 20}, 0.1, {type: FlxTweenType.BACKWARD, ease: FlxEase.circOut});
 			}
 			if (preload)
 				numScore.visible = false;
@@ -1242,6 +1242,15 @@ class PlayState extends MusicBeatState
 			// bound to camera
 			rating.cameras = [camHUD];
 			rating.screenCenter();
+		}
+
+		// return the actual rating to the array of judgements
+		Timings.gottenJudgements.set(daRating, Timings.gottenJudgements.get(daRating) + 1);
+
+		// set new smallest rating
+		if (Timings.smallestRating != daRating) {
+			if (Timings.judgementsMap.get(Timings.smallestRating)[0] < Timings.judgementsMap.get(daRating)[0])
+				Timings.smallestRating = daRating;
 		}
 
 		if (cache)

@@ -16,9 +16,9 @@ class Timings
 	// from left to right
 	// max milliseconds, score from it and percentage
 	public static var judgementsMap:Map<String, Array<Dynamic>> = [
-		"sick" => [0, 50, 350, 100],
-		"good" => [1, 100, 150, 75],
-		"bad" => [2, 120, 0, 25],
+		"sick" => [0, 50, 350, 100, ' [SFC]'],
+		"good" => [1, 100, 150, 75, ' [GFC]'],
+		"bad" => [2, 120, 0, 25, ' [FC]'],
 		"shit" => [3, 160, -50, -150],
 		"miss" => [4, 200, -100, -175],
 	];
@@ -34,6 +34,9 @@ class Timings
 	public static var comboDisplay:String = '';
 	public static var notesHitNoSus:Int = 0;
 
+	public static var gottenJudgements:Map<String, Int> = [];
+	public static var smallestRating:String;
+
 	public static function callAccuracy()
 	{
 		// reset the accuracy to 0%
@@ -47,6 +50,11 @@ class Timings
 			if (judgementsMap.get(i)[1] > biggestThreshold)
 				biggestThreshold = judgementsMap.get(i)[1];
 		msThreshold = biggestThreshold;
+
+		// set the gotten judgement amounts
+		for (judgement in judgementsMap.keys())
+			gottenJudgements.set(judgement, 0);
+		smallestRating = 'sick';
 
 		notesHit = 0;
 		notesHitNoSus = 0;
@@ -86,20 +94,9 @@ class Timings
 	public static function updateFCDisplay()
 	{
 		// update combo display
-		// if you dont understand this look up ternary operators, they're REALLY useful for condensing code and
-		// I would totally encourage you check them out and learn a little more
-		comboDisplay = ((PlayState.combo >= notesHitNoSus) ? ((trueAccuracy >= 100) ? ' [PERFECT]' : ' [FC]') : '');
-
-		// to break it down further
-		/*
-			if (PlayState.combo >= notesHitNoSus) {
-				if (trueAccuracy >= 100)
-					comboDisplay = ' [PERFECT]';
-				else
-					comboDisplay = ' [FC]';
-			} else
-				comboDisplay = '';
-		 */
+		comboDisplay = '';
+		if (judgementsMap.get(smallestRating)[4] != null)
+			comboDisplay = judgementsMap.get(smallestRating)[4];
 
 		// this updates the most so uh
 		PlayState.uiHUD.updateScoreText();
