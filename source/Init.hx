@@ -117,7 +117,7 @@ class Init extends FlxState
 		],
 		'Centered Notefield' => [false, Checkmark, "Center the notes, disables the enemy's notes."],
 		"Custom Titlescreen" => [
-			true,
+			false,
 			Checkmark,
 			"Enables the custom Forever Engine titlescreen! (only effective with a restart)",
 			FORCED
