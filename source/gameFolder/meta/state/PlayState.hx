@@ -942,10 +942,10 @@ class PlayState extends MusicBeatState
 		///*
 		if (daNote.isSustainNote
 			&& (((daNote.y + daNote.offset.y <= (strumline.receptors.members[Math.floor(daNote.noteData)].y + Note.swagWidth / 2))
-				&& !Init.trueSettings.get('Downscroll'))
-				|| (((daNote.y - (daNote.offset.y * daNote.scale.y) + daNote.height) >= (strumline.receptors.members[Math.floor(daNote.noteData)].y
-					+ Note.swagWidth / 2))
-					&& Init.trueSettings.get('Downscroll')))
+			&& !Init.trueSettings.get('Downscroll'))
+			|| (((daNote.y - (daNote.offset.y * daNote.scale.y) + daNote.height) 
+			>= (strumline.receptors.members[Math.floor(daNote.noteData)].y + Note.swagWidth / 2)) 
+			&& Init.trueSettings.get('Downscroll')))
 			&& (autoplay || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
 		{
 			var swagRectY = ((strumline.receptors.members[Math.floor(daNote.noteData)].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y);
@@ -955,7 +955,8 @@ class PlayState extends MusicBeatState
 			if (Init.trueSettings.get('Downscroll'))
 			{
 				swagRect.height = swagRectY;
-				swagRect.y -= swagRect.height - daNote.height;
+				// I'm literally a dumbass
+				swagRect.y += swagRect.height - daNote.height;
 			}
 			else
 			{
@@ -1728,7 +1729,6 @@ class PlayState extends MusicBeatState
 
 	override function add(Object:FlxBasic):FlxBasic
 	{
-		Main.loadedAssets.insert(Main.loadedAssets.length, Object);
 		if (Init.trueSettings.get('Disable Antialiasing') && Std.isOfType(Object, FlxSprite))
 			cast(Object, FlxSprite).antialiasing = false;
 		return super.add(Object);

@@ -70,7 +70,7 @@ class Main extends Sprite
 
 	public static var gameVersion:String = '0.2.4.1';
 
-	public static var loadedAssets:Array<FlxBasic> = [];
+	public static var loadedAssets:Array<Dynamic> = [];
 
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
@@ -235,6 +235,9 @@ class Main extends Sprite
 
 	public static function dumpCache()
 	{
+		// dump saved frames and shit
+		loadedAssets = [];
+
 		///* SPECIAL THANKS TO HAYA
 		@:privateAccess
 		for (key in FlxG.bitmap._cache.keys())

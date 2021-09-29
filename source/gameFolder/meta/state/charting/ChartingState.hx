@@ -16,6 +16,7 @@ import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUITabMenu;
+import flixel.graphics.FlxGraphic;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
@@ -213,19 +214,25 @@ class ChartingState extends MusicBeatState
 			ForeverTools.killMusic([songMusic, vocals]);
 			Main.switchState(this, new PlayState());
 		}
+	}
 
+	override public function stepHit() {
 		// call all rendered notes lol
-		curRenderedNotes.forEach(function(epicNote:Note){
+		curRenderedNotes.forEach(function(epicNote:Note)
+		{
 			if ((epicNote.y < (strumLineCam.y - (FlxG.height / 2) - epicNote.height))
-			|| (epicNote.y > (strumLineCam.y + (FlxG.height / 2)))) {
+				|| (epicNote.y > (strumLineCam.y + (FlxG.height / 2))))
+			{
 				// do epic note calls for strum stuffs
-				if (Math.floor(Conductor.songPosition / Conductor.stepCrochet) == Math.floor(epicNote.strumTime / Conductor.stepCrochet) 
-					&& (!hitSoundsPlayed.contains(epicNote))) {
-					
+				if (Math.floor(Conductor.songPosition / Conductor.stepCrochet) == Math.floor(epicNote.strumTime / Conductor.stepCrochet)
+					&& (!hitSoundsPlayed.contains(epicNote)))
+				{
 					hitSoundsPlayed.push(epicNote);
 				}
 			}
 		});
+
+		super.stepHit();
 	}
 
 	function getStrumTime(yPos:Float):Float
@@ -255,6 +262,58 @@ class ChartingState extends MusicBeatState
 		fullGrid.height = (songMusic.length / Conductor.stepCrochet) * gridSize;
 
 		add(fullGrid);
+
+	}
+
+	public var sectionLineGraphic:FlxGraphic;
+	public var sectionCameraGraphic:FlxGraphic;
+	public var sectionStepGraphic:FlxGraphic;
+
+	private function regenerateSection(section:Int, placement:Float)
+	{
+		// this will be used to regenerate a box that shows what section the camera is focused on
+
+		// oh and section information lol
+		var sectionLine:FlxSprite = new FlxSprite(FlxG.width / 2 - (gridSize * (keysTotal / 2)) - (extraSize / 2), placement);
+		sectionLine.frames = sectionLineGraphic.imageFrame;
+		sectionLine.alpha = (88 / 255);
+
+		// section camera
+		var sectionExtend:Float = 0;
+		if (_song.notes[section].mustHitSection)
+			sectionExtend = (gridSize * (keysTotal / 2));
+
+		var sectionCamera:FlxSprite = new FlxSprite(FlxG.width / 2 - (gridSize * (keysTotal / 2)) + (sectionExtend), placement);
+		sectionCamera.frames = sectionCameraGraphic.imageFrame;
+		sectionCamera.alpha = (88 / 255);
+		curRenderedSections.add(sectionCamera);
+
+		// set up section numbers
+		for (i in 0...2)
+		{
+			var sectionNumber:FlxText = new FlxText(0, sectionLine.y - 12, 0, Std.string(section), 20);
+			// set the x of the section number
+			sectionNumber.x = sectionLine.x - sectionNumber.width - 5;
+			if (i == 1)
+				sectionNumber.x = sectionLine.x + sectionLine.width + 5;
+
+			sectionNumber.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE);
+			sectionNumber.antialiasing = false;
+			sectionNumber.alpha = sectionLine.alpha;
+			curRenderedSections.add(sectionNumber);
+		}
+
+		for (i in 1...Std.int(_song.notes[section].lengthInSteps / 4))
+		{
+			// create a smaller section stepper
+			var sectionStep:FlxSprite = new FlxSprite(FlxG.width / 2 - (gridSize * (keysTotal / 2)) - (extraSize / 2),
+				placement + (i * (gridSize * 4)));
+			sectionStep.frames = sectionStepGraphic.imageFrame;
+			sectionStep.alpha = sectionLine.alpha;
+			curRenderedSections.add(sectionStep);
+		}
+
+		curRenderedSections.add(sectionLine);
 	}
 
 	var sectionsMax = 0;
@@ -266,9 +325,11 @@ class ChartingState extends MusicBeatState
 		curRenderedSustains.clear();
 
 		//sectionsMax = 1;
+		generateSection();
 		for (section in 0..._song.notes.length)
 		{
 			sectionsMax = section;
+			regenerateSection(section, 16 * gridSize * section);
 			for (i in _song.notes[section].sectionNotes)
 			{
 				// note stuffs
@@ -281,6 +342,15 @@ class ChartingState extends MusicBeatState
 		}
 		// lolll
 		//sectionsMax--;
+	}
+
+	var extraSize = 6;
+
+	function generateSection() { 
+		// pregenerate assets so it doesnt destroy your ram later
+		sectionLineGraphic = FlxG.bitmap.create(gridSize * keysTotal + extraSize, 2, FlxColor.WHITE);
+		sectionCameraGraphic = FlxG.bitmap.create(Std.int(gridSize * (keysTotal / 2)), 16 * gridSize, FlxColor.fromRGB(43, 116, 219));
+		sectionStepGraphic = FlxG.bitmap.create(gridSize * keysTotal + extraSize, 1, FlxColor.WHITE);
 	}
 
 	function loadSong(daSong:String):Void

@@ -3,6 +3,7 @@ package gameFolder.meta.state;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 import flixel.addons.transition.FlxTransitionableState;
@@ -61,6 +62,7 @@ class CustomTitlescreen extends MusicBeatState
 
 	var initLogowidth:Float = 0;
 	var newLogoScale:Float = 0;
+	var backdrop:FlxSprite;
 
 	function startIntro()
 	{
@@ -94,6 +96,12 @@ class CustomTitlescreen extends MusicBeatState
 		// bg.setGraphicSize(Std.int(bg.width * 0.6));
 		// bg.updateHitbox();
 		add(bg);
+
+		// cool bg
+		backdrop = new FlxSprite().makeGraphic(100, 100, 0xFF84A682);
+		backdrop.setGraphicSize(Std.int(bg.width), Std.int(bg.height));
+		backdrop.screenCenter();
+		add(backdrop);
 
 		logoBl = new FlxSprite();
 		logoBl.frames = Paths.getSparrowAtlas('menus/base/title/foreverlogo');
@@ -171,29 +179,15 @@ class CustomTitlescreen extends MusicBeatState
 		logoBl.scale.x = FlxMath.lerp(newLogoScale, logoBl.scale.x, 0.95);
 		logoBl.scale.y = FlxMath.lerp(newLogoScale, logoBl.scale.y, 0.95);
 
+		FlxTween.color(backdrop, 1, backdrop.color, FlxColor.BLACK);
+
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
-
-		#if mobile
-		for (touch in FlxG.touches.list)
-		{
-			if (touch.justPressed)
-			{
-				pressedEnter = true;
-			}
-		}
-		#end
-
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 
 		if (gamepad != null)
 		{
 			if (gamepad.justPressed.START)
 				pressedEnter = true;
-
-			#if switch
-			if (gamepad.justPressed.B)
-				pressedEnter = true;
-			#end
 		}
 
 		if (pressedEnter && !transitioning && skippedIntro)
@@ -212,23 +206,10 @@ class CustomTitlescreen extends MusicBeatState
 			{
 				// Check if version is outdated
 
-				var version:String = "v" + Application.current.meta.get('version');
-				/*
-					if (version.trim() != NGio.GAME_VER_NUMS.trim() && !OutdatedSubState.leftState)
-					{
-						FlxG.switchState(new OutdatedSubState());
-						trace('OLD VERSION!');
-						trace('old ver');
-						trace(version.trim());
-						trace('cur ver');
-						trace(NGio.GAME_VER_NUMS.trim());
-					}
-					else
-					{ */
+				//var version:String = "v" + Application.current.meta.get('version');
 				Main.switchState(this, new MainMenuState());
 				// }
 			});
-			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
 
 		// hi game, please stop crashing its kinda annoyin, thanks!
@@ -273,12 +254,39 @@ class CustomTitlescreen extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
+
 		logoBl.animation.play('bumpin');
+		backdrop.color = 0x84A682;
 
 		switch (curBeat)
 		{
 			case 16:
 				skipIntro();
+		}
+	}
+
+	override function stepHit()
+	{
+		super.stepHit();
+
+		switch (curStep)
+		{
+			case 4:
+				createCoolText(['Yoshubs']);
+			case 6:
+				addMoreText('Neolixn');
+			case 8:
+				addMoreText('Gedehari');
+			case 10:
+				addMoreText('Tsuraran');
+			case 12:
+				addMoreText('FlopDoodle');
+			case 16: 
+				addMoreText('');
+				addMoreText('PRESENT');
+
+			case 24:
+				deleteCoolText();
 		}
 	}
 

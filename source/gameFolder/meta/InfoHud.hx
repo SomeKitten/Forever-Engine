@@ -1,6 +1,7 @@
 package gameFolder.meta;
 
 // import Main;
+import flixel.FlxG;
 import haxe.Timer;
 import openfl.events.Event;
 import openfl.system.System;
@@ -74,14 +75,14 @@ class InfoHud extends TextField
 			times.shift();
 		}
 
-		// according to google, if this is wrong blame google lmao
-
-		// pretty sure that was to avoid optimisation issues and shit but like I dunno man I'm not writing an if statement that updates all of these at once
-		// if (currentCount != cacheCount && display)
+		// u h
 		text = "";
 		if (displayFps)
 		{
-			currentFPS = Math.round((times.length + cacheCount) / 2);
+			if (Math.isNaN(FlxG.updateFramerate))
+				currentFPS = Math.round((times.length + cacheCount) / 2);
+			else
+				currentFPS = FlxG.updateFramerate;
 			text += "FPS: " + currentFPS + "\n";
 			cacheCount = times.length;
 		}

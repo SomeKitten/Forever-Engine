@@ -604,7 +604,6 @@ class Stage extends FlxTypedGroup<FlxBasic>
 
 	override function add(Object:FlxBasic):FlxBasic
 	{
-		Main.loadedAssets.insert(Main.loadedAssets.length, Object);
 		if (Init.trueSettings.get('Disable Antialiasing') && Std.isOfType(Object, FlxSprite))
 			cast(Object, FlxSprite).antialiasing = false;
 		return super.add(Object);

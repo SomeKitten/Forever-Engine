@@ -166,11 +166,19 @@ class Paths
 
 	inline static public function getSparrowAtlas(key:String, ?library:String)
 	{
-		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
+		return cast(returnCached(FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library))), FlxAtlasFrames);
 	}
 
 	inline static public function getPackerAtlas(key:String, ?library:String)
 	{
-		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
+		return cast(returnCached(FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library))), FlxAtlasFrames);
+	}
+
+	// cache bullshit
+
+	static public function returnCached(asset:Dynamic) { 
+		if (!Main.loadedAssets.contains(asset))
+			Main.loadedAssets.push(asset);
+		return Main.loadedAssets[Main.loadedAssets.indexOf(asset)];
 	}
 }

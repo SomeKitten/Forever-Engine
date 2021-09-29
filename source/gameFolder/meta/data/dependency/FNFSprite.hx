@@ -43,7 +43,7 @@ class FNFSprite extends FlxSprite
 	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false,
 			?Key:String):FNFSprite
 	{
-		var graph:FlxGraphic = FlxG.bitmap.add(Graphic, Unique, Key);
+		var graph:FlxGraphic = cast(Paths.returnCached(FlxG.bitmap.add(Graphic, Unique, Key)), FlxGraphic);
 		if (graph == null)
 			return this;
 
