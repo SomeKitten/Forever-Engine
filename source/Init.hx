@@ -117,7 +117,7 @@ class Init extends FlxState
 		],
 		'Centered Notefield' => [false, Checkmark, "Center the notes, disables the enemy's notes."],
 		"Custom Titlescreen" => [
-			false,
+			true,
 			Checkmark,
 			"Enables the custom Forever Engine titlescreen! (only effective with a restart)",
 			FORCED
@@ -132,12 +132,14 @@ class Init extends FlxState
 		'Fixed Judgements' => [
 			false,
 			Checkmark,
-			"Fixes the judgements to the camera instead of to the world itself, making them easier to read."
+			"Fixes the judgements to the camera instead of to the world itself, making them easier to read.", 
+			NOT_FORCED
 		],
 		'Simply Judgements' => [
 			false,
 			Checkmark,
-			"Simplifies the judgement animations, displaying only one judgement / rating sprite at a time."
+			"Simplifies the judgement animations, displaying only one judgement / rating sprite at a time.",
+			NOT_FORCED
 		],
 
 
