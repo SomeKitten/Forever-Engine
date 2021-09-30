@@ -123,7 +123,7 @@ class Init extends FlxState
 			FORCED
 		],
 		'Skip Text' => [
-			'never',
+			'freeplay only',
 			Selector,
 			'Decides whether to skip cutscenes and dialogue in gameplay. May be always, only in freeplay, or never.',
 			NOT_FORCED,

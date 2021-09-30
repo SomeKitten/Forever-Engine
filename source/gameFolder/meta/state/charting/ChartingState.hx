@@ -119,6 +119,10 @@ class ChartingState extends MusicBeatState
 		add(strumLine);
 		strumLine.screenCenter(X);
 
+		// cursor
+		dummyArrow = new FlxSprite().makeGraphic(gridSize, gridSize);
+		add(dummyArrow);
+
 		// and now the epic note thingies
 		arrowGroup = new FlxTypedSpriteGroup<UIStaticArrow>(0, 0);
 		for (i in 0...keysTotal)
@@ -206,6 +210,71 @@ class ChartingState extends MusicBeatState
 
 		super.update(elapsed);
 
+		///*
+		if (FlxG.mouse.x > (fullGrid.x)
+			&& FlxG.mouse.x < (fullGrid.x + fullGrid.width)
+			&& FlxG.mouse.y > 0
+			&& FlxG.mouse.y < (getYfromStrum(songMusic.length)))
+		{
+			var fakeMouseX = FlxG.mouse.x - fullGrid.x;
+			dummyArrow.x = (Math.floor((fakeMouseX) / gridSize) * gridSize) + fullGrid.x;
+			if (FlxG.keys.pressed.SHIFT)
+				dummyArrow.y = FlxG.mouse.y;
+			else
+				dummyArrow.y = Math.floor(FlxG.mouse.y / gridSize) * gridSize;
+
+			// moved this in here for the sake of not dying
+			if (FlxG.mouse.justPressed)
+			{
+				if (!FlxG.mouse.overlaps(curRenderedNotes))
+				{
+					// add note funny
+					var noteStrum = getStrumTime(dummyArrow.y);
+
+					var notesSection = Math.floor(noteStrum / (Conductor.stepCrochet * 16));
+					var noteData = adjustSide(Math.floor((dummyArrow.x - fullGrid.x) / gridSize), _song.notes[notesSection].mustHitSection);
+					var noteSus = 0; // ninja you will NOT get away with this
+
+					//noteCleanup(notesSection, noteStrum, noteData);
+					//_song.notes[notesSection].sectionNotes.push([noteStrum, noteData, noteSus]);
+
+					generateChartNote(noteData, noteStrum, noteSus, 0, notesSection);
+
+					//updateSelection(_song.notes[notesSection].sectionNotes[_song.notes[notesSection].sectionNotes.length - 1], notesSection, true);
+					//isPlacing = true;
+				}
+				else
+				{
+					curRenderedNotes.forEachAlive(function(note:Note)
+					{
+						if (FlxG.mouse.overlaps(note))
+						{
+							if (FlxG.keys.pressed.CONTROL)
+							{
+								// selectNote(note);
+							}
+							else
+							{
+								// delete the epic note
+								//var notesSection = getSectionfromY(note.y);
+								// persona 3 mass destruction
+								//destroySustain(note, notesSection);
+
+								//noteCleanup(notesSection, note.strumTime, note.rawNoteData);
+
+								note.kill();
+								curRenderedNotes.remove(note);
+								note.destroy();
+								//
+							}
+						}
+						// lol
+					});
+				}
+			}
+		}
+		// */
+
 		if (FlxG.keys.justPressed.ENTER)
 		{
 			songPosition = songMusic.time;
@@ -220,15 +289,20 @@ class ChartingState extends MusicBeatState
 		// call all rendered notes lol
 		curRenderedNotes.forEach(function(epicNote:Note)
 		{
-			if ((epicNote.y < (strumLineCam.y - (FlxG.height / 2) - epicNote.height))
-				|| (epicNote.y > (strumLineCam.y + (FlxG.height / 2))))
+			if ((epicNote.y > (strumLineCam.y - (FlxG.height / 2) - epicNote.height))
+				|| (epicNote.y < (strumLineCam.y + (FlxG.height / 2))))
 			{
+				epicNote.alive = true;
+				epicNote.visible = true;
 				// do epic note calls for strum stuffs
 				if (Math.floor(Conductor.songPosition / Conductor.stepCrochet) == Math.floor(epicNote.strumTime / Conductor.stepCrochet)
 					&& (!hitSoundsPlayed.contains(epicNote)))
 				{
 					hitSoundsPlayed.push(epicNote);
 				}
+			} else {
+				epicNote.alive = false;
+				epicNote.visible = false;
 			}
 		});
 
@@ -237,7 +311,7 @@ class ChartingState extends MusicBeatState
 
 	function getStrumTime(yPos:Float):Float
 	{
-		return FlxMath.remapToRange(yPos, 0, (songMusic.length / Conductor.stepCrochet) * gridSize, songMusic.length, 0);
+		return FlxMath.remapToRange(yPos, 0, (songMusic.length / Conductor.stepCrochet) * gridSize, 0, songMusic.length);
 	}
 
 	function getYfromStrum(strumTime:Float):Float
@@ -262,7 +336,6 @@ class ChartingState extends MusicBeatState
 		fullGrid.height = (songMusic.length / Conductor.stepCrochet) * gridSize;
 
 		add(fullGrid);
-
 	}
 
 	public var sectionLineGraphic:FlxGraphic;
@@ -389,7 +462,6 @@ class ChartingState extends MusicBeatState
 
 	private function generateChartNote(daNoteInfo, daStrumTime, daSus, daNoteAlt, noteSection)
 	{
-		//
 		var note:Note = ForeverAssets.generateArrow(PlayState.assetModifier, daStrumTime, daNoteInfo % 4, 0, daNoteAlt, false, null);
 		// I love how there's 3 different engines that use this exact same variable name lmao
 		note.rawNoteData = daNoteInfo;

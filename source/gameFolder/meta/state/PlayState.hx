@@ -100,6 +100,8 @@ class PlayState extends MusicBeatState
 	private var startingSong:Bool = false;
 	private var paused:Bool = false;
 	var startedCountdown:Bool = false;
+	var inCutscene:Bool = false;
+	
 	var canPause:Bool = true;
 
 	var previousFrameTime:Int = 0;
@@ -344,10 +346,9 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(dialogueHUD);
 
 		// call the funny intro cutscene depending on the song
-		var freeplayOverride = true;
-		if (isStoryMode || freeplayOverride)
+		if (!skipCutscenes())
 			songIntroCutscene();
-		else
+		else 
 			startCountdown();
 
 		/**
@@ -415,168 +416,171 @@ class PlayState extends MusicBeatState
 
 		}
 
-		// pause the game if the game is allowed to pause and enter is pressed
-		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
-		{
-			// update drawing stuffs
-			persistentUpdate = false;
-			persistentDraw = true;
-			paused = true;
-
-			// open pause substate
-			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-			updateRPC(true);
-		}
-
-		// make sure you're not cheating lol
-		if (!isStoryMode)
-		{
-			// charting state (more on that later)
-			if ((FlxG.keys.justPressed.SEVEN) && (!startingSong))
+		if (!inCutscene) {
+			// pause the game if the game is allowed to pause and enter is pressed
+			if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
 			{
-				resetMusic();
-				if (Init.trueSettings.get('Use Forever Chart Editor'))
-					Main.switchState(this, new ChartingState());
-				else
-					Main.switchState(this, new OriginalChartingState());
+				// update drawing stuffs
+				persistentUpdate = false;
+				persistentDraw = true;
+				paused = true;
+
+				// open pause substate
+				openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+				updateRPC(true);
 			}
-		}
 
-		///*
-		if (startingSong)
-		{
-			if (startedCountdown)
+			// make sure you're not cheating lol
+			if (!isStoryMode)
 			{
-				Conductor.songPosition += elapsed * 1000;
-				if (Conductor.songPosition >= 0)
-					startSong();
-			}
-		}
-		else
-		{
-			// Conductor.songPosition = FlxG.sound.music.time;
-			Conductor.songPosition += elapsed * 1000;
-
-			if (!paused)
-			{
-				songTime += FlxG.game.ticks - previousFrameTime;
-				previousFrameTime = FlxG.game.ticks;
-
-				// Interpolation type beat
-				if (Conductor.lastSongPos != Conductor.songPosition)
+				// charting state (more on that later)
+				if ((FlxG.keys.justPressed.SEVEN) && (!startingSong))
 				{
-					songTime = (songTime + Conductor.songPosition) / 2;
-					Conductor.lastSongPos = Conductor.songPosition;
-					// Conductor.songPosition += FlxG.elapsed * 1000;
-					// trace('MISSED FRAME');
+					resetMusic();
+					if (Init.trueSettings.get('Use Forever Chart Editor'))
+						Main.switchState(this, new ChartingState());
+					else
+						Main.switchState(this, new OriginalChartingState());
 				}
 			}
 
-			// Conductor.lastSongPos = FlxG.sound.music.time;
-			// song shit for testing lols
-		}
-
-		// boyfriend.playAnim('singLEFT', true);
-		// */
-
-		if (generatedMusic && PlayState.SONG.notes[Std.int(curStep / 16)] != null)
-		{
-			if (!PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection)
+			///*
+			if (startingSong)
 			{
-				var char = dadOpponent;
-
-				var getCenterX = char.getMidpoint().x + 150;
-				var getCenterY = char.getMidpoint().y - 100;
-				switch (dadOpponent.curCharacter)
+				if (startedCountdown)
 				{
-					case 'mom':
-						getCenterY = char.getMidpoint().y;
-					case 'senpai':
-						getCenterY = char.getMidpoint().y - 430;
-						getCenterX = char.getMidpoint().x - 100;
-					case 'senpai-angry':
-						getCenterY = char.getMidpoint().y - 430;
-						getCenterX = char.getMidpoint().x - 100;
+					Conductor.songPosition += elapsed * 1000;
+					if (Conductor.songPosition >= 0)
+						startSong();
 				}
-
-				camFollow.setPosition(getCenterX + (camDisplaceX * 8), getCenterY);
-
-				if (char.curCharacter == 'mom')
-					vocals.volume = 1;
-
-				/*
-					if (SONG.song.toLowerCase() == 'tutorial')
-					{
-						FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut});
-					}
-				 */
 			}
 			else
 			{
-				var char = boyfriend;
+				// Conductor.songPosition = FlxG.sound.music.time;
+				Conductor.songPosition += elapsed * 1000;
 
-				var getCenterX = char.getMidpoint().x - 100;
-				var getCenterY = char.getMidpoint().y - 100;
-				switch (curStage)
+				if (!paused)
 				{
-					case 'limo':
-						getCenterX = char.getMidpoint().x - 300;
-					case 'mall':
-						getCenterY = char.getMidpoint().y - 200;
-					case 'school':
-						getCenterX = char.getMidpoint().x - 200;
-						getCenterY = char.getMidpoint().y - 200;
-					case 'schoolEvil':
-						getCenterX = char.getMidpoint().x - 200;
-						getCenterY = char.getMidpoint().y - 200;
+					songTime += FlxG.game.ticks - previousFrameTime;
+					previousFrameTime = FlxG.game.ticks;
+
+					// Interpolation type beat
+					if (Conductor.lastSongPos != Conductor.songPosition)
+					{
+						songTime = (songTime + Conductor.songPosition) / 2;
+						Conductor.lastSongPos = Conductor.songPosition;
+						// Conductor.songPosition += FlxG.elapsed * 1000;
+						// trace('MISSED FRAME');
+					}
 				}
 
-				camFollow.setPosition(getCenterX + (camDisplaceX * 8), getCenterY);
-
-				/*
-					if (SONG.song.toLowerCase() == 'tutorial')
-					{
-						FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut});
-					}
-				 */
+				// Conductor.lastSongPos = FlxG.sound.music.time;
+				// song shit for testing lols
 			}
+
+			// boyfriend.playAnim('singLEFT', true);
+			// */
+
+			if (generatedMusic && PlayState.SONG.notes[Std.int(curStep / 16)] != null)
+			{
+				if (!PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection)
+				{
+					var char = dadOpponent;
+
+					var getCenterX = char.getMidpoint().x + 150;
+					var getCenterY = char.getMidpoint().y - 100;
+					switch (dadOpponent.curCharacter)
+					{
+						case 'mom':
+							getCenterY = char.getMidpoint().y;
+						case 'senpai':
+							getCenterY = char.getMidpoint().y - 430;
+							getCenterX = char.getMidpoint().x - 100;
+						case 'senpai-angry':
+							getCenterY = char.getMidpoint().y - 430;
+							getCenterX = char.getMidpoint().x - 100;
+					}
+
+					camFollow.setPosition(getCenterX + (camDisplaceX * 8), getCenterY);
+
+					if (char.curCharacter == 'mom')
+						vocals.volume = 1;
+
+					/*
+						if (SONG.song.toLowerCase() == 'tutorial')
+						{
+							FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut});
+						}
+					 */
+				}
+				else
+				{
+					var char = boyfriend;
+
+					var getCenterX = char.getMidpoint().x - 100;
+					var getCenterY = char.getMidpoint().y - 100;
+					switch (curStage)
+					{
+						case 'limo':
+							getCenterX = char.getMidpoint().x - 300;
+						case 'mall':
+							getCenterY = char.getMidpoint().y - 200;
+						case 'school':
+							getCenterX = char.getMidpoint().x - 200;
+							getCenterY = char.getMidpoint().y - 200;
+						case 'schoolEvil':
+							getCenterX = char.getMidpoint().x - 200;
+							getCenterY = char.getMidpoint().y - 200;
+					}
+
+					camFollow.setPosition(getCenterX + (camDisplaceX * 8), getCenterY);
+
+					/*
+						if (SONG.song.toLowerCase() == 'tutorial')
+						{
+							FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut});
+						}
+					 */
+				}
+			}
+
+			var easeLerp = 0.95;
+			// camera stuffs
+			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom + forceZoom[0], FlxG.camera.zoom, easeLerp);
+			for (hud in allUIs)
+				hud.zoom = FlxMath.lerp(1 + forceZoom[1], hud.zoom, easeLerp);
+
+			// not even forcezoom anymore but still
+			FlxG.camera.angle = FlxMath.lerp(0 + forceZoom[2], FlxG.camera.angle, easeLerp);
+			for (hud in allUIs)
+				hud.angle = FlxMath.lerp(0 + forceZoom[3], hud.angle, easeLerp);
+
+			if (health <= 0 && startedCountdown)
+			{
+				// startTimer.active = false;
+				persistentUpdate = false;
+				persistentDraw = false;
+				paused = true;
+
+				resetMusic();
+
+				openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+
+				// discord stuffs should go here
+			}
+
+			// spawn in the notes from the array
+			if ((unspawnNotes[0] != null) && ((unspawnNotes[0].strumTime - Conductor.songPosition) < 3500))
+			{
+				var dunceNote:Note = unspawnNotes[0];
+				// push note to its correct strumline
+				strumLines.members[Math.floor((dunceNote.noteData + (dunceNote.mustPress ? 4 : 0)) / numberOfKeys)].push(dunceNote);
+				unspawnNotes.splice(unspawnNotes.indexOf(dunceNote), 1);
+			}
+
+			noteCalls();
 		}
 
-		var easeLerp = 0.95;
-		// camera stuffs
-		FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom + forceZoom[0], FlxG.camera.zoom, easeLerp);
-		for (hud in allUIs)
-			hud.zoom = FlxMath.lerp(1 + forceZoom[1], hud.zoom, easeLerp);
-
-		// not even forcezoom anymore but still
-		FlxG.camera.angle = FlxMath.lerp(0 + forceZoom[2], FlxG.camera.angle, easeLerp);
-		for (hud in allUIs)
-			hud.angle = FlxMath.lerp(0 + forceZoom[3], hud.angle, easeLerp);
-
-		if (health <= 0 && startedCountdown)
-		{
-			// startTimer.active = false;
-			persistentUpdate = false;
-			persistentDraw = false;
-			paused = true;
-
-			resetMusic();
-
-			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-
-			// discord stuffs should go here
-		}
-
-		// spawn in the notes from the array
-		if ((unspawnNotes[0] != null) && ((unspawnNotes[0].strumTime - Conductor.songPosition) < 3500))
-		{
-			var dunceNote:Note = unspawnNotes[0];
-			// push note to its correct strumline
-			strumLines.members[Math.floor((dunceNote.noteData + (dunceNote.mustPress ? 4 : 0)) / numberOfKeys)].push(dunceNote);
-			unspawnNotes.splice(unspawnNotes.indexOf(dunceNote), 1);
-		}
-
-		noteCalls();
 	}
 
 	function noteCalls()
@@ -1544,6 +1548,7 @@ class PlayState extends MusicBeatState
 		switch (curSong.toLowerCase())
 		{
 			case "winter-horrorland":
+				inCutscene = true;
 				var blackScreen:FlxSprite = new FlxSprite(0, 0).makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.BLACK);
 				add(blackScreen);
 				blackScreen.scrollFactor.set();
@@ -1568,43 +1573,79 @@ class PlayState extends MusicBeatState
 							{
 								startCountdown();
 							}
+							
 						});
+						
 					});
 				});
 			case 'roses':
 				// the same just play angery noise LOL
 				FlxG.sound.play(Paths.sound('ANGRY_TEXT_BOX'));
-				var dialogPath = Paths.json(SONG.song.toLowerCase() + '/dialogue');
+				callTextbox();
+			case 'thorns':
+				inCutscene = true;
+				for (hud in allUIs)
+					hud.visible = false;
+				
+				var red:FlxSprite = new FlxSprite(-100, -100).makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFFff1b31);
+				red.scrollFactor.set();
 
-				if (!skipCutscenes() && sys.FileSystem.exists(dialogPath))
+				var senpaiEvil:FlxSprite = new FlxSprite();
+				senpaiEvil.frames = Paths.getSparrowAtlas('cutscene/senpai/senpaiCrazy');
+				senpaiEvil.animation.addByPrefix('idle', 'Senpai Pre Explosion', 24, false);
+				senpaiEvil.setGraphicSize(Std.int(senpaiEvil.width * 6));
+				senpaiEvil.scrollFactor.set();
+				senpaiEvil.updateHitbox();
+				senpaiEvil.screenCenter();
+
+				add(red);
+				add(senpaiEvil);
+				senpaiEvil.alpha = 0;
+				new FlxTimer().start(0.3, function(swagTimer:FlxTimer)
 				{
-					startedCountdown = false;
-
-					dialogueBox = DialogueBox.createDialogue(sys.io.File.getContent(dialogPath));
-					dialogueBox.cameras = [dialogueHUD];
-					dialogueBox.whenDaFinish = startCountdown;
-
-					add(dialogueBox);
-				}
-				else
-					startCountdown();
+					senpaiEvil.alpha += 0.15;
+					if (senpaiEvil.alpha < 1)
+						swagTimer.reset();
+					else
+					{
+						senpaiEvil.animation.play('idle');
+						FlxG.sound.play(Paths.sound('Senpai_Dies'), 1, false, null, true, function()
+						{
+							remove(senpaiEvil);
+							remove(red);
+							FlxG.camera.fade(FlxColor.WHITE, 0.01, true, function()
+							{
+								for (hud in allUIs)
+									hud.visible = true;
+								callTextbox();
+							}, true);
+						});
+						new FlxTimer().start(3.2, function(deadTime:FlxTimer)
+						{
+							FlxG.camera.fade(FlxColor.WHITE, 1.6, false);
+						});
+					}
+				});
 			default:
-				var dialogPath = Paths.json(SONG.song.toLowerCase() + '/dialogue');
-
-				if (!skipCutscenes() && sys.FileSystem.exists(dialogPath))
-				{
-					startedCountdown = false;
-
-					dialogueBox = DialogueBox.createDialogue(sys.io.File.getContent(dialogPath));
-					dialogueBox.cameras = [dialogueHUD];
-					dialogueBox.whenDaFinish = startCountdown;
-
-					add(dialogueBox);
-				}
-				else
-					startCountdown();
+				callTextbox();
 		}
 		//
+	}
+
+	function callTextbox() {
+		var dialogPath = Paths.json(SONG.song.toLowerCase() + '/dialogue');
+		if (sys.FileSystem.exists(dialogPath))
+		{
+			startedCountdown = false;
+
+			dialogueBox = DialogueBox.createDialogue(sys.io.File.getContent(dialogPath));
+			dialogueBox.cameras = [dialogueHUD];
+			dialogueBox.whenDaFinish = startCountdown;
+
+			add(dialogueBox);
+		}
+		else
+			startCountdown();
 	}
 
 	public static function skipCutscenes():Bool {
@@ -1632,8 +1673,11 @@ class PlayState extends MusicBeatState
 
 	private function startCountdown():Void
 	{
+		inCutscene = false;
 		Conductor.songPosition = -(Conductor.crochet * 5);
 		swagCounter = 0;
+		
+		camHUD.visible = true;
 
 		startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
 		{

@@ -125,8 +125,8 @@ class ForeverAssets
 				tempSplash.animation.add('anim1', [noteData, 4 + noteData, 8 + noteData, 12 + noteData], 24, false);
 				tempSplash.animation.add('anim2', [16 + noteData, 20 + noteData, 24 + noteData, 28 + noteData], 24, false);
 				tempSplash.animation.play('anim1');
-				tempSplash.addOffset('anim1', -120, -120);
-				tempSplash.addOffset('anim2', -120, -120);
+				tempSplash.addOffset('anim1', -120, -90);
+				tempSplash.addOffset('anim2', -120, -90);
 				tempSplash.setGraphicSize(Std.int(tempSplash.width * PlayState.daPixelZoom));
 
 			default:
