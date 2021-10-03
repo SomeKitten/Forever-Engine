@@ -245,8 +245,10 @@ class Main extends Sprite
 				obj.destroy();
 			}
 		}
+		Assets.cache.clear("songs");
 		// */
 	}
+	
 
 	function onCrash(e:UncaughtErrorEvent):Void
 	{

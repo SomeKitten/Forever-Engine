@@ -84,7 +84,7 @@ class Init extends FlxState
 			NOT_FORCED
 		],
 		'Use Forever Chart Editor' => [
-			true,
+			false,
 			Checkmark,
 			'When enabled, uses the custom Forever Engine chart editor!',
 			NOT_FORCED

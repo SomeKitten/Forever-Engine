@@ -204,8 +204,7 @@ class OptionsMenuState extends MusicBeatState
 			activeSubgroup.members[i].targetY = (i - curSelection) / 2;
 
 			// check for null members and hardcode the dividers
-			if (categoryMap.get(curCategory)[0][i][1] == null)
-			{
+			if (categoryMap.get(curCategory)[0][i][1] == null) {
 				activeSubgroup.members[i].alpha = 1;
 				activeSubgroup.members[i].xTo = Std.int((FlxG.width / 2) - ((activeSubgroup.members[i].text.length / 2) * 40));
 			}

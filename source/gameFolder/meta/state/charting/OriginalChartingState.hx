@@ -206,7 +206,7 @@ class OriginalChartingState extends MusicBeatState
 			if (check_mute_inst.checked)
 				vol = 0;
 
-			FlxG.sound.music.volume = vol;
+			songMusic.volume = vol;
 		};
 
 		var saveButton:FlxButton = new FlxButton(110, 8, "Save", function()
@@ -364,31 +364,44 @@ class OriginalChartingState extends MusicBeatState
 		// I'm genuinely tempted to go around and remove every instance of the word "sus" it is genuinely killing me inside
 	}
 
+	var songMusic:FlxSound;
+
 	function loadSong(daSong:String):Void
 	{
-		if (FlxG.sound.music != null)
-		{
-			FlxG.sound.music.stop();
-			// vocals.stop();
-		}
+		if (songMusic != null)
+			songMusic.stop();
 
-		FlxG.sound.playMusic(Paths.inst(daSong), 0.6);
+		if (vocals != null)
+			vocals.stop();
 
-		// WONT WORK FOR TUTORIAL OR TEST SONG!!! REDO LATER
-		vocals = new FlxSound().loadEmbedded(Paths.voices(daSong));
+		songMusic = new FlxSound().loadEmbedded(Sound.fromFile('./' + Paths.inst(daSong)), false, true);
+		if (_song.needsVoices)
+			vocals = new FlxSound().loadEmbedded(Sound.fromFile('./' + Paths.voices(daSong)), false, true);
+		else
+			vocals = new FlxSound();
+		FlxG.sound.list.add(songMusic);
 		FlxG.sound.list.add(vocals);
 
-		FlxG.sound.music.pause();
-		vocals.pause();
+		songMusic.play();
+		vocals.play();
 
-		FlxG.sound.music.onComplete = function()
+		pauseMusic();
+
+		songMusic.onComplete = function()
 		{
-			vocals.pause();
-			vocals.time = 0;
-			FlxG.sound.music.pause();
-			FlxG.sound.music.time = 0;
-			changeSection();
+			ForeverTools.killMusic([songMusic, vocals]);
+			loadSong(daSong);
 		};
+		//
+	}
+
+	function pauseMusic()
+	{
+		songMusic.time = Math.max(songMusic.time, 0);
+		songMusic.time = Math.min(songMusic.time, songMusic.length);
+
+		songMusic.pause();
+		vocals.pause();
 	}
 
 	function generateUI():Void
@@ -491,7 +504,7 @@ class OriginalChartingState extends MusicBeatState
 	{
 		curStep = recalculateSteps();
 
-		Conductor.songPosition = FlxG.sound.music.time;
+		Conductor.songPosition = songMusic.time;
 		_song.song = typingShit.text;
 
 		strumLine.y = getYfromStrum((Conductor.songPosition - sectionStartTime()) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps));
@@ -563,7 +576,7 @@ class OriginalChartingState extends MusicBeatState
 			lastSection = curSection;
 
 			PlayState.SONG = _song;
-			FlxG.sound.music.stop();
+			songMusic.stop();
 			vocals.stop();
 			Main.switchState(this, new PlayState());
 		}
@@ -597,15 +610,15 @@ class OriginalChartingState extends MusicBeatState
 		{
 			if (FlxG.keys.justPressed.SPACE)
 			{
-				if (FlxG.sound.music.playing)
+				if (songMusic.playing)
 				{
-					FlxG.sound.music.pause();
+					songMusic.pause();
 					vocals.pause();
 				}
 				else
 				{
 					vocals.play();
-					FlxG.sound.music.play();
+					songMusic.play();
 				}
 			}
 
@@ -619,49 +632,49 @@ class OriginalChartingState extends MusicBeatState
 
 			if (FlxG.mouse.wheel != 0)
 			{
-				FlxG.sound.music.pause();
+				songMusic.pause();
 				vocals.pause();
 
-				FlxG.sound.music.time -= (FlxG.mouse.wheel * Conductor.stepCrochet * 0.4);
-				vocals.time = FlxG.sound.music.time;
+				songMusic.time -= (FlxG.mouse.wheel * Conductor.stepCrochet * 0.4);
+				vocals.time = songMusic.time;
 			}
 
 			if (!FlxG.keys.pressed.SHIFT)
 			{
 				if (FlxG.keys.pressed.W || FlxG.keys.pressed.S)
 				{
-					FlxG.sound.music.pause();
+					songMusic.pause();
 					vocals.pause();
 
 					var daTime:Float = 700 * FlxG.elapsed;
 
 					if (FlxG.keys.pressed.W)
 					{
-						FlxG.sound.music.time -= daTime;
+						songMusic.time -= daTime;
 					}
 					else
-						FlxG.sound.music.time += daTime;
+						songMusic.time += daTime;
 
-					vocals.time = FlxG.sound.music.time;
+					vocals.time = songMusic.time;
 				}
 			}
 			else
 			{
 				if (FlxG.keys.justPressed.W || FlxG.keys.justPressed.S)
 				{
-					FlxG.sound.music.pause();
+					songMusic.pause();
 					vocals.pause();
 
 					var daTime:Float = Conductor.stepCrochet * 2;
 
 					if (FlxG.keys.justPressed.W)
 					{
-						FlxG.sound.music.time -= daTime;
+						songMusic.time -= daTime;
 					}
 					else
-						FlxG.sound.music.time += daTime;
+						songMusic.time += daTime;
 
-					vocals.time = FlxG.sound.music.time;
+					vocals.time = songMusic.time;
 				}
 			}
 		}
@@ -683,7 +696,7 @@ class OriginalChartingState extends MusicBeatState
 
 		bpmTxt.text = bpmTxt.text = Std.string(FlxMath.roundDecimal(Conductor.songPosition / 1000, 2))
 			+ " / "
-			+ Std.string(FlxMath.roundDecimal(FlxG.sound.music.length / 1000, 2))
+			+ Std.string(FlxMath.roundDecimal(songMusic.length / 1000, 2))
 			+ "\nSection: "
 			+ curSection;
 		super.update(elapsed);
@@ -713,11 +726,11 @@ class OriginalChartingState extends MusicBeatState
 		}
 		for (i in 0...Conductor.bpmChangeMap.length)
 		{
-			if (FlxG.sound.music.time > Conductor.bpmChangeMap[i].songTime)
+			if (songMusic.time > Conductor.bpmChangeMap[i].songTime)
 				lastChange = Conductor.bpmChangeMap[i];
 		}
 
-		curStep = lastChange.stepTime + Math.floor((FlxG.sound.music.time - lastChange.songTime) / Conductor.stepCrochet);
+		curStep = lastChange.stepTime + Math.floor((songMusic.time - lastChange.songTime) / Conductor.stepCrochet);
 		updateBeat();
 
 		return curStep;
@@ -727,19 +740,19 @@ class OriginalChartingState extends MusicBeatState
 	{
 		updateGrid();
 
-		FlxG.sound.music.pause();
+		songMusic.pause();
 		vocals.pause();
 
 		// Basically old shit from changeSection???
-		FlxG.sound.music.time = sectionStartTime();
+		songMusic.time = sectionStartTime();
 
 		if (songBeginning)
 		{
-			FlxG.sound.music.time = 0;
+			songMusic.time = 0;
 			curSection = 0;
 		}
 
-		vocals.time = FlxG.sound.music.time;
+		vocals.time = songMusic.time;
 		updateCurStep();
 
 		updateGrid();
@@ -758,7 +771,7 @@ class OriginalChartingState extends MusicBeatState
 
 			if (updateMusic)
 			{
-				FlxG.sound.music.pause();
+				songMusic.pause();
 				vocals.pause();
 
 				/*var daNum:Int = 0;
@@ -769,8 +782,8 @@ class OriginalChartingState extends MusicBeatState
 						daNum++;
 				}*/
 
-				FlxG.sound.music.time = sectionStartTime();
-				vocals.time = FlxG.sound.music.time;
+				songMusic.time = sectionStartTime();
+				vocals.time = songMusic.time;
 				updateCurStep();
 			}
 
