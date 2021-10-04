@@ -34,10 +34,10 @@ class Character extends FNFSprite
 		super(x, y);
 		this.isPlayer = isPlayer;
 
-		setCharacter(character);
+		setCharacter(x, y, character);
 	}
 
-	function setCharacter(character:String)
+	public function setCharacter(x:Float, y:Float, character:String)
 	{
 		curCharacter = character;
 		var tex:FlxAtlasFrames;
@@ -510,6 +510,9 @@ class Character extends FNFSprite
 		}
 		else if (curCharacter.startsWith('bf'))
 			flipLeftRight();
+
+		this.x = x;
+		this.y = y;
 	}
 
 	function flipLeftRight():Void
