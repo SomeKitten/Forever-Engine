@@ -4,14 +4,14 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
-import gameFolder.gameObjects.userInterface.*;
-import gameFolder.gameObjects.userInterface.menu.*;
-import gameFolder.gameObjects.userInterface.notes.*;
-import gameFolder.gameObjects.userInterface.notes.Strumline.UIStaticArrow;
-import gameFolder.meta.data.Conductor;
-import gameFolder.meta.data.Section.SwagSection;
-import gameFolder.meta.data.Timings;
-import gameFolder.meta.state.PlayState;
+import gameObjects.userInterface.*;
+import gameObjects.userInterface.menu.*;
+import gameObjects.userInterface.notes.*;
+import gameObjects.userInterface.notes.Strumline.UIStaticArrow;
+import meta.data.Conductor;
+import meta.data.Section.SwagSection;
+import meta.data.Timings;
+import meta.state.PlayState;
 
 using StringTools;
 

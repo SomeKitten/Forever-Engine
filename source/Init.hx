@@ -2,12 +2,12 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
-import gameFolder.meta.CoolUtil;
-import gameFolder.meta.InfoHud;
-import gameFolder.meta.data.Highscore;
-import gameFolder.meta.data.dependency.Discord;
-import gameFolder.meta.state.*;
-import gameFolder.meta.state.charting.*;
+import meta.CoolUtil;
+import meta.InfoHud;
+import meta.data.Highscore;
+import meta.data.dependency.Discord;
+import meta.state.*;
+import meta.state.charting.*;
 import openfl.filters.BitmapFilter;
 import openfl.filters.ColorMatrixFilter;
 
@@ -211,7 +211,7 @@ class Init extends FlxState
 		FlxG.mouse.useSystemCursor = true; // Use system cursor because it's prettier
 		FlxG.mouse.visible = false; // Hide mouse on start
 
-		// Main.switchState(this, new ChartingState());
+		// Main.switchState(this, new TestState());
 		gotoTitleScreen();
 	}
 
