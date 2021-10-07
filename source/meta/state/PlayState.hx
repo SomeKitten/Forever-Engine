@@ -1281,6 +1281,8 @@ class PlayState extends MusicBeatState
 			songMusic.onComplete = endSong;
 			vocals.play();
 
+			resyncVocals();
+
 			#if !html5
 			// Song duration in a float, useful for the time left feature
 			songLength = songMusic.length;
