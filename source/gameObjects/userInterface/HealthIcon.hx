@@ -8,7 +8,7 @@ class HealthIcon extends FlxSprite
 {
 	// rewrite using da new icon system as ninjamuffin would say it
 	public var sprTracker:FlxSprite;
-	public var exclusions:Array<String> = ['pixel'];
+	public static var exclusions:Array<String> = ['pixel'];
 
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{

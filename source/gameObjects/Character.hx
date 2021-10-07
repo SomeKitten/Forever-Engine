@@ -8,6 +8,7 @@ import flixel.FlxG;
 import flixel.addons.util.FlxSimplex;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
+import gameObjects.userInterface.HealthIcon;
 import meta.*;
 import meta.data.*;
 import meta.data.dependency.FNFSprite;
@@ -628,8 +629,11 @@ class Character extends FNFSprite
 	{
 		var base = curCharacter;
 
-		if (base.startsWith('gf'))
-			base = 'gf';
+		if (base.contains('-'))
+		{
+			if (!HealthIcon.exclusions.contains(base.substring(base.indexOf('-') + 1, base.length)))
+				base = base.substring(0, base.indexOf('-'));
+		}
 		return base;
 	}
 }

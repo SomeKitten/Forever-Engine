@@ -1357,14 +1357,14 @@ class PlayState extends MusicBeatState
 
 	private function charactersDance(curBeat:Int)
 	{
-		if ((curBeat % gfSpeed == 0) && (!gf.animation.curAnim.name.startsWith("sing")))
+		if ((curBeat % gfSpeed == 0) && (gf.animation.curAnim.name.startsWith("dance")))
 			gf.dance();
 
-		if (!boyfriend.animation.curAnim.name.startsWith("sing") && (curBeat % 2 == 0 || boyfriend.quickDancer))
+		if (boyfriend.animation.curAnim.name.startsWith("idle") && (curBeat % 2 == 0 || boyfriend.quickDancer))
 			boyfriend.dance();
 
 		// added this for opponent cus it wasn't here before and skater would just freeze
-		if (!dadOpponent.animation.curAnim.name.startsWith("sing") && (curBeat % 2 == 0 || dadOpponent.quickDancer))
+		if (dadOpponent.animation.curAnim.name.startsWith("idle") && (curBeat % 2 == 0 || dadOpponent.quickDancer))
 			dadOpponent.dance();
 	}
 
