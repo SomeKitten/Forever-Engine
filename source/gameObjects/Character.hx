@@ -630,10 +630,7 @@ class Character extends FNFSprite
 		var base = curCharacter;
 
 		if (base.contains('-'))
-		{
-			if (!HealthIcon.exclusions.contains(base.substring(base.indexOf('-') + 1, base.length)))
-				base = base.substring(0, base.indexOf('-'));
-		}
+			base = base.substring(0, base.indexOf('-'));
 		return base;
 	}
 }
