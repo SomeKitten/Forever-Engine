@@ -70,9 +70,6 @@ SHOUTOUTS
 
 [Clockwerk](https://twitter.com/ClockwerkSmurf) - also made vs skipper, oh my god what were you guys thinking
 
-[Flippy](https://www.youtube.com/channel/UCMIGpjyL6H__IFp7emWErlw) - GIVING ME A LOT OF SUPPORT, INPUT, FEEDBACK, ETC ON THE ENGINE, IT WAS SO COOL TO MEET YOU DUDE AND YOU'RE AWESOME AND I REALLY APPRECIATE YOUR SUPPORT FOR THE ENGINE AS WELL AS YOUR DEDICATION TO THE MOD COMMUNITY!
-
-
 ----------------------------------------------
 How to Compile:
 
