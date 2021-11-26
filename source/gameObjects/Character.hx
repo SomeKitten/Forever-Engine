@@ -611,7 +611,8 @@ class Character extends FNFSprite
 
 	override public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		super.playAnim(AnimName, Force, Reversed, Frame);
+		if (animation.getByName(AnimName) != null)
+			super.playAnim(AnimName, Force, Reversed, Frame);
 
 		if (curCharacter == 'gf')
 		{

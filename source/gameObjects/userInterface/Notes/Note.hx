@@ -178,7 +178,13 @@ class Note extends FNFSprite
 			 */
 			final quantArray:Array<Int> = [4, 8, 12, 16, 20, 24, 32, 48, 64, 192]; // different quants
 
-			final beatTimeSeconds:Float = (60 / Conductor.bpm); // beat in seconds
+			var curBPM:Float = Conductor.bpm;
+			for (i in 0...Conductor.bpmChangeMap.length) {
+				if (strumTime > Conductor.bpmChangeMap[i].songTime)
+					curBPM = Conductor.bpmChangeMap[i].bpm;
+			}
+
+			final beatTimeSeconds:Float = (60 / curBPM); // beat in seconds
 			final beatTime:Float = beatTimeSeconds * 1000; // beat in milliseconds
 			// assumed 4 beats per measure?
 			final measureTime:Float = beatTime * 4;
